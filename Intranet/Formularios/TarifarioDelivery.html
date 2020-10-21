@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Listado de tarifas</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/TarifarioDelivery.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Tarifario de Delivery</h1>
+            <div class="row m-2">
+                <div class="col-12" >
+                    <div style="width: 490px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">Estado</div>
+                            <select id="estado" class="normal p-2" onchange="buscar('', 1)">
+                                <option value="">-- Estado --</option>
+                                <option value="activo" selected>Activo</option>
+                                <option value="inactivo">inActivo</option>
+                            </select>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Ciudad</div>
+                            <select id="ciudadb" class="medio p-2 per230" onchange="buscar('', 1)"></select>
+                        </div>
+                        <div class='inlineblock' id='boxtipo'></div>
+                    </div>
+                    <div class=" minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Para modificar una tarifa seleccione el registro.
+                    </div>
+                    <div id="contenedorProveedor">
+                        <table class="table" id='tbldelivery'>
+                            <thead class="thead-light">
+                            <th><div class="grande">Descripcion</div></th>
+                            <th><div class="pequeno">De Km</div></th>
+                            <th><div class="pequeno">Hasta Km</div></th>
+                            <th><div class="pequeno">Precio Bs</div></th>
+                            <th><div class="normal">Estado</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Más Tarifas (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+            <div style="height: 60px"></div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 394px">
+                <button onclick="modificar()" class='btn btn-warning per232' style="display: none;"  id="btnmodificar">Modificar</button>
+                <button onclick="nuevo(1)" class='btn btn-primary per231'  id="btnnuevo">Nuevo</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per228"/>
+                    <img onclick="exportarExcel('tbldelivery', 'Lista de Choferes')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per229"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popDelivery" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="formDelivery">
+                        <div class="row">
+                            <div class="col-8">
+                                <label>Descripcion</label>
+                                <input type="text" class="form-control" name="nombre" maxlength="400" autocomplete="off">
+                            </div>
+                            <div class="col-4">
+                                <label>Ciudad</label>
+                                <select id="ciudad" class="p-2 medio per230">
+                                </select>
+                            </div>
+                            
+
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>De Km</label>
+                                <input type="number" class="form-control" name="de" autocomplete="off" step="0.1">
+                            </div>
+                            <div class="col-3">
+                                <label>Hasta Km</label>
+                                <input type="number" class="form-control" name="hasta" step="0.1"  autocomplete="off">
+                            </div>
+                            <div class="col-3">
+                                <label>Precio Bs</label>
+                                <input type="number" class="form-control" name="precio" step="0.1"  autocomplete="off">
+                            </div>
+                            <div class="col-3">
+                                <label>Estado</label>
+                                <select id="tpestado" class="p-2 medio">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="col-3" id="boxtipo2"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

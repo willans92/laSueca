@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Venta</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/ReporteAjusteInventario.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"   >
+            <h1>Reporte Ajuste Inventario</h1>
+            <div class="row m-2">
+                <div class='m-2' id="filtrosMenu">
+                    <div style="width: 400px;">
+                        <div class="inlineblock" >
+                            <div class="inlineblock">
+                                <div class="negrilla">De</div>
+                                <input type='text' class='fecha medio ' name='de'/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Hasta</div>
+                                <input type='text' class='fecha medio ' name='hasta'/> 
+                            </div>
+                            <div class="inlineblock">
+                                <button onclick="reporteDetallado()" class='btn btn-warning'>GENERAR REPORTE</button>    
+                            </div>
+                        </div>
+                    </div>
+                </div><br>
+                <div  id="tblventas" style="overflow: auto; margin-top: 10px; width: 100%;" ></div>
+
+
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 200px">
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="exportarExcel('tblventas', 'Reporte Ajuste de Inventario')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn "/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

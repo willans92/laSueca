@@ -1,0 +1,50 @@
+body{
+    background: none;
+}
+body button{
+    display: none;
+} 
+
+th, td, td:first-child, td:last-child,tr:last-of-type td 
+,tr:last-of-type td:first-child, tr:last-of-type td:last-child  {
+    background: none;
+    color:black;
+    border: solid 1px black;
+    box-shadow: none;
+}
+tfoot td,tfoot td:first-child,tfoot td:last-child,tfoot tr:last-of-type td 
+,tfoot tr:last-of-type td:first-child,tfoot tr:last-of-type td:last-child{
+    border: solid 0px white;
+    text-align: right;
+}
+table{
+    border-collapse: collapse;
+}
+
+page :left {
+    margin-left: 0cm;
+}
+.impresion7cm td,.impresion7cm th,.impresion7cm td:first-child
+,.impresion7cm td:last-child,.impresion7cm tr:last-of-type td 
+,.impresion7cm tr:last-of-type td:first-child,.impresion7cm tr:last-of-type td:last-child {
+    border: none !important;
+    padding: 8px 1px;
+}
+.impresion7cm thead{
+    border-bottom: dashed 2px black;
+}
+.impresion7cm tfoot{
+    border-top: dashed 2px black;
+}
+tbody{
+    height: auto !important;
+}
+@media print {
+    a:link:after, a:visited:after {  
+        display: none;
+        content: ""; 
+    } 
+}
+@page{
+    margin: 0.5cm;
+}

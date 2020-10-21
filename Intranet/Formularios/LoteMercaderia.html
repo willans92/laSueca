@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+        
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Lote Mercaderia</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/LoteMercaderia.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Lote de Mercadería</h1>
+            <div class="row">
+                <div  id="filtrosMenu">
+                    <div style="width: 629px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">Nro Doc. Compra</div>
+                            <input type='text' class='medio' name='nroDocumento' onkeyup="buscar(event,1)" placeholder="Nro Documento"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Nro Lote</div>
+                            <input type='text' class='medio' name='nroLote' onkeyup="buscar(event,1)" placeholder="Nro Lote"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Código / Producto</div>
+                            <input type='text' class='medio ' name='buscador' onkeyup="buscar(event,1)" placeholder="Producto o Código"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Stock</div>
+                            <select id="stock" class="medio" onchange="buscar('',1)">
+                                <option value="Con Stock">Con Stock</option>
+                                <option value="Sin Stock">Sin Stock</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 minitext" >
+                    <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                    *  Presione enter para que filtre * Para cambiar lote de mercaderia seleccionar registro. 
+                </div>
+                <div  id="tbllote" style="overflow: auto; margin-top: 10px; width: 100%;" >
+                    <table class='table'> 
+                        <thead  class='thead-light'> 
+                            <th><div class='normal'>Nro Documento</div></th> 
+                            <th><div class='normal'>Vencimiento</div></th> 
+                            <th><div class='normal'>Nro Lote</div></th> 
+                            <th><div class='grande'>Producto</div></th> 
+                            <th><div class='pequeno'>Stock Inicial</div></th> 
+                            <th><div class='pequeno'>Stock Actual</div></th> 
+                            <th><div class='normal'>Registrado</div></th> 
+                        </thead>
+                        <tbody >
+                        </tbody>
+                    </table>
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('',2)">Cargar Más Lotes (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 580px">
+                <button onclick="BuscarLote('Vigentes')" class='btn btn-primary' >Vigentes</button>
+                <button onclick="BuscarLote('Vencidos')" class='btn btn-warning per113' >Vencidos</button>
+                <button onclick="BuscarLote('Anulados')" class='btn btn-secondary per114' >Anulados</button>
+                <button onclick="lotePop()" class='btn btn-link per117'  id="btnDetalle" style="display: none;">Cambiar Lote</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per115"/>
+                    <img onclick="exportarExcel('tbllote', 'Lote de Mercaderia')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per116"/>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="modal fade" id="popLote" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" >Historico de Lote</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Nro Documento</label>
+                            <div id='nroDocumentoTxt'></div>
+                        </div>
+                        <div class="col-4">
+                            <label>Tipo Documento</label>
+                            <div id='tipoDocumentoTxt'></div>
+                        </div>
+                        <div class="col-4">
+                            <label>Fecha Compra</label>
+                            <div id='fechaCompraTxt'></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-8">
+                            <label>Producto</label>
+                            <div  id='productoTxt'></div>
+                        </div>
+                        <div class="col-4">
+                            <label>Stock Compra</label>
+                            <div  id='stockCompraTxt'></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Lote Actual</label>
+                            <div  id='loteActualTxt'></div>
+                        </div>
+                        <div class="col-4">
+                            <label>Fecha Vencimiento</label>
+                            <div  id='fechaVencimientoTxt'></div>
+                        </div>
+                        <div class="col-4">
+                            <label>Stock Actual</label>
+                            <div  id='stockActualTxt'></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label>Historico Cambio de Lote</label>
+                            <table id='tblHistorico' class="table">
+                                <thead  class="thead-light">
+                                    <th><div class='pequeno'>Registrado</div></th>
+                                    <th><div class='pequeno'>Vencimiento</div></th>
+                                    <th><div class='pequeno'>Nro Lote</div></th>
+                                    <th><div class='grande'>Registrado Por</div></th>
+                                </thead>
+                                <tbody style="height: 70px;">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                    <div class="row" id="contenedorRegistro">
+                        <div class="col-4" style="text-align: right; font-size: 16px; margin-top: 22px;">
+                            <label></label>
+                            <label>CAMBIAR LOTE POR:</label>
+                        </div>
+                        <div class="col-4">
+                            <label>Nuevo Lote</label>
+                            <input type="text" name="nuevoLote" maxlength="70">
+                        </div>
+                        <div class="col-4">
+                            <label>Fecha Vencimiento</label>
+                            <input type="text" name="nuevoVencimiento" class="fecha" readonly>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <div id="errorPop"></div>
+                  <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-primary" onclick="registrarLote()" id="btnRegister">Realizar Cambio</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    </body>
+</html>
+

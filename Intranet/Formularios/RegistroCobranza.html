@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Registro Cobranza</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/RegistroCobranza.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Registro de Cobranza</h1>
+            
+            <div class="row" id="formCobranza">
+                <div class="col-12">
+                    <div class="inlineblock">
+                        <span class='negrillaenter' id="nroDocumentoTxt">Nro Documento</span>
+                        <input type='text' style="width: 107px" disabled  name='nroDocumento' readonly autocomplete="off"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Fecha</span>
+                        <input type='text' class='normal fecha per145' name='fecha' autocomplete="off" readonly />
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Cobrador</span>
+                        <input type='text' class='grande per146' name='cobrador'/>
+
+                    </div>
+                    <div class="inlineblock">
+                        <div class="negrilla">Metodo de Pago</div>
+                        <select id="metodoPago" >
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta Credito o Debito">Tarjeta Credito o Debito</option>
+                        </select>
+                    </div>
+
+                    <br>
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Detalle</span>
+                        <input type='text' class='grande2' autocomplete="off" name='detalle' value="Registro de Cobranza" />
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Tipo de Cambio</span>
+                        <input type='number' min="0" max="1000" class='normal' autocomplete="off" name='tipoCambio' value="6.96" />
+                    </div>
+
+                    <div class="inlineblock">
+                        <button id="btnagregar" onclick="popAgregar(1)">Agregar Cobranza</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-2" id="contenedorRegistro">
+
+
+                </div>
+                
+                <div class="col-8">
+                    <div class='negrilla inlineblock' id='txtInformacion'></div>
+                    <div id='vlueInformacion' class="inlineblock" ></div>
+                </div>
+            </div>
+        </div>
+        <div class='background'></div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 580px">
+                <button onclick="nuevo(0)" class='btn-secondary' id="btncancelar" style="display: none;">Cancelar</button>
+                <button onclick="modificar()" class='btn-warning per143'  id="btnmodificar" style="display: none;">Modificar</button>
+                <button onclick="nuevo(1)" class='btn-primary per140'  id="btnnuevo" >Nuevo</button>
+                <button onclick="registrar()" class='btn-primary' id="btnregistrar">Registrar</button>
+                <button onclick="eliminarCobranza(1)" class='btn-link per142'  id="btneliminar" style="display: none;">Eliminar Cobranza</button>
+                <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per144" id="btnImprimir" style="display: none;"/>
+                <div class="inlineblock per141" id="navegadorRegistro">
+                    <img onclick="cargarCobranza('primero')" src="../Imagen/Iconos/primero.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCobranza('anterior')" src="../Imagen/Iconos/anterior.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCobranza('siguiente')" src="../Imagen/Iconos/siguiente.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCobranza('ultimo')" src="../Imagen/Iconos/ultimo.png" alt="Imprimir" class="iconBtn"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="popCobranza" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Buscador de Registro</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <label>Buscador de Cliente</label>
+                                <input type='text' class="form-control" name='buscadorCliente' placeholder="Buscador" value="" autocomplete="off"/>
+                            </div>
+                            <div class="col-2">
+                                <label>CI</label>
+                                <div id="txtci"></div>
+                            </div>
+                            <div class="col-5">
+                                <label>Cliente</label>
+                                <div id="txtnombre"></div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label>Cuentas Por Cobrar</label>
+                                <table class="table" id="tblCuentaXCobrar">
+                                    <thead class="thead-light">
+                                    <th><div class="chico2"></div></th>
+                                    <th><div class="pequeno">Facturado</div></th>
+                                    <th><div class="normal">Documento de Venta</div></th>
+                                    <th><div class="normal">Detalle</div></th>
+                                    <th><div class="pequeno">Deuda</div></th>
+                                    <th><div class="pequeno">Pagado</div></th>
+                                    <th><div class="pequeno">Saldo</div></th>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot></tfoot>
+                                </table> 
+                            </div>
+
+                        </div>
+                        <div class="row mt-2" id="contenedorPago">
+                            <div class="col-3">
+                                <label>Monto</label>
+                                <div id="montoCuentaXcobrar" class="p-2"></div>
+                            </div>
+                            <div class="col-3">
+                                <label>Monto A Pagar</label>
+                                <input type='number' step="0.5" class="form-control" name='montoApagar' value="" autocomplete="off" onkeyup="calcularSaldoDeuda()"/>
+                            </div>
+                            <div class="col-3">
+                                <label>Saldo Deuda</label>
+                                <div id="saldoCuentaXcobrar" class="p-2"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="agregarCobranza()" id="btnagregarcobro">Agregar Pago</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+

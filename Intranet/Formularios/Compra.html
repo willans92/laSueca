@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Compra</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Compra.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Compra</h1>
+            <div id="formCompra" class="row">
+                <div class="col-12">
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Fecha</span>
+                        <input type='text' class='medio fecha per106' name='fecha' autocomplete="off" /><br>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Tipo Documento</span>
+                        <select id="tpdoc" class="medio per105" onchange="cambioTpDoc(this)">
+                            <option value="Compra Facturada">Factura</option>
+                            <option value="Nota de Compra">Documento</option>
+                        </select>
+                    </div> 
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Detalle</span>
+                        <input type='text' class='grande' autocomplete="off" name='detalle' maxlength="400"/>
+                    </div> 
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Almacén</span>
+                        <input type='text' class='grande' autocomplete="off" name='almacen' maxlength="400"/>   
+                    </div>
+
+
+                    <br>
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Proveedor</span>
+                        <input type='text' class='grande'  autocomplete="off" placeholder="-- Proveedor --" data-cod="0"  name='Provedor'   />
+
+                    </div>
+
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter' id="txtfac">Nro Factura</span>
+                        <input type='text' class='medio' autocomplete="off" name='nroFactura'  onclick="selectText(this)" maxlength="70"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter' id="txtaut">Nro Autorización</span>
+                        <input type='text' class='medio' autocomplete="off" name='nroAutorizacion'  onclick='selectText(this)' maxlength="70"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter' id="txtcodigoControl">Código Control</span>
+                        <input type='text' class='medio' autocomplete="off" name='codigoControl' maxlength="50" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 minitext" >
+                    <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                    * Para eliminar registro dar doble clic en la fila. 
+                </div>
+                <div class="col-12" >
+                    <table class="table" id="tblprd">
+                        <thead class="thead-light">
+                        <th><div class="grande3">Producto</div></th>
+                        <th><div class="pequeno">Cantidad</div></th>
+                        <th><div class="pequeno">Precio Bs</div></th>
+                        <th><div class="pequeno">Precio $us</div></th>
+                        <th><div class="pequeno">Total Bs</div></th>
+                        <th><div class="pequeno">Total $us</div></th>
+                        <th><div class="normal loteper">Nro Lote</div></th>
+                        <th><div class="normal loteper">Fecha</div></th>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                        <tfoot>
+                        <td><div class="grande grande3 derecha">TOTAL</div></td>
+                        <td><div class="pequeno derecha">0.00</div></td>
+                        <td><div class="pequeno derecha">0.00</div></td>
+                        <td><div class="pequeno derecha">0.00</div></td>
+                        <td><div class="pequeno derecha">0.00</div></td>
+                        <td><div class="pequeno derecha">0.00</div></td>
+                        <td><div class="normal derecha loteper"></div></td>
+                        <td><div class="normal derecha loteper"></div></td>
+                        </tfoot>
+
+
+                    </table>
+                    <div class="row">
+                        <div class="negrilla col-4">
+                            <span class='negrillaenter'>Encargado</span>
+                            <input type='text' style='width: auto;' name='encargado' class="per107"/>
+                        </div> 
+                        <div class="Col-8">
+                            <div class="inlineblock">
+                                <span class='negrillaenter'>Tipo Pago</span>
+                                <select id="tppago" class="medio">
+                                    <option value="Contado">Contado</option>
+                                    <option value="Credito">Credito</option>
+                                </select>
+                            </div>
+                            <div class="inlineblock">
+                                <span class='negrillaenter'>Tipo Cambio</span>
+                                <input type='number' step="0.1" value="6.96" autocomplete="off" class='normal derecha' name='tpcambio' onclick="selectText(this)" onblur="calcular()"/>
+                            </div>
+                            <div class="inlineblock">
+                                <span class='negrillaenter'>Ingresar Mercadería</span>
+                                <select id="tpmoneda" class="medio" onchange="cambiarIngresoMercaderia(this)">
+                                    <option value="Bs">Bolivianos Bs</option>
+                                    <option value="$us">Dolares $us</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                        <div class="col-12 negrilla mt-3" >
+                            <div class="normal P-2 d-inline-block">TOTAL Bs</div>
+                            <div class="medio P-2 d-inline-block" id="totalGeneral">0.00</div><br>
+                            <div class="normal P-2 d-inline-block">TOTAL $us</div>
+                            <div class="medio P-2 d-inline-block" id="totalGeneralD">0.00</div>
+                            
+                            <div class='negrilla inlineblock' id='txtInformacion'></div>
+                            <div id='vlueInformacion' class="inlineblock" ></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 512px">
+                <button onclick="nuevo(0)" class='btn-secondary' id="btncancelar">Cancelar</button>
+                <button onclick="modificar()" class='btn-warning per103'  id="btnmodificar" style='display: none;'>Modificar</button>
+                <button onclick="nuevo(1)" class='btn-primary per100'  id="btnnuevo">Nuevo</button>
+                <button onclick="registrar()" class='btn-primary' id="btnregistrar">Registrar</button>
+                <button onclick="eliminarCompra(1)" class='btn-link per102'  id="btneliminar" style="display: none;">Eliminar Compra</button>
+                <img onclick="imprimir(false)"  id="btnimprimir" style="display: none;" src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per104"/>
+                <div class="inlineblock per101" id="navegadorRegistro">
+                    <img onclick="cargarCompra('primero')" src="../Imagen/Iconos/primero.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCompra('anterior')" src="../Imagen/Iconos/anterior.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCompra('siguiente')" src="../Imagen/Iconos/siguiente.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarCompra('ultimo')" src="../Imagen/Iconos/ultimo.png" alt="Imprimir" class="iconBtn"/>
+                </div>
+            </div>
+        </div>
+        <iframe id="impresion" style="display:none; width: 100%"></iframe>
+    </body>
+</html>
+

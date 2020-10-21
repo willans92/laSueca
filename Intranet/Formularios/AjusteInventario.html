@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Ajuste de Inventario</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/AjusteInventario.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Ajuste de Inventario</h1>
+            <div id="formCompra" class="row">
+                <div class="col-12">
+                    <div class="inlineblock">
+                        <span class='negrillaenter' >Nro Ajuste</span>
+                        <input type='text' class='normal' autocomplete="off" name='nroAjuste'  readonly/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Fecha</span>
+                        <input type='text' class='medio fecha per205' name='fecha' autocomplete="off" /><br>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Detalle</span>
+                        <input type='text' class='grande' autocomplete="off" name='detalle' maxlength="400"/>
+                    </div> 
+
+                    
+
+                    <br>
+
+
+
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Almacén</span>
+                        <input type='text' class='grande' autocomplete="off" name='almacen' maxlength="400"/>   
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 minitext" >
+                    <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                    * Para eliminar registro dar doble clic en la fila. 
+                </div>
+                <div class="col-12" >
+                    <table class="table" id="tblprd">
+                        <thead class="thead-light">
+                        <th><div class="grande4">Producto</div></th>
+                        <th><div class="normal">Ajuste</div></th>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                        <tfoot>
+                        <td><div class="grande4 derecha">TOTAL</div></td>
+                        <td><div class="normal derecha">0.00</div></td>
+                        </tfoot>
+
+
+                    </table>
+                    <div class="row">
+                        <div class="negrilla col-6">
+                            <span class='negrillaenter'>Encargado</span>
+                            <input type='text' style='width: 100%;  max-width: 300px;' name='encargado' class="per206"/>
+                        </div> 
+                        
+                        <div class="col-12 pt-2">
+                              <div class='negrilla inlineblock' id='txtInformacion'></div>
+                            <div id='vlueInformacion' class="inlineblock" ></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 512px">
+                <button onclick="nuevo(0)" class='btn-secondary' id="btncancelar">Cancelar</button>
+                <button onclick="modificar()" class='btn-warning per203'  id="btnmodificar" style='display: none;'>Modificar</button>
+                <button onclick="nuevo(1)" class='btn-primary per200'  id="btnnuevo">Nuevo</button>
+                <button onclick="registrar()" class='btn-primary' id="btnregistrar">Registrar</button>
+                <button onclick="eliminarAjuste(1)" class='btn-link per202'  id="btneliminar" style="display: none;">Eliminar Compra</button>
+                <img onclick="imprimir(false)"  id="btnimprimir" style="display: none;" src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per204"/>
+                <div class="inlineblock per201" id="navegadorRegistro">
+                    <img onclick="cargarAjuste('primero')" src="../Imagen/Iconos/primero.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarAjuste('anterior')" src="../Imagen/Iconos/anterior.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarAjuste('siguiente')" src="../Imagen/Iconos/siguiente.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarAjuste('ultimo')" src="../Imagen/Iconos/ultimo.png" alt="Imprimir" class="iconBtn"/>
+                </div>
+            </div>
+        </div>
+        <iframe id="impresion" style="display:none; width: 100%"></iframe>
+    </body>
+</html>
+

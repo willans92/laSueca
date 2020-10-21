@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Venta</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/ReporteVenta.js?2" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"   >
+            <h1>Venta</h1>
+            <div class="row m-2">
+                <div class='m-2' id="filtrosMenu">
+                    <div style="width: 901px;">
+                        <div class="inlineblock">
+                            <div class="negrilla" id="txtEmpleado" style="display: none;">Vendedor</div> 
+                            <input id='empleado' style="display: none;" type='text' class='medio ' placeholder="-- VENDEDOR --" autocomplete="off"/>
+                        </div> 
+                        <div class='inlineblock' id="detalladoFiltro" style="display: none;">
+                            <div class="inlineblock">
+                                <div class="negrilla" id="txtbuscador">CI / Cliente</div> 
+                                <input type='text' class='medio ' name='buscador' onkeyup="filtro(event)" placeholder="BUSCADOR" autocomplete="off"/>
+                            </div>
+                            <div id="filtroProducto">
+                                <div class="inlineblock">
+                                    <div class="negrilla">Línea</div>
+                                    <input autocomplete="off" type="text" data-search='lineaContenedor' placeholder="-- LINEA --" data-cod="0" data-txt="" class="centrar  normal " id="lineab" />
+
+                                </div>
+                                <div class="inlineblock">
+                                    <div class="negrilla">Marca</div>
+                                    <input autocomplete="off" type="text" placeholder="-- MARCA --" data-cod="0" data-txt="" class="centrar normal " id="marcab" />
+                                </div>
+                            </div>
+                                                      
+                        </div>
+                        <div class="inlineblock" id="sucursalbox" style="display: none;">
+                            <div class="negrilla">Sucursal</div>
+                             <input autocomplete="off" type="text" placeholder="-- SUCURSAL --" class="centrar medio " id="sucursal" />
+                         </div>
+                        <div id='fechabox' class="inlineblock" style="display: none;">
+                            <div class="inlineblock">
+                                <div class="negrilla">De</div>
+                                <input type='text' class='fecha medio ' name='de'/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Hasta</div>
+                                <input type='text' class='fecha medio ' name='hasta'/> 
+                            </div>
+                            <div class="inlineblock">
+                                <button onclick="generar()" class='btn btn-warning'>GENERAR REPORTE</button>    
+                            </div>
+                        </div>
+                    </div>
+                </div><br>
+                <div  id="tblventas" style="overflow: auto; margin-top: 10px; width: 100%;" ></div>
+
+
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 966px">
+                <button onclick="reporteMensual('Mensuales')" class="per169"  >Mensual</button>
+                <button onclick="reporteMensual('Diarias')"  class="per170">Diario</button>
+                <button onclick="reporteDetallado()"  class="per171">Detallado</button>
+                <button onclick="reporteCliente()" class="per175">Cliente</button>
+                <button onclick="reporteVendedor()"  class="per172">Vendedor</button>
+                <button onclick="reporteProducto()" class="per173">Producto</button>
+                <button onclick="reporteLineaProducto()" class="per174">Línea de Producto</button>
+                <button onclick="reporteMarcaProducto()" class="per176">Marca de Producto</button>
+                
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per167"/>
+                    <img onclick="exportarExcel('tblventas', 'Reporte Venta')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per168 "/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

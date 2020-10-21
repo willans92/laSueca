@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Categoria Producto</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/CategoriaProducto.js" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Categoria Producto</h1>
+            <div class="row m-2">
+
+                <div class="col-12" >
+                    <div style="    width: 500px;">
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Nombre</span>
+                            <input type='text' class='grande buscar centrar'  autocomplete="off"  name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event)"/>
+                        </div>
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Estado</span>
+                            <select id="slestado" class="normal" onchange="buscar('')">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">inActivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar una categoria seleccione el registro. 
+                    </div>
+                    <div id="contenedorUsuarop">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 454px">
+                <button onclick="actualizar()" id="actualizar" style="display: none;"></button>
+                <button type="button" class="btn btn-warning per163"  data-toggle="modal" data-target="#popUsuario" data-whatever="@mdo" style="display: none" onclick="modificar(3,1)" id="btnmodificar">Modificar Categoria</button>
+                <button type="button" class="btn btn-primary per160"  data-toggle="modal" data-target="#popUsuario" data-whatever="@mdo" onclick="categoriaPop(1)">Nueva Categoria</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn "/>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="modal fade" id="popUsuario" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" >Usuario</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-8 col-lg-4" id="onlinebox">
+                            <div class='negrillaenter'>Foto</div>
+                            <img src="../Imagen/Iconos/earth190.svg" data-peque="../Imagen/Iconos/earth190.svg" class="normal" style="min-width: 50; min-height: 50px;" onclick="cargarImagen(this, 1)" id="foto">
+                            <div class='negrillaenter'>Estado</div>
+                            <select id="estado" class="form-control per164">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">inActivo</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <div class='negrillaenter'>Nombre</div>
+                            <input type="text" class="form-control" name="nombre"   maxlength="300" autocomplete="off">
+                            <div class='negrillaenter'>SubCategoria</div>
+                            <input type="text" class="grande mb-2" name="buscadorLinea" placeholder="Buscar"   maxlength="300" autocomplete="off" onkeyup="filtrarCategoria()">
+                            <table class="table" id='tbllinea'>
+                                <thead class="thead-light">
+                                <th><div class="grande">Detalle</div></th>
+                                <th><div class="normal">Pertenece</div></th>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <div id="errorPop"></div>
+                  <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        
+        
+    </body>
+</html>
+

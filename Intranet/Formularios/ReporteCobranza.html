@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Cobranza</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/ReporteCobranza.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Cobranza</h1>
+            <div class="row m-2">
+                <div class='m-2' id="filtrosMenu">
+                    <div style="width: 987px;">
+
+                        <div  class="inlineblock" id='empleadoDIV' style="display: none;">
+                            <span class='negrillaenter'>Cobrador</span> 
+                            <input type="text" placeholder="-- Cobrador --"  autocomplete="off" name="empleado"/>
+                        </div>
+                        <div  class="inlineblock" id='clienteDIV' style="display: none;">
+                            <span class='negrillaenter'>Cliente</span> 
+                            <input type="text" placeholder="-- Cobrador --"  autocomplete="off" name="cliente"/>
+                        </div>
+                        <div class='inlineblock' id="detalladoFiltro" style="display: none;">
+                            <div  class="inlineblock">
+                                <span class='negrillaenter'>CI / Nombre</span> 
+                                <input type='text' class='medio' name='buscador' onkeyup="filtroDetallado(event)" placeholder="BUSCADOR" autocomplete="off"/>
+                            </div>
+                            <div  class="inlineblock">
+                                <span class='negrillaenter'>Sucursal</span> 
+                                <input type="text" placeholder="-- Sucursal --"  autocomplete="off" name="sucursal"/>
+                            </div>
+                        </div>
+                        <div id='fechabox' class="inlineblock" style="display: none;">
+                            <div  class="inlineblock">
+                                <span class='negrillaenter'>De </span> 
+                                <input type='text' class='fecha medio ' name='de' readonly autocomplete="off"/>
+                            </div>
+                            <div  class="inlineblock">
+                                <span class='negrillaenter'>Hasta </span>
+                                <input type='text' class='fecha medio' name='hasta' readonly autocomplete="off"/> 
+                            </div>
+                            <button onclick="generar()" class=''>GENERAR REPORTE</button>
+                        </div>
+
+                    </div>
+                </div><br>
+                <div  id="tblventas" style="overflow: auto; margin-top: 10px; width: 100%;" ></div>
+
+
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 532px">
+                <button onclick="reporteMensual('Mensual')" class='p-2 per156' >Mensual</button>
+                <button onclick="reporteMensual('Diario')" class='p-2 per157' >Diario</button>
+                <button onclick="reporteDetallado()" class='p-2 per158' >Detallado</button>
+                <button onclick="reporteCliente()" class='p-2 per159'>Cliente</button>
+                <button onclick="reporteCobrador()" class='p-2 per159'>Cobrador</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per154"/>
+                    <img onclick="exportarExcel('tblventas', 'Reporte de Cobranza')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per155"/>
+                </div>
+                
+            </div>
+        </div>
+
+    </body>
+</html>
+

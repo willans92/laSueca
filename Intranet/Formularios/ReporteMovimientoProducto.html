@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Reporte Movimiento de Producto</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/ReporteMovimientoProducto.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Reporte Movimiento de Producto</h1>
+            <div class="row m-2">
+
+                <div class="col-12" >
+                    <div id='filtrosMenu'>
+                        <div style="width: 940px">
+                            <div class="inlineblock">
+                                <div class="negrilla">De</div>
+                                <input type='text' class='fecha' name='de' readonly autocomplete="off"/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Hasta</div>
+                                <input type='text' class='fecha' readonly name='hasta' autocomplete="off"/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Código / Producto / Cod. Barra</div>
+                                <input type='text' class='grande2 centrar' autocomplete="off" name='buscar' placeholder="BUSCADOR" />
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Almacén</div>
+                                <input type='text' class='medio centrar' autocomplete="off" name='almacen' placeholder="-- Almacén --" />
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Tipo Documento</div>
+                                <select id="tipoDocumento" class="medio" onchange="filtrar()">
+                                    <option value="0">-- Tipo Doc. --</option>
+                                    <option value="Ventas">Ventas</option>
+                                    <option value="Compras">Compras</option>
+                                    <option value="Traspasos">Traspasos</option>
+                                    <option value="Ajuste de Inventario">Ajuste de Inventario</option>
+                                    <option value="Ventas y Compras">Ventas y Compras</option>
+                                </select>
+                            </div>
+                            <button onclick='HistoricoProducto()' class='medio'>Generar</button>
+                        </div>
+                        <div class="col-12 minitext" >
+                            <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                            Para ver la información debe seleccionar un producto.
+                        </div>
+                        <div id="prdSeleccionado" style="width: 940px; display: none;">
+                            <div class="inlineblock">
+                                <div class="negrilla">Código</div>
+                                <input type='text' class='medio inputTxt' autocomplete="off" name='codigoSeleccionado'/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Código Barra</div>
+                                <input type='text' class='grande inputTxt' autocomplete="off" name='codigoBSeleccionado'/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Producto</div>
+                                <input type='text' class='grande4 inputTxt' autocomplete="off" name='productoSeleccionado'/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="contenedorProducto">
+                        <table class="table" id='tblprd'>
+                            <thead class="thead-light">
+                            <th><div class='chico'>Fecha</div></th>
+                            <th><div class='chico'>Documento</div></th>
+                            <th><div class='normal'>Nro Documento</div></th>
+                            <th><div class='medio'>Detalle</div></th>
+                            <th><div class='chico'>Ingreso</div></th>
+                            <th><div class='chico'>Salida</div></th>
+                            <th><div class='chico'>Saldo</div></th>
+                            <th><div class='medio'>Registrado Por</div></th>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                            <td><div class='chico'></div></td>
+                            <td><div class='normal'></div></td>
+                            <td><div class='chico derecha'></div></td>
+                            <td><div class='medio derecha'>TOTAL</div></td>
+                            <td><div class='chico derecha'>0</div></td>
+                            <td><div class='chico derecha'>0</div></td>
+                            <td><div class='chico derecha'>0</div></td>
+                            <td><div class='medio'></div></td>
+                            </tfoot>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 131px">
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per135"/>
+                    <img onclick="exportarExcel('tblprd', 'Estado de Cuenta Producto')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per136"/>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </body>
+</html>
+

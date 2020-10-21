@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Sucursal</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css?3" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
+        <script src="../Script/Sucursal.js?5" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Sucursal</h1>
+            <div class="row m-2">
+                <div class="col-12" >
+                    <div>
+                        <div class="inlineblock">
+                            <div class="negrilla" >NIT / Nombre</div> 
+                            <input type='text' class='grande buscar' name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla" >Estado</div> 
+                            <select id="tpestadoB" class=" normal" onchange="cargar()">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="minitext" >
+                        <div style="width: 630px">
+                            <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                            * Al utilizar el buscador presionar enter para filtrar. * Para modificar una sucursal seleccione el registro.
+                        </div>
+
+                    </div>
+                    <div id="contenidoSucursal">
+                        <table class="table" id='tblprd'>
+                            <thead class="thead-light">
+                            <th><div class="chico">NIT</div></th>
+                            <th><div class="medio">Nombre</div></th>
+                            <th><div class="medio">Direccion</div></th>
+                            <th><div class="normal">Telefono</div></th>
+                            <th><div class="normal">Correo</div></th>
+                            <th><div class="chico">Documento Venta</div></th>
+                            <th><div class="chico">Formato Impresion</div></th>
+                            <th><div class="chico">Online App</div></th>
+                            <th><div class="chico">Tipo Atención</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Mas Sucursales (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 394px">
+                <button onclick="nuevo()" class='btn btn-primary per86'  id="btnnuevo">Nuevo</button>
+                <button onclick="modificar()" class='btn btn-warning per89'  style="display: none"  id="btnmodificar">Modificar</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per87"/>
+                    <img onclick="exportarExcel('tblprd', 'Lista de Sucursales')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per88"/>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="popSucursal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Sucursal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="formSucursal">
+
+                        <div class="row">
+                            <div class="col-9 col-lg-4">
+                                <label>NIT</label>
+                                <input type="text" class="form-control" name="nit" maxlength="30">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label>Nombre Sucursal</label>
+                                <input type="text" class="form-control" name="nombre" maxlength="140">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-9 col-lg-4">
+                                <label>Teléfono</label>
+                                <input type="text" class="form-control" name="telefono" maxlength="30">
+                            </div>
+                            <div class="col-12 col-lg-4" >
+                                <label>Dirección</label>
+                                <input type="text" class="form-control" name="direccion" maxlength="300">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label>Correo</label>
+                                <input type="text" class="form-control" name="correo" maxlength="250">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-9 col-lg-4">
+                                <label>Documento Venta</label><br>
+                                <select id="formDV" class="p-2 medio">
+                                    <option value="Factura">Factura</option>
+                                    <option value="Nota de Venta" >Nota de Venta</option>
+                                </select>
+                            </div>
+                            <div class="col-9 col-lg-4">
+                                <label>Formato Impresion</label><br>
+                                <select id="formImpresion" class="p-2 medio">
+                                    <option value="Hoja 7cm">Hoja 7cm</option>
+                                    <option value="Hoja Carta">Hoja Carta</option>
+                                    <option value="Hoja Media Carta" style="display: none">Hoja Media Carta</option>
+                                </select>
+                            </div>
+                            <div class="col-9 col-lg-4">
+                                <label>Estado</label><br>
+                                <select id="tpestado" class="p-2 medio per90">
+                                    <option value="inactivo">Inactivo</option>
+                                    <option value="activo">Activo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-9 col-lg-4">
+                                <span class='negrillaenter'>Logo Sucursal</span>
+                                <img src="../Imagen/Iconos/earth190.svg" class="normal" onclick="cargarImagen(this, 1)" id="logo">
+                            </div>
+                                <div class="col-9 col-lg-4">
+                                    <label>País</label><br>
+                                    <select id="pais" class="p-2 ">
+                                        <option value="Bolivia">Bolivia</option>
+                                    </select>
+                                </div>
+                                <div class="col-9 col-lg-4">
+                                    <label>Ciudad</label><br>
+                                    <select id="ciudad" class="p-2 " onchange="cambioEstado()">
+
+                                    </select>
+                                </div>
+
+                        </div>
+                        <div class="row" id="onlinebox">
+                            <div class="col-12 col-lg-7">
+                                <div id="mapa"></div>
+                            </div>
+                            <div class="col-12 col-lg-5" id="horarioDiariobox">
+                                <label>Horario Atención 1</label><br>
+                                <input type="text" class="form-control hora" autocomplete="off" name="horaDe" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <input type="text" class="form-control hora" autocomplete="off" name="minDe" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <span>-</span>
+                                <input type="text" class="form-control hora" autocomplete="off" name="horaA" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <input type="text" class="form-control hora" autocomplete="off" name="minA" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <br>
+                                <label>Horario Atención 2</label><br>
+                                <input type="text" class="form-control hora" autocomplete="off" name="horaDe2" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <input type="text" class="form-control hora" autocomplete="off" name="minDe2" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <span>-</span>
+                                <input type="text" class="form-control hora" autocomplete="off" name="horaA2" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                                <input type="text" class="form-control hora" autocomplete="off" name="minA2" style="width: 38px; padding:0 9px; display: inline-block !important; "  onkeyup="changeHorario(event)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </body>
+</html>
+

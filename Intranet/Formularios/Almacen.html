@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Proveedor</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Almacen.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Almacén</h1>
+            <div class="row">
+                <div class="col-12" >
+                    <div style="width: 542px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">Código / Nombre</div>
+                            <input type='text' class='grande buscar' name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)" autocomplete="off"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Sucursal</div>
+                            <input autocomplete="off" type="text" placeholder="-- Sucursal --"  class="centrar medio per133" name="tpsucursalB" />
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Estado</div>
+                            <select id="tpestadoB" class="medio" onchange="cargar()">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">InActivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar un almacén seleccione el registro. 
+                    </div>
+                    <div id="contenedorAlmacen">
+                        <table class="table" id='tblprd'>
+                            <thead class="thead-light">
+                            <th><div class="chico">Código</div></th>
+                            <th><div class="medio">Nombre</div></th>
+                            <th><div class="medio">Sucursal</div></th>
+                            <th><div class="medio">Dirección</div></th>
+                            <th><div class="normal">Teléfono</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Más Almacén (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+            <div style="height: 60px"></div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 394px">
+                <button onclick="modificar()" class='btn-warning per131'  id="btnmodificar" style="display: none;">Modificar</button>
+                <button onclick="nuevo(1)"  class="btn btn-primary per128"  data-toggle="modal" data-target="#popCliente" data-whatever="@mdo"  id="btnnuevo">Nuevo</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per129"/>
+                    <img onclick="exportarExcel('tblprd', 'Lista de Almacen')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per130"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popAlmacen" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="formAlmacen">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Almacen</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3" id="codigBox">
+                                <label>Código</label>
+                                <input type="text" class="form-control" name="codigo" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-5">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control"  name="nombre" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-4">
+                                <label>Sucursal</label>
+                                <input autocomplete="off" type="text" placeholder="-- Sucursal --"  class="per133 centrar medio" name="tpsucursal" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Teléfono </label>
+                                <input type="text" class="form-control" name="telefono" autocomplete="off" maxlength="100">
+                            </div>
+                            <div class="col-5">
+                                <label>Dirección</label>
+                                <input type="text" class="form-control" name="direccion" autocomplete="off" maxlength="230">
+                            </div>
+                            <div class="col-4">
+                                <label>Posición</label>
+                                <input type="number" class="form-control" name="posicion" autocomplete="off" max="100" maxlength="4">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Estado</label>
+                                <select id="tpestado" class="form-control per132">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

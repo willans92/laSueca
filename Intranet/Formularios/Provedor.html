@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Proveedor</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Provedor.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Proveedor</h1>
+            <div class="row m-2">
+                <div class="col-12" >
+                    <div style="width: 379px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">NIT / Proveedor</div>
+                            <input type='text' class='grande buscar' name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)" autocomplete="off"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Estado</div>
+                            <select id="tpestadoB" class=" medio" onchange="cargar()">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class=" minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar.
+                    </div>
+                    <div id="contenedorProveedor">
+                        <table class="table" id='tblprd'>
+                            <thead class="thead-light">
+                            <th><div class="pequeno">NIT</div></th>
+                            <th><div class="medio">Nombre</div></th>
+                            <th><div class="medio">Razon Social</div></th>
+                            <th><div class="normal">Dirección</div></th>
+                            <th><div class="normal">Correo</div></th>
+                            <th><div class="chico">Teléfono</div></th>
+                            <th><div class="chico">Forma Pago</div></th>
+                            <th><div class="chico">Tipo Documento</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('',2)">Cargar Más Proveedores (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+            <div style="height: 60px"></div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 394px">
+                <button onclick="modificar()" class='btn btn-warning per111' style="display: none;"  id="btnmodificar">Modificar</button>
+                <button onclick="nuevo(1)" class='btn btn-primary per108'  id="btnnuevo">Nuevo</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per109"/>
+                    <img onclick="exportarExcel('tblprd', 'Lista de Proveedor')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per110"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popProvedor" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Proveedor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="formProvedor">
+                        <div class="row">
+                            <div class="col-3">
+                                <label>NIT</label>
+                                <input type="text" class="form-control" name="nit" maxlength="50"  autocomplete="off">
+                            </div>
+                            <div class="col-5">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control" name="nombre" maxlength="400" onblur="cambioNombreEmpresa()" autocomplete="off">
+                            </div>
+                            <div class="col-4">
+                                <label>Razon Social</label>
+                                <input type="text" class="form-control" name="rz" maxlength="400" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Teléfono</label>
+                                <input type="text" class="form-control" name="telefono" maxlength="150"  autocomplete="off">
+                            </div>
+                            <div class="col-5">
+                                <label>Dirección</label>
+                                <input type="text" class="form-control" name="direccion"  maxlength="500" autocomplete="off">
+                            </div>
+                            <div class="col-4">
+                                <label>Correo</label>
+                                <input type="text" class="form-control" name="correo" maxlength="290"  autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Telf. de Contacto</label>
+                                <input type="text" class="form-control" name="TelfpsContacto"  maxlength="150" autocomplete="off">
+                            </div>
+                            <div class="col-5">
+                                <label>Persona de Contacto</label>
+                                <input type="text" class="form-control" name="psContacto" maxlength="220" autocomplete="off">
+                            </div>
+                            <div class="col-4">
+                                <label>Forma de Pago</label>
+                                <select id="tppago" class="p-2 medio">
+                                    <option value="Contado">Contado</option>
+                                    <option value="Credito">Credito</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Tipo Documento</label>
+                                <select id="tpDoc" class="p-2 medio">
+                                    <option value="Compra Facturada">Factura</option>
+                                    <option value="Nota de Compra">Documento</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <label>Estado</label>
+                                <select id="tpestado" class="p-2 medio per112">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

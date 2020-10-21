@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Registro Cobranza</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/EstadoCuentaCliente.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Estado de Cuenta Cliente</h1>
+
+            <div class="row" id="formCobranza">
+                <div class="col-12">
+                    <div class="inlineblock mr-2" >
+                        <span class='negrillaenter'>CI / Código / Cliente</span>
+                        <input type='text' class='grande'  name='buscadorCliente' placeholder="Buscador"  autocomplete="off"/>
+                    </div>
+                    <div class="inlineblock mr-2" >
+                        <span class='negrillaenter'>Código</span>
+                        <input type="text" name="codigo" class="normal inputTxt" autocomplete="off"/>
+                    </div>
+                    <div class="inlineblock mr-2" >
+                        <span class='negrillaenter'>CI</span>
+                        <input type="text" name="ci" class="normal inputTxt" autocomplete="off"/>
+                    </div>
+                    <div class="inlineblock" >
+                        <span class='negrillaenter  mr-2'>Cliente</span>
+                        <input type="text" name="cliente" class="grande2 inputTxt" />
+                    </div>
+                </div>
+                <div class="col-12 minitext" >
+                    <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                    Para ver la información debe seleccionar un cliente.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-2" id="contenedorRegistro">
+                  
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 744px">
+                <button onclick="cambiarFormulario('Xhistorico')"  >Por Histórico </button>
+                <button onclick="cambiarFormulario('XCliente')"   >Por Venta</button>
+                <div class="inlineblock" id="btnDocumento" style="display: none;">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per152"/>
+                    <img onclick="exportarExcel('contenedorRegistro', 'Estado de Cuenta Cliente')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per153"/>
+                </div>
+                
+            </div>
+        </div>
+    </body>
+</html>
+

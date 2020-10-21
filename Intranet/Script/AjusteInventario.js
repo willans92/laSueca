@@ -1,0 +1,522 @@
+var url = '../Controlador/AjusteInventario_Controlador.php';
+var contador = 0;
+var listaAlmacen = {};
+var listaProducto = {};
+var id_Ajuste = 0;
+var htmlColumna = '';
+var tamanopantalla = $(window).height() - 425;
+var estadoDolar = false;
+$(document).ready(function () {
+    $('#impresion').contents().find("head").append($("<link href='../Estilo/bootstrap.min.css' rel='stylesheet' type='text/css'/><link href='../Estilo/Estilo.css' rel='stylesheet' type='text/css'/><link href='../Estilo/Impresion.css' rel='stylesheet'  type='text/css'/>"));
+    $(".fecha").datepicker();
+    $(".fecha").val(fechaActual());
+    var usuarioLocal = localStorage.getItem("usuario");
+    if (usuarioLocal === null) {
+        window.parent.cerrarSession();
+        return;
+    }
+    usuarioLocal = $.parseJSON(usuarioLocal);
+    $("#tblprd tbody").css("height", tamanopantalla);
+     $(window).resize(function () {
+        var tamanopantalla = $(window).height() - 425;
+        $("#tblprd tbody").css("height", tamanopantalla);
+    });
+    htmlColumna += "<tr ondblclick='eliminarColumna(this)' data-iddetalle='0'>";
+    htmlColumna += "<td><div class='grande4'><input autocomplete='off' data-cod='0' data-pos='-1' type='text' class='izquierda'  onkeyup='cambiarLado(event,this)' name='productoTabla' ></div></td>";
+    htmlColumna += "<td><div class='normal'><input type='number' value='0'  step=0 min=0 class='derecha' onkeyup='cambiarLado(event,this)'  onblur='calcular()' name='cantidad'></div></td>";
+    htmlColumna += "</tr>";
+    var datos = window.parent.listaUsuario;
+    var listaUsuario = Object.keys(datos).map((key) => datos[key]);
+    var listaPermisosUsuarioRapido = window.parent.listaPermisosUsuarioRapido;
+    var todosEncargados = listaPermisosUsuarioRapido[208];
+    if (!todosEncargados) {
+        listaUsuario = listaUsuario.filter((item) => (item.sucursal_id + "") === ("" + usuarioLocal.sucursal_id));
+    }
+    comboBox({identificador: "input[name=encargado]", valueDefault: usuarioLocal.id_usuario, datos: listaUsuario, codigo: "id_usuario", texto: "nombre", todos: false});
+    nuevo(0);
+    cargarData("", false);
+});
+function nuevo(tipo) {
+    $("#btnimprimir").ocultar();
+    if (tipo === 1) {
+        $("#formCompra input").attr("disabled", false);
+        $("#btncancelar").visible();
+        $("#btnregistrar").visible();
+        $("#btnnuevo").ocultar();
+        $("#btnmodificar").ocultar();
+        $("#btneliminar").ocultar();
+        $("h1").text("Nuevo Ajuste");
+        vaciarFromulario();
+        $("#tblprd input").attr("disabled", false);
+        $("input[name=detalle]").val("Ajuste de Inventario");
+        cargarData("activo");
+    } else {
+        if (id_Ajuste === 0) {
+            vaciarFromulario();
+        } else {
+            cargarAjuste("actual");
+        }
+        $("#vlueInformacion").html("");
+        $("#txtInformacion").html("");
+        $("h1").text("Ajuste de Inventario");
+        $("#formCompra input").attr("disabled", true);
+        $("#tblprd input").attr("disabled", true);
+        $("input[name=detalle]").val("Ajuste de Inventario");
+        $("#btncancelar").ocultar();
+        $("#btnregistrar").ocultar();
+        $("#btnnuevo").visible();
+        $("#btnmodificar").ocultar();
+        $("#btneliminar").ocultar();
+        $("#btnPrimera").visible();
+        $("#btnAnterior").visible();
+        $("#btnSiguiente").visible();
+        $("#btnUltimo").visible();
+        var usuarioLocal = localStorage.getItem("usuario");
+        if (usuarioLocal === null) {
+            window.parent.cerrarSession();
+            return;
+        }
+        usuarioLocal = $.parseJSON(usuarioLocal);
+        $("input[name=encargado]").val(usuarioLocal.nombre);
+        $("input[name=encargado]").data("cod", usuarioLocal.id_usuario);
+    }
+}
+function cargarData(estado, nuevo = true) {
+    cargando(true);
+    $.get(url, {proceso: "cargarData", estado: estado}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var usuarioLocal = localStorage.getItem("usuario");
+            if (usuarioLocal === null) {
+                window.parent.cerrarSession();
+                return;
+            }
+            usuarioLocal = $.parseJSON(usuarioLocal);
+            listaAlmacen = json.result.almacenes;
+            comboBox({identificador: "input[name=almacen]", datos: listaAlmacen, codigo: "id_almacen", texto: "nombre", todos: false,ordenarPor:"posicion"});
+            if (listaAlmacen.length > 0) {
+                $("input[name=almacen]").data("cod", listaAlmacen[0].id_almacen);
+                $("input[name=almacen]").val(listaAlmacen[0].nombre);
+            }
+            listaProducto = json.result.productos;
+            var ajusteLocal = localStorage.getItem("idajuste");
+            if (ajusteLocal !== null) {
+                id_Ajuste = ajusteLocal;
+                localStorage.removeItem("idajuste");
+                cargarAjuste("actual");
+            } else {
+                if (nuevo) {
+                    $("#tblprd tbody").html(htmlColumna);
+                    $("#tblprd tbody").append(htmlColumna);
+                    $("#tblprd tbody").append(htmlColumna);
+                    $("#tblprd tbody").append(htmlColumna);
+                    $("#tblprd").igualartabla();
+                    comboBox({identificador: "input[name=productoTabla]", datos: listaProducto, codigo: "id_producto", texto: "codigo", callback: (item) => calcular(), todos: false, extraBusqueda: "codigoBarra", texto2: "nombre"});
+                }
+
+            }
+        }
+    });
+}
+function vaciarFromulario() {
+    $("#formCompra input[name=detalle]").val("");
+    $("#formCompra input[name=nroAjuste]").val("");
+    id_Ajuste = 0;
+    $("#tblprd tbody").html(htmlColumna);
+    $("#tblprd tbody").append(htmlColumna);
+    $("#tblprd tbody").append(htmlColumna);
+    $("#tblprd tbody").append(htmlColumna);
+    $(".fecha").datepicker();
+    $("#tblprd").igualartabla();
+    $("#tpdoc").change();
+    $("#btnPrimera").ocultar();
+    $("#btnAnterior").ocultar();
+    $("#btnSiguiente").ocultar();
+    $("#btnUltimo").ocultar();
+    calcular();
+}
+function modificar() {
+    if (id_Ajuste === 0) {
+        alertaRapida("No ha seleccionado ninguna ajuste para modificar.");
+        return;
+    }
+    $("#btnimprimir").ocultar();
+    $("#formCompra input").attr("disabled", false);
+    $("#tblprd input").attr("disabled", false);
+    $("#btncancelar").visible();
+    $("#btnregistrar").visible();
+    $("#btnnuevo").ocultar();
+    $("#btnmodificar").ocultar();
+    $("#btneliminar").ocultar();
+    $("h1").text("Modificando Ajuste de Inventario");
+    $("#btnPrimera").ocultar();
+    $("#btnAnterior").ocultar();
+    $("#btnSiguiente").ocultar();
+    $("#btnUltimo").ocultar();
+    cargarData("", false);
+}
+function cargarAjuste(tipo) {
+    cargando(true);
+    $.get(url, {proceso: 'buscarAjuste', tipo: tipo, idajuste: id_Ajuste}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var ajusteObj = json.result.ajuste;
+            var detalleAjusteObj = json.result.detalle;
+            if (ajusteObj === "null" || ajusteObj === null) {
+                return;
+            }
+            $("#formCompra input").attr("disabled", true);
+            $("#tblprd input").attr("disabled", true);
+            id_Ajuste = ajusteObj.id_ajusteInventario;
+            var fechaSplit = ajusteObj.fecha.split(" ");
+            $("#btnimprimir").visible();
+            $("#btnmodificar").visible();
+            $("#btneliminar").visible();
+            $("input[name=fecha]").val(fechaSplit[0]);
+
+            var almacen = listaAlmacen.filter((item) => ("" + item.id_almacen === ("" + ajusteObj.almacen_id)));
+            $("input[name=almacen]").data("cod", ajusteObj.almacen);
+            $("input[name=almacen]").val(almacen[0].nombre);
+
+
+            $("input[name=nroAjuste]").val(ajusteObj.nroDocumento);
+            $("input[name=detalle]").val(ajusteObj.detalle);
+
+            $("#tblprd tbody").html("");
+            $("#mensajeEliminado").html("");
+            var listaUsuario = window.parent.listaUsuario;
+            var modificadopor = listaUsuario["u" + ajusteObj.usuarioActualizo];
+            if (ajusteObj.estado === "inactivo") {
+                $("#btnmodificar").ocultar();
+                $("#btneliminar").ocultar();
+                $("#txtInformacion").html("Registro Eliminado");
+                $("#txtInformacion").addClass("txtRojo");
+            } else {
+                $("#txtInformacion").html("Ult. Actualización");
+                $("#txtInformacion").removeClass("txtRojo");
+            }
+            $("#vlueInformacion").html(ajusteObj.fechaActualizado + " , " + modificadopor.nombre);
+            var encargadopor = listaUsuario["u" + ajusteObj.usuarioEncargado];
+            $("input[name=encargado]").val(encargadopor.nombre);
+            $("input[name=encargado]").data("cod", ajusteObj.usuarioEncargado);
+            var listaProd = window.parent.listaProducto;
+            var html = "";
+            for (var i = 0; i < detalleAjusteObj.length; i++) {
+                var item = detalleAjusteObj[i];
+                var producto = listaProd["p" + item.producto_id];
+                var vista = producto.codigo.replace(/"/g, '\"').replace(/"/g, "\'") + " - " + producto.nombre.replace(/"/g, '\"').replace(/"/g, "\'");
+                html += "<tr ondblclick='eliminarColumna(this)'  data-iddetalle='" + item.id_detalleCompra + "'>";
+                html += "<td><div class='grande4'><input name='productoTabla'  autocomplete='off' data-pos='-1' data-cod='" + item.producto_id + "' value=\"" + vista + "\" type='text'  class='izquierda'  onkeyup='cambiarLado(event,this)'  ></div></td>";
+                html += "<td><div class='normal'><input name='cantidad' type='number'  value='" + item.cantidad + "'  step=0 min=0 class='derecha' onkeyup='cambiarLado(event,this)'  onblur='calcular()'></div></td>";
+                html += "</tr>";
+
+            }
+            html += htmlColumna;
+            html += htmlColumna;
+            html += htmlColumna;
+            $("#tblprd tbody").html(html);
+
+            comboBox({identificador: "input[name=productoTabla]", datos: listaProducto, codigo: "id_producto", texto: "codigo", callback: (item) => calcular(), todos: false, extraBusqueda: "codigoBarra", texto2: "nombre"});
+            $(".fecha").datepicker();
+            $("#tblprd").igualartabla();
+            $("#tblprd input").attr("disabled", true);
+            calcular();
+        }
+    });
+}
+function cambiarLado(e, elemento) {
+    var contenedorSearch = $("#contenedorComboBox");
+    var cantColuman = $("#tblprd tbody tr").length;
+    var td = $(elemento).parent().parent();
+    var tr = td.parent();
+    var indexTD = td.index();
+    var indexTr = tr.index();
+    $("#ui-datepicker-div").ocultar();
+    if (cantColuman - indexTr <= 3) {
+        $("#tblprd tbody").append(htmlColumna);
+        var tr = $("input[name=productoTabla]");
+        comboBox({identificador: tr[tr.length - 1], datos: listaProducto, codigo: "id_producto", texto: "codigo", callback: (item) => calcular(), todos: false, extraBusqueda: "codigoBarra", texto2: "nombre"});
+        $("#tblprd").igualartabla();
+    }
+    if (e.keyCode === 9) {//TAB
+        tr.click();
+    }
+    if ((e.keyCode === 38 && contenedorSearch.length > 0)
+            || (e.keyCode === 40 && contenedorSearch.length > 0)) {//arriba
+        return;
+    }
+    if (e.keyCode === 13 || e.keyCode === 39) {//derecha
+        if (indexTD === 1) {
+            tr.next().click();
+            tr.next().find('input:eq(0)').focus();
+
+        } else {
+            td.next().find('input').focus();
+            td.next().find('input').select();
+        }
+        $(".cuerposearch ").ocultar();
+    }
+    if (e.keyCode === 40) {// abajo
+        tr.next().find('td:eq(' + indexTD + ') input').focus();
+        tr.next().find('td:eq(' + indexTD + ') input').select();
+        tr.next().click();
+    }
+    if (e.keyCode === 37) {//izquierda
+        if (indexTD === 0 && indexTr > 0) {
+            tr.prev().click();
+            tr.prev().find('input:eq(1)').focus();
+            tr.prev().find('input:eq(1)').select();
+        } else {
+            td.prev().find('input').focus();
+            td.prev().find('input').select();
+        }
+        $(".cuerposearch ").ocultar();
+
+    }
+    if (e.keyCode === 38) {//arriba
+        if (indexTr > 0) {
+            tr.prev().find('td:eq(' + indexTD + ') input').focus();
+            tr.prev().find('td:eq(' + indexTD + ') input').select();
+            tr.prev().click();
+        }
+    }
+
+}
+function eliminarColumna(ele) {
+    if ($("input[name=fecha]").attr("disabled") === "disabled") {
+        return;
+    }
+    $(ele).remove();
+    var cantColuman = $("#tblprd tbody tr").length;
+    if (cantColuman <= 3) {
+        $("#tblprd tbody").append(htmlColumna);
+        var tr = $("input[name=productoTabla]");
+        comboBox({identificador: tr[tr.length - 1], datos: listaProducto, codigo: "id_producto", texto: "codigo", callback: (item) => calcular(), todos: false, extraBusqueda: "codigoBarra", texto2: "nombre"});
+        $(".fecha").datepicker();
+        $("#tblprd").igualartabla();
+    }
+    calcular();
+}
+function calcular() {
+    var tr = $("#tblprd tbody tr");
+    var cantidadTotal = 0;
+    for (var i = 0; i < tr.length; i++) {
+        var cant = $(tr[i]).find('input[name=cantidad]').val();
+        cant = cant === '' ? 0 : parseFloat(cant);
+        cantidadTotal += cant;
+    }
+    $('#tblprd tfoot td:eq(1) div').html(cantidadTotal);
+}
+function registrar() {
+    var json = variables("#formCompra");
+    json.proceso = 'registrarAjuste';
+    json.id_AjusteInventario = id_Ajuste;
+    json.encargado = $("input[name=encargado]").data("cod");
+    json.almacen = $("input[name=almacen]").data("cod");
+
+    if (json.almacen === "0") {
+        alertaRapida("No ha seleccionado ningun almacén Origen.", "error");
+        return;
+    }
+   
+    if (json.detalle.length === 0) {
+        alertaRapida("No se ha ingresado el detalle del ajuste.", "error");
+        return;
+    }
+
+    var lista = $("#tblprd tbody tr");
+    var listaAjuste = [];
+    for (var i = 0; i < lista.length; i++) {
+        var cantidad = $(lista[i]).find("input[name=cantidad]").val();
+        var idDetalle = $(lista[i]).data("iddetalle");
+        var producto = $(lista[i]).find("input[name=productoTabla]").data("cod");
+        cantidad = cantidad === "" ? 0 : parseInt(cantidad);
+        producto = producto === "" ? 0 : parseFloat(producto);
+        if (producto === 0 || cantidad===0) {
+            continue;
+        }
+        listaAjuste.push({
+            id: producto, cant: cantidad, idDetalle: idDetalle
+        });
+    }
+    if (listaAjuste.length === 0) {
+        alertaRapida("No ha ingresado ningun producto a la lista de ajuste.", "error");
+        return;
+    }
+    json.listaAjuste = listaAjuste;
+    cargando(true);
+    $.post(url, json, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            if (id_Ajuste === 0) {
+                alertaRapida("El ajuste se registro correctamente.");
+            } else {
+                alertaRapida("El ajuste se actualizo correctamente.");
+            }
+            id_Ajuste = json.result;
+            if (window.parent.conf[9]) {
+                imprimir(true);
+            } else {
+                nuevo(0);
+            }
+
+
+        }
+    });
+}
+function imprimir(resetear) {
+    cargando(true);
+    $.get(url, {id_Ajuste: id_Ajuste, proceso: "imprimirAjuste"}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var detalle = json.result.detalle;
+            var ajuste = json.result.ajuste;
+            var almacen = json.result.almacen;
+            imprimirNotaAjuste(ajuste, detalle, almacen);
+            if (resetear) {
+                nuevo(0);
+            }
+        }
+    });
+}
+function imprimirNotaAjuste(ajuste, detalleAjuste, almacen) {
+    var contenido = "";
+    var usuarioLocal = localStorage.getItem("usuario");
+    if (usuarioLocal === null) {
+        window.parent.cerrarSession();
+        return;
+    }
+    var nroAjuste = ajuste.nroDocumento;
+    var fecha = ajuste.fecha;
+    var listaUsuario = window.parent.listaUsuario;
+    var recepcionista = listaUsuario["u" + ajuste.usuarioEncargado];
+    usuarioLocal = $.parseJSON(usuarioLocal);
+
+    var htmlHead = "<div class='row mt-2'>";
+    htmlHead += "       <div class='col-3'> ";
+    htmlHead += "           <div class='inlineblock mr-2 negrilla'>Fecha:</div>";
+    htmlHead += "           <div class='inlineblock'>" + fecha + "</div>";
+    htmlHead += "       </div>";
+    htmlHead += "       <div class='col-4'>";
+    htmlHead += "           <div class='inlineblock mr-2 negrilla'>Almacén:</div>";
+    htmlHead += "           <div class='inlineblock'>" + almacen.nombre + "</div>";
+    htmlHead += "       </div>";
+    htmlHead += "       <div class='col-7'> ";
+    htmlHead += "           <div class='inlineblock mr-2 negrilla'>Detalle:</div>";
+    htmlHead += "           <div class='inlineblock'>" + ajuste.detalle + "</div>";
+    htmlHead += "       </div>";
+    htmlHead += "       <div class='col-5'> ";
+    htmlHead += "           <div class='inlineblock mr-2 negrilla'>Encargado:</div>";
+    htmlHead += "           <div class='inlineblock'>" + recepcionista.nombre + "</div>";
+    htmlHead += "       </div>";
+    htmlHead += "   </div>";
+    
+
+    contenido += "<table>";
+    contenido += "    <thead>";
+    contenido += "        <th><div style='width:100px;'>Código</div></th>";
+    contenido += "        <th><div style='width:410px;'>Producto</div></th>";
+    contenido += "        <th><div style='width:100px;'>Cantidad</div></th>";
+    contenido += "    </thead>";
+    contenido += "    <tbody class='detalleprd'>";
+    listaProducto2 = window.parent.listaProducto;
+    var total = 0;
+    for (var i = 0; i < detalleAjuste.length; i++) {
+        var item = detalleAjuste[i];
+        var producto = listaProducto2["p" + item.producto_id]
+        var cantidad = parseInt(item["cantidad"]);
+        total += cantidad;
+        contenido += "<tr>";
+        contenido += "  <td><div style='width:100px;' class='derecha'>" + producto.codigo + "</div></td>";
+        contenido += "  <td><div style='width:410px;' class='izquierda'>" + producto.nombre + "</div></td>";
+        contenido += "  <td><div style='width:100px;' class='derecha'>" + cantidad + "</div></td>";
+        contenido += "</tr>";
+
+    }
+    contenido += "  </tbody>";
+    contenido += "  <tfoot>";
+    contenido += "      <tr >";
+    contenido += "<td><div style='width:100px;'></div></td>";
+    contenido += "<td><div style='width:410px;' class='derecha'></div></td>";
+    contenido += "<td><div style='width:100px;' class='derecha'>" + total + "</div></td>";
+    contenido += "      </tr>";
+    contenido += "  </tfoot>";
+    contenido += "</table>";
+
+
+   
+
+    contenido += "        <div class='row centrar mt-3'>";
+    if (ajuste.estado === "inactivo") {
+        var listaUsuario = window.parent.listaUsuario;
+        var modificadopor = listaUsuario["u" + ajuste.usuarioActualizo];
+        contenido += "<div class='col-12 negrilla centrar' style='font-size:16px; color:red;'><div class='p-3'>ESTE DOCUMENTO SE ELIMINO " + ajuste.fechaActualizado + ", POR " + modificadopor.nombre.toUpperCase() + "</div></div>";
+    }
+    /*var empresa = window.parent.empresaD;
+    if (empresa.firmaNotaCompra1 !== "") {
+     contenido += "<div class='col-3'><div style='border-top: solid 1px black; margin: 5px 23px;margin-top: 120px;'>" + empresa.firmaNotaCompra1 + "</div></div>";
+     }
+     if (empresa.firmaNotaCompra2 !== "") {
+     contenido += "<div class='col-3'><div style='border-top: solid 1px black; margin: 5px 23px;margin-top: 120px;'>" + empresa.firmaNotaCompra2 + "</div></div>";
+     }*/
+    contenido += "        </div>";
+
+    var htmlDerecha = "";
+    htmlDerecha += " <div> ";
+    htmlDerecha += "    <div class='inlineblock mr-2 negrilla'>Fecha: </div>";
+    htmlDerecha += "    <div class='inlineblock'>" + fecha + "</div>";
+    htmlDerecha += "</div>";
+    htmlDerecha += " <div> ";
+    htmlDerecha += "    <div class='inlineblock mr-2 negrilla'>Tipo Doc.: </div>";
+    htmlDerecha += "    <div class='inlineblock'>Nota de Ajuste de Inventario</div>";
+    htmlDerecha += "</div>";
+    htmlDerecha += " <div> ";
+    htmlDerecha += "    <div class='inlineblock mr-2 negrilla'>Nro. Doc.: </div>";
+    htmlDerecha += "    <div class='inlineblock'>" + nroAjuste + "</div>";
+    htmlDerecha += "</div>";
+    imprimirReporte({contenido: contenido, sucursal_id: almacen.sucursal_id, titulo: "Nota De Ajuste de Inventario", datosHead: htmlHead, encabezadoThead: true, htmlDerecha: htmlDerecha});
+}
+function eliminarAjuste(tipo) {
+    if (tipo === 1) {
+        $("body").msmPregunta("¿Esta seguro de eliminar este registro de ajuste?", "eliminarAjuste(2)");
+    } else {
+        $.post(url, {proceso: "eliminarAjuste", id_Ajuste: id_Ajuste}, function (response) {
+            cargando(false);
+            var json = $.parseJSON(response);
+            if (json.error.length > 0) {
+                if ("Error Session" === json.error) {
+                    window.parent.cerrarSession();
+                }
+                alertaRapida(json.error, "error");
+            } else {
+                nuevo(0);
+                alertaRapida("El registro se elimino correctamente.");
+                cargarAjuste("actual");
+            }
+        });
+    }
+}

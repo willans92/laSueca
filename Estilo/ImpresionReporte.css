@@ -1,0 +1,88 @@
+body{
+    background: none;
+}
+body button{
+    display: none;
+} 
+.medio{
+    width: 300px;
+}
+page :left {
+    margin-left: 0cm;
+}
+
+thead th{
+    border-color: #dee2e6;
+}
+.hojaCarta tbody td,.hojaCarta thead th,.hojaCarta tfoot td {
+    border: solid 1px silver;
+    font-size: 15px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-bottom: silver 1px solid;
+    padding: 0 7px;
+}
+.hojaCarta thead th,.hojaCarta tfoot td{ 
+    border-bottom-color:  black !important;
+    border-top-color:  black !important;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    background: white;
+    margin-bottom: 8px;
+    background: white;
+    padding: 6px 7px;
+}
+.hojaCarta tfood td {
+    background: none;
+    border:none;
+}
+tfoot{
+    display: table-footer-group !important;
+}
+tbody{
+    height: auto !important;
+    width: 100% !important;
+}
+.tableSinheadBorde th{
+    background: white !important;
+    margin-bottom: 3px;
+}
+.tableSinheadBorde th div{
+    padding: 7px 0px;
+}
+.subrayar{
+    color:black;
+    text-decoration-line: none;
+}
+.cabeceraInventario2 th,.quitarLineaTabla td{
+    border: none !important;
+}
+.txtTotal td{
+    border: none !important;
+    margin: 0;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+.boxfirma{
+    border: solid 1px black;
+    margin: 5px;
+}
+.vistaPreviaHoja{
+    transform: scale(0.7) !important;
+    margin-left: -160px !important;
+    margin-top: -60px !important;
+    border: silver 1px solid !important;
+    padding: 18px !important;
+}
+tfoot div{
+    padding:0;
+}
+@media print {
+    a:link:after, a:visited:after {  
+        display: none;
+        content: ""; 
+    } 
+}
+@page{
+    margin: 0.5cm;
+}

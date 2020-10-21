@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Control Pedido</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css?3" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
+        <script src="../Script/ControlPedido.js?13" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Control de Pedido</h1>
+            <div class="row">
+                <div class="col-12" >
+                    <div style="overflow: auto;">
+                        <div style="width: 800px;">
+                            <div id='fechabox' class="inlineblock" >
+                                <div  class="inlineblock">
+                                    <span class='negrillaenter'>De </span> 
+                                    <input type='text' class='fecha medio ' name='de' readonly autocomplete="off"/>
+                                </div>
+                                <div  class="inlineblock">
+                                    <span class='negrillaenter'>Hasta </span>
+                                    <input type='text' class='fecha medio' name='hasta' readonly autocomplete="off"/> 
+                                </div>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Cliente</div>
+                                <input type='text' class='normal buscar centrar p-2'  autocomplete="off"  name='buscar' placeholder="BUSCADOR"/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Empresa</div>
+                                <input type='text' class='normal buscar centrar p-2'  autocomplete="off"  name='empresa' placeholder="BUSCADOR"/>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Estado Pedido</div>
+                                <select id="estado" class="normal p-2">
+                                    <option value=''>-- Estado --</option>
+                                    <option value='pendiente' class='estadoPlomo'>Pendiente</option>
+                                    <option value='recepcionado' class='estadoCeleste'>Recepcionado</option>
+                                    <option value='recogiendo pedido' class='estadoNaranja'>Recogiendo Pedido</option>
+                                    <option value='en camino' class='estadoAmarillo'>En Camino</option>
+                                    <option value='entregado' class='estadoVerde'>Entregado</option>
+                                    <option value='cancelado' class='estadoRojo'>Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Estado Express</div>
+                                <select id="estadoExpress" class="normal p-2">
+                                    <option value=''>-- Estado --</option>
+                                    <option value="aceptado" class="estadoCeleste">Aceptado</option>
+                                    <option value="recogido" class="estadoAmarillo">Recogido</option>
+                                    <option value="pendiente" class="estadoPlomo">Pendiente</option>
+                                    <option value="entregado" class="estadoVerde">Entregado</option>
+                                    <option value="finalizado" class="estadoVerde">Finalizado</option>
+                                    <option value="cancelado" class="estadoRojo">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="inlineblock">
+                                <div class="negrilla">Ciudad</div>
+                                <select id="ciudad" class="normal p-2 per194"></select>
+                            </div>
+                            <div class="inlineblock">
+                                <button onclick="buscarPedido('', 1)">Filtrar</button>
+                            </div>
+                            <br >
+                            <div class="boxDetallePedido" style='margin: 0 8px;'>
+                                <div class='negrilla centrar'>Pendiente</div>
+                                <div id='pendientetxt' class='dato'>0</div>
+                                <div id='pendientebs' class='dato'>0</div>
+                                <div id='pendienter' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Recepcionado <div class='borderCurrier'>Aceptado</div></div>
+                                <div id='recepcionadotxt' class='dato'>0</div>
+                                <div id='recepcionadoBs' class='dato'>0</div>
+                                <div id='recepcionadorr' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Llam.Repart <div class='borderCurrier'>Recogido</div></div>
+                                <div id='recepcionadoPedidotxt' class='dato'>0</div>
+                                <div id='recepcionadoPedidobs' class='dato'>0</div>
+                                <div id='recepcionadoPedidor' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido normal" >
+                                <div class='negrilla centrar'>En Camino </div>
+                                <div id='encaminotxt' class='dato'>0</div>
+                                <div id='encaminobs' class='dato'>0</div>
+                                <div id='encaminor' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Entregado <div class='borderCurrier'>Vuelta</div></div>
+                                <div id='entregadotxt' class='dato'>0</div>
+                                <div id='entregadobs' class='dato'>0</div>
+                                <div id='entregador' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Cancelado</div>
+                                <div id='canceladotxt' class='dato'>0</div>
+                                <div id='canceladobs' class='dato'>0</div>
+                                <div id='cancelador' class='dato'>0</div>
+                            </div>
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Total Pedido</div>
+                                <div id='totaltxt' class='dato'>0</div>
+                                <div id='totalbs' class='dato'>0</div>
+                                <div id='totalr' class='dato'>0</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id='contenedorCliente' class="pt-2">
+                        <table class='table' id='tblpedido'>
+                            <thead class='thead-light'>
+                                <tr>
+                                    <th><div class='pequeno2'>Nro.</div></th>
+                                    <th><div class='pequeno'>Solicitado</div></th>
+                                    <th><div style='width: 80px'>Recepcionado <div class='borderCurrier'>Recogido</div> </div></th>
+                                    <th><div style="width: 80px">Llam.Repart. <div class='borderCurrier'>Entregado</div></div></th>
+                                    <th><div class='pequeno'>En Camino <div class='borderCurrier'>Vuelta</div> </div></th>
+                                    <th><div class='medio'>Cliente</div></th>
+                                    <th><div class='chico'>Telf. Cliente <div class='borderCurrier'>Telf. Origen</div></div></th>
+                                    <th><div class='normal'>Empresa <div class='borderCurrier'>Tipo de Carrera</div></div></th>
+                                    <th><div class='chico'>Telf. Empresa <div class='borderCurrier'>Telf. Destino</div></div></th>
+                                    <th><div class='pequeno'>Estado</div></th>
+                                    <th><div class='normal'>Delivery</div></th>
+                                    <th><div class='pequeno'>Monto</div></th>
+                                    <th><div class='pequeno'>Costo Delivery</div></th>
+                                </tr>
+
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="subrayar" id="btncargarMas" onclick="buscarPedido('', 2)">Cargar Más Pedidos (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 390px">
+                <button onclick="modificar()" class='btn btn-warning' style="display: none;"  id="btnmodificar">Modificar</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn "/>
+                    <img onclick="exportarExcel('tblpedido', 'Lista de Pedido')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn "/>
+                </div>
+                <span class="ml-3 negrilla">Ver</span>
+                    <select id="verPedido" onchange="buscarPedido('', 1)">
+                        <option value="-">--Todo--</option>
+                        <option value="pedido">Solo Pedidos</option>
+                        <option value="express">Solo Express</option>
+                    </select>
+
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="popPedido" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="formPedido">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Detalle del Pedido</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3" id="codigBox">
+                                <label>Solicitada</label>
+                                <div id="solicitada"></div>
+                            </div>
+                            <div class="col-5" id="codigBox">
+                                <label>Cliente</label>
+                                <div id="clienttext"></div>
+                            </div>
+                            <div class="col-4" id="codigBox">
+                                <label id='txtTelfCli'>Teléfono</label>
+                                <div id="telclient"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3" id="codigBox">
+                                <label>Entregado</label>
+                                <div id="entregadoTxt"></div>
+                            </div>
+                            <div class="col-5" id="codigBox">
+                                <label id='txtEmpr'>Empresa</label>
+                                <div id="empresatext"></div>
+                            </div>
+                            <div class="col-4" id="codigBox">
+                                <label id='txtTelfEmp'>Telf. Emp.</label>
+                                <div id="telemp"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3" id="codigBox">
+                                <label>Estado</label>
+                                <select id="tpestado" class="normal p-2 per195">
+                                    <option value='pendiente'>Pendiente</option>
+                                    <option value='recepcionado'>Recepcionado</option>
+                                    <option value='recogiendo pedido'>Recogiendo Pedido</option>
+                                    <option value='en camino'>En Camino</option>
+                                    <option value='entregado'>Entregado</option>
+                                    <option value='cancelado'>Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="col-5" id="codigBox">
+                                <label>Delivery</label>
+                                <input type="text" placeholder="DELIVERY" class="form-control" autocomplete="off" name="delivery">
+                            </div>
+                            <div class="col-4" id="codigBox">
+                                <label>Costo Delivery</label>
+                                <div id="costoDelivery" class="pt-2"></div>
+                            </div>
+                        </div>
+                        <div class="row" id='boxFact'>
+                            <div class="col-3" id="codigBox">
+                                <label>NIT</label>
+                                <div id="nit" class="pt-2 pr-2"></div>
+                            </div>
+                            <div class="col-5" id="codigBox">
+                                <label>Razon Social</label>
+                                <div id="rz" class="pt-2 pr-2"></div>
+                            </div>
+                            <div class="col-4 "  id="codigBox">
+                                <label>Monto Billete</label>
+                                <div id="billete" class="pt-2 pr-2"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6" id="codigBox">
+                                <div id='boxDireccion'>
+                                    <label>Dirección</label>
+                                    <div id="direccionapp" class="pt-2 pr-2"></div>
+                                </div>
+                                <label id='txtProd'>Producto</label>
+                                <div class="row" id="divProd">
+
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2" id="codigBox">
+                                <label>Mapa</label><br>
+                                <div style="width: 20px; height: 20px; background: #84ef84; display: inline-block; border-radius: 26px; position: relative; top: 4px;"></div> Origen
+                                <div style="width: 20px; height: 20px; background: #e58900; display: inline-block; border-radius: 26px; position: relative; top: 4px; margin-left: 15px;"></div> Fin
+                                <br>
+                                <div id="mapa"></div>
+
+                            </div>
+                            <div class="col-12">
+                                <div id="btnubicacion" style="    background: #add1e2; padding: 12px; display: inline-block;">
+                                    <div>
+                                        <div class="inlineblock mr-2">
+                                            <div class="negrilla inlineblock">Latitud</div>
+                                            <input type="text" name="lat1" class="normal">
+                                        </div>
+                                        <div class="inlineblock mr-2">
+                                            <div class="negrilla inlineblock">Longitud</div>
+                                            <input type="text" name="lon1" class="normal">
+                                        </div>
+                                        <div class="inlineblock mr-2 mb-2">
+                                            <button onclick="fijarUbicacion(1)" style="background: #518651;" id="btnOrigen">Origen</button>
+                                            <button onclick="fijarUbicacion(2)" style="background: #e58900;" id="btnFin">Fin</button>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div>
+                                        <div class="inlineblock mr-2">
+                                            <div class="negrilla">Nuevo Costo</div>
+                                            <div id="costtxt"  class="p-2 text-right">0</div>
+                                        </div>
+                                        <div class="inlineblock mr-2">
+                                            <div class="negrilla">Nuevo Desc</div>
+                                            <input type="number" value="0" name="desc" onkeyup="cambiarDescuento()" class="normal  text-right">
+                                        </div>
+                                        <div class="inlineblock mr-2">
+                                            <div class="negrilla">Total Costo</div>
+                                            <div id="tcos" class="p-2  text-right">0</div>
+                                        </div>
+                                        <div class="inlineblock">
+                                            <button onclick="cambioUbicacion()"  >Modificar Ubicación</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="cambioDatosPedido()">Cambio Pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+

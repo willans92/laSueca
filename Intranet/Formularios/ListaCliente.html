@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Lista Cliente</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        <script src="../Script/ListaCliente.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Lista de Cliente</h1>
+            <div class="row">
+
+                <div class="col-12" >
+                    <div style="width: 309px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">Codigo</div>
+                            <input type='text' class='normal buscar centrar p-2'  autocomplete="off"  name='codigoB' placeholder="CODIGO" onkeyup="buscar(event, 1)"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">CI / Nombre</div>
+                            <input type='text' class='grande buscar centrar p-2'  autocomplete="off"  name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)"/>
+                        </div>
+                    </div>
+                    <div class=" minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar un cliente seleccione el registro.
+                    </div>
+                    <div id='contenedorCliente'>
+                        <table class="table" id='tblcliente'>
+                            <thead class="thead-light">
+                            <th><div class='pequeno'>Codigo</div></th>
+                            <th><div class='chico'>CI</div></th>
+                            <th><div class='medio'>Nombre</div></th>
+                            <th><div class='pequeno'>Telefono</div></th>
+                            <th><div class='normal'>Limite Credito</div></th>
+                            <th><div class='pequeno'>Desc. %</div></th>
+                            <th><div class='normal'>Deuda Actual</div></th>
+                            <th><div class='medio'>Direccion</div></th>
+
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Más Clientes (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 629px">
+                <button onclick="actualizar()" id="actualizar" style="display: none;"></button>
+                <button type="button" class="btn btn-primary per68"  data-toggle="modal" data-target="#popCliente" data-whatever="@mdo" onclick="nuevo()">Nuevo Cliente</button>
+                <button type="button" class="btn btn-warning per69"  style="display: none" onclick="modificar(3)" id="btnmodificar">Modificar Cliente</button>
+                <button type="button" class="btn btn-success per76"  style="display: none" onclick="cobranzaPop()" id="btncobranza">Resumen Estado de Cuentas</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn  per70"/>
+                    <img onclick="exportarExcel('tblcliente', 'Lista Cliente')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn  per71"/>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="popCliente" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Cliente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Código</label>
+                                <input type="text" class="form-control" name="codigo"  maxlength="40" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>CI</label>
+                                <input type="text" class="form-control" name="ci"   maxlength="35" onblur="rellenarRazonSocial()" autocomplete='off'>
+                            </div>
+                            <div class="col-6">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control" name="nombre"   maxlength="300" onblur="rellenarRazonSocial()" autocomplete='off'>
+                                <div class="error" id="errorNombre"></div>
+                            </div>
+                            <div class="col-3">
+                                <label>% Desc.</label>
+                                <input type="number" min="0" class="form-control  per72" name="descuento" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>NIT</label>
+                                <input type="text" class="form-control" name="nit"   maxlength="30" autocomplete='off'>
+                            </div>
+                            <div class="col-6">
+                                <label>Razon Social</label>
+                                <input type="text" class="form-control" name="rz"   maxlength="150" autocomplete='off' >
+                            </div>
+                            <div class="col-3">
+                                <label>% Desc. Max.</label>
+                                <input type="number" class="form-control  per73" name="descmax" min="0" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Teléfono Contacto</label>
+                                <input type="text" class="form-control" name="telefonocontacto"   maxlength="45" autocomplete='off'>
+                            </div>
+                            <div class="col-6">
+                                <label>Persona de Contacto</label>
+                                <input type="text" class="form-control" name="personacontacto"   maxlength="100" autocomplete='off'>
+                            </div>
+                            <div class="col-3">
+                                <label>Límite de Credito</label>
+                                <input type="number" class="form-control  per74" name="limitecredito" min="0" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Teléfono</label>
+                                <input type="text" class="form-control" name="telefono"  maxlength="140" autocomplete='off'>
+                            </div>
+                            <div class="col-5">
+                                <label>Dirección</label>
+                                <input type="text" class="form-control" name="direccion"  maxlength="330" autocomplete='off'>
+                            </div>
+                            <div class="col-4">
+                                <label>Correo</label>
+                                <input type="email" class="form-control" name="correo"  maxlength="100" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Fecha Nacimiento</label>
+                                <input type="text" class="form-control fecha" name="fechanacimiento" readonly autocomplete='off'>
+                            </div>
+                            <div class="col-9">
+                                <label>Comentario</label>
+                                <input type="text" class="form-control" name="comentario" maxlength="1000" autocomplete='off'>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popCobranza" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Registro de Cobranza</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <label>CI</label>
+                                <div id="txtCI"></div>
+                            </div>
+                            <div class="col-6">
+                                <label>Nombre</label>
+                                <div id="txtNombre"></div>
+                            </div>
+                            <div class="col-3">
+                                <label>Telefono</label>
+                                <div id="txtTelefono"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Dirección</label>
+                                <div id="txtDireccion"></div>
+                            </div>
+                            <div class="col-4">
+                                <label>Correo</label>
+                                <div id="txtCorreo"></div>
+                            </div>
+                            <div class="col-4">
+                                <label>Comentario</label>
+                                <div id="txtComentario"></div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>
+                                    Registro de Ventas
+
+                                    <span style="float: right; font-size: 12px;">
+                                        <input type="checkbox" name="chkverfactura" onchange="verFacturaDeuda(this)"/> Solo ver factura con deuda
+                                    </span>
+                                </h6>
+                                <div class="minitext" >
+                                    <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                                    * Dar clic en un registro para poder ver el detalle de cobranza y registrar el cobro.
+                                </div>
+                                <table class="table" id="tblFact">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><div class="pequeno">Fecha</div></th>
+                                            <th><div class="pequeno">Nro. Doc.</div></th>
+                                            <th><div class="pequeno">Monto Fact</div></th>
+                                            <th><div class="pequeno">Monto Pagado</div></th>
+                                            <th><div class="pequeno">Saldo Deuda</div></th>
+                                            <th><div class="normal">Vendedor</div></th>
+                                            <th><div class="pequeno">Estado</div></th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-3" id="contenedorCobranza">
+                            <div class="col-12">
+                                <h6>Histórico de Pago</h6>
+                                <table class="table" id="tblCobranza">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><div class="pequeno">Fecha</div></th>
+                                            <th><div class="pequeno">Nro. Doc.</div></th>
+                                            <th><div class="normal">Detalle</div></th>
+                                            <th><div class="pequeno">Monto</div></th>
+                                            <th><div class="normal">Método de Pago</div></th>
+                                            <th><div class="normal">Cobrador</div></th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-3 per75" id="contenedorRegistroCobranza">
+                            <div class="col-12">
+                                <h6>Formulario de Cobranza</h6>
+                            </div>
+                            <div class="col-3">
+                                <div class="negrilla">Deuda</div>
+                                <div class="p-2" id="txtDeuda"></div>
+                            </div>
+                            <div class="col-3">
+                                <div class="negrilla">Monto A Pagar</div>
+                                <input type="number" step="0.5" min="0" name="montoApagar" class="form-control"  onclick="selectText(this)" onkeyup="calcularSaldo()">
+                            </div>
+                            <div class="col-2">
+                                <div class="negrilla">Saldo</div>
+                                <div id="txtsaldo"></div>
+                            </div>
+                            <div class="col-3">
+                                <div class="negrilla">Fecha de Cobro</div>
+                                <input class="fecha form-control per78" type="text" name="fechaCobro"  readonly>
+                            </div>
+                            <div class="col-3">
+                                <div class="negrilla">Metodo de Pago</div>
+                                <select id="tipoPago" class="form-control">
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta Credito o Debito">Tarjeta Credito o Debito</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <div class="negrilla">Cobrador</div>
+                                <input type='text' autocomplete="off" data-pos='-1' class='per77 form-control'  data-cod="0" name='cobrador'/>
+                            </div>
+                            <div class="col-4">
+                                <div class="negrilla">Comentario</div>
+                                <input type="text" maxlength="200" name="comentario" class="form-control">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12 text-center mt3">
+                                <div class="error" id='errorCobranza'></div>
+
+                                <button type="button" class="btn btn-warning mt-2 per75" onclick="registrarCobro()" >Registrar Pago</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </body>
+</html>
+

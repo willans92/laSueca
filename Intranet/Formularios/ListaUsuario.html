@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Lista Cliente</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/ListaUsuario.js?2" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Lista de Usuario</h1>
+            <div class="row m-2">
+
+                <div class="col-12" >
+                    <div style="    width: 500px;">
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Código / CI / Usuario</span>
+                            <input type='text' class='grande buscar centrar'  autocomplete="off"  name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)"/>
+                        </div>
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Sucursal</span>
+                            <input type='text' class='medio per165'  id="slsucursal" autocomplete="off"  placeholder="-- SUCURSAL --" />
+                        </div>
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Estado</span>
+                            <select id="slestado" class="normal p-2" onchange="buscar('', 1)">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">inActivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar un usuario seleccione el registro. 
+                    </div>
+                    <div id="contenedorUsuarop">
+                        <table class="table" id='tblusuario'>
+                            <thead class="thead-light">
+                                <th><div class='pequeno'>CI</div></th>
+                                <th><div class='medio'>Nombre</div></th>
+                                <th><div class='normal'>Teléfono</div></th>
+                                <th><div class='medio'>Sucursal</div></th>
+                                <th><div class='pequeno'>Contratado</div></th>
+                                <th><div class='medio'>Dirección</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Mas Productos (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 454px">
+                <button onclick="actualizar()" id="actualizar" style="display: none;"></button>
+                <button type="button" class="btn btn-warning per163"  data-toggle="modal" data-target="#popUsuario" data-whatever="@mdo" style="display: none" onclick="modificar(3)" id="btnmodificar">Modificar Usuario</button>
+                <button type="button" class="btn btn-primary per160"  data-toggle="modal" data-target="#popUsuario" data-whatever="@mdo" onclick="usuarioPop(1)">Nuevo Usuario</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn per161"/>
+                    <img onclick="exportarExcel('tblusuario', 'Lista de Usuario')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn per162"/>
+            </div>
+            </div>
+        </div>
+        
+        
+        <div class="modal fade" id="popUsuario" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" >Usuario</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <label>CI</label>
+                            <input type="text" class="form-control" name="ci"   maxlength="30" autocomplete="off">
+                        </div>
+                        <div class="col-6">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" name="nombre"   maxlength="300" autocomplete="off">
+                        </div>
+                        <div class="col-3">
+                            <label>Estado</label>
+                            <select id="estado" class="form-control per164">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">inActivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <label>Teléfono</label>
+                            <input type="text" class="form-control" name="telefono"  maxlength="100" autocomplete="off">
+                        </div>
+                        <div class="col-6">
+                            <label>Dirección</label>
+                            <input type="text" class="form-control" name="direccion"  maxlength="280" autocomplete="off">
+                        </div>
+                        <div class="col-3">
+                            <label>Fecha Contratado</label>
+                            <input type="text" class="form-control fecha" name="fecha_contratado"  readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Sucursal</label>
+                            <input type="text" class="form-control per165"  id="sucursal">
+                        </div>
+                        <div class="col-2">
+                            <label>¿Cuenta?</label>
+                            <select id="tieneCuenta" class="form-control per166" onchange="tieneCuenta()">
+                                <option value="no">No</option>
+                                <option value="si">Si</option>
+                            </select>
+                        </div>
+                        <div class="col-3 cuenta" >
+                            <label>Cuenta</label>
+                            <input type="text" class="form-control" name="cuenta" maxlength="30" autocomplete="off">
+                        </div>
+                        <div class="col-3 cuenta">
+                            <label>Contraseña</label>
+                            <input type="password" class="form-control" name="contrasena" maxlength="30" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="row" id='ciudadaBox' style="display: none;">
+                        <div class="col-4">
+                            <label>Ciudad</label>
+                            <select class="normal" id='ciudad'></select>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <div id="errorPop"></div>
+                  <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        
+        
+    </body>
+</html>
+
