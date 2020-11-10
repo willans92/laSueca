@@ -19,7 +19,7 @@ class linea_producto {
     }
 
     function todo() {
-        $consulta = "select * from lasueca.linea_producto  where empresa_id=" . $this->CON->empresa_id . " order by posicion asc, id_linea_producto asc";
+        $consulta = "select * from lasueca.linea_producto  where empresa_id=87 order by posicion asc, id_linea_producto asc";
         return $this->CON->consulta2($consulta);
     }
 

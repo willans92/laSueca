@@ -53,10 +53,32 @@ class producto {
         $consulta .= " from lasueca.producto p where p.empresa_id=$id_empresa";
         return $this->CON->consulta2($consulta);
     }
+
     function buscarXid($id_producto) {
         $consulta = "select  *";
         $consulta .= " from lasueca.producto where id_producto=$id_producto";
         return $this->CON->consulta2($consulta)[0];
+    }
+
+    function productoTienda($id_tienda,$linea,$categoria,$text,$pibote) {
+        $consulta .= " select lin.descripcion linea,lin.id_linea_producto,c.nombre categoria,p.nombre,p.codigo ";
+        $consulta .= " ,ifnull((select precio from precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
+        $consulta .= " ,ifnull((select comision from precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) comision";
+        $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c, lasueca.producto p, lasueca.linea_producto_tienda lp";
+        $consulta .= " where ($linea=0 or  l.linea_producto_id=$linea) and ($categoria=0 or  c.id_categoriaProducto=$categoria) and (p.codigo like '%$text%' or p.nombre like '%$text%')";
+        $consulta .= " and l.linea_producto_id=lin.id_linea_producto and l.categoriaProducto_id=c.id_categoriaProducto";
+        $consulta .= " and p.linea_producto_id=l.linea_producto_id and lp.linea_producto_id=l.linea_producto_id";
+        $consulta .= " and c.estado like 'activo' and p.estado like 'activo'  and p.app  like 'activo'  and lp.tienda_id=$id_tienda limit $pibote,50";
+        $resultado=array();
+        $resultado["data"]=$this->CON->consulta2($consulta);
+        $consulta = " select count(p.id_producto) limite";
+        $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c, lasueca.producto p, lasueca.linea_producto_tienda lp";
+        $consulta .= " where ($linea=0 or  l.linea_producto_id=$linea) and ($categoria=0 or  c.id_categoriaProducto=$categoria) and (p.codigo like '%$text%' or p.nombre like '%$text%')";
+        $consulta .= " and l.linea_producto_id=lin.id_linea_producto and l.categoriaProducto_id=c.id_categoriaProducto";
+        $consulta .= " and p.linea_producto_id=l.linea_producto_id and lp.linea_producto_id=l.linea_producto_id";
+        $consulta .= " and c.estado like 'activo' and p.estado like 'activo'  and p.app  like 'activo'  and lp.tienda_id=$id_tienda";
+        $resultado["limite"]= $this->CON->consulta2($consulta)[0]["limite"];
+        return $resultado;
     }
 
     function version($nroVersion) {
@@ -239,10 +261,10 @@ class producto {
         return $this->CON->manipular($consulta);
     }
 
-    function modificarEstadoApp($id_producto, $empresa_id, $estado, $online,$logo) {
-        $logoStr="";
-        if($logo!=="-"){
-            $logoStr=" foto='$logo', ";
+    function modificarEstadoApp($id_producto, $empresa_id, $estado, $online, $logo) {
+        $logoStr = "";
+        if ($logo !== "-") {
+            $logoStr = " foto='$logo', ";
         }
         $consulta = "update lasueca.producto set $logoStr estado='" . $estado . "', app='$online' where empresa_id=$empresa_id  and id_producto=$id_producto";
         return $this->CON->manipular($consulta);

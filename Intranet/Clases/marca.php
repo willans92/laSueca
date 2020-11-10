@@ -17,7 +17,7 @@ class marca {
     }
 
     function todo() {
-        $consulta = "select * from lasueca.marca where empresa_id=".$this->CON->empresa_id;
+        $consulta = "select * from lasueca.marca where empresa_id=87";
         return $this->CON->consulta2($consulta);
     }
 

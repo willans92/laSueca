@@ -35,9 +35,9 @@
                     <div class="centrar">
                         <select class="grande negrilla" id="sucursal" style="display: none"></select>
                     </div>
-                    <div class='point item' onclick="redireccionarUrl('',this)">Catalogo de Producto</div>
+                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_CatalogoProducto.html',this)">Catalogo de Producto</div>
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ConfiguracionTienda.html',this)">Configuracion de la tienda</div>
-                    <div class='point item' onclick="redireccionarUrl('',this)">Reporte de Pedidos</div>
+                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_CatalogoProducto.html',this)">Reporte de Pedidos</div>
                 </div>
 
                 <iframe src="" class="col-12" id="cuerpoProyeto" style="padding: 0px 30px;"></iframe>
