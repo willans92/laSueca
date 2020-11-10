@@ -688,7 +688,7 @@ tfoot{
     text-align: center;
 }
 .fecha{
-    width: 102px;
+    width: 110px;
     background: #e8eff7;
 }
 .subrayar{
@@ -1294,4 +1294,24 @@ ul{
     font-weight: bold;
     border-bottom: solid 1px silver;
     padding: 5px 16px;
+}
+#tipoLogin div{
+    border: 2px solid silver;
+    padding: 8px 12px;
+    width: 139px;
+    border-radius: 8px;
+    color: #929292;
+    display: inline-block;
+    margin: 3px 4px;
+    cursor: pointer;
+}
+.tipoLoginSelected{
+    background: #acdaac;
+    color: #268a26 !important;
+    border-color: #268a26 !important;
+}
+.categoriaTienda .titulo{
+    font-size: 19px;
+    font-weight: bold;
+    cursor: pointer;
 }

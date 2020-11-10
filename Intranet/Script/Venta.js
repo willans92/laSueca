@@ -423,7 +423,7 @@ function cargarVenta(tipo) {// data-pos, data-stock en tr
                 var fechaSplit = ventaObj.fecha.split(" ");
                 $("input[name=fecha]").val(fechaSplit[0]);
                 var listaCliente = window.parent.listaCliente;
-                if (json.result.clienteV !== "-1") {// validacion clientes sin version
+                if (json.result.clienteV != "-1") {// validacion clientes sin version
                     window.parent.listaCliente["c" + json.result.clienteV.id_cliente] = json.result.clienteV;
                     listaCliente = window.parent.listaCliente;
                 }

@@ -32,7 +32,6 @@
         <script src="Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/popper.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
-        <script src="Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
         <script src="Script/index.js" type="text/javascript"></script>
     </head>
     <body style="background: #024379">
@@ -40,6 +39,14 @@
             <div class='boxmedio' id="formRegistro" >
                 <img src="Imagen/banderaSueca.jpg" alt="" style="width: 150px; height: 150px;  border-radius: 100px;"/>
                 <div class="sueca">LA SUECA</div>
+                <div id="tipoLogin">
+                    <div class="tipoLoginSelected" onclick="cambiarTipo(this,'Administrativo')">
+                        Administrativo
+                    </div>
+                    <div  onclick="cambiarTipo(this,'Tienda')">
+                        Tienda
+                    </div>
+                </div>
                 <div class="negrilla">Cuenta</div>
                 <input type='text' name='cuentaLogeo' autocomplete="off" onkeyup="entrar(event)"/>
                 <div class="negrilla">Contraseña</div>

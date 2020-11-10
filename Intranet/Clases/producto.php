@@ -213,6 +213,7 @@ class producto {
         $consulta .= " ) a ),0)) stock  ";
         $consulta .= " , ifnull((SELECT precio FROM lasueca.detallecompra where estado like 'activo' and producto_id=p.id_producto  order by STR_TO_DATE(fecha,'%e/%c/%Y %H:%i:%s') desc, id_detalleCompra desc  limit 0,1),0) precioCompra ";
         $consulta .= " , ifnull((SELECT precio FROM lasueca.precioventa where estado like 'activo' and producto_id=p.id_producto order by STR_TO_DATE(fecha,'%e/%c/%Y %H:%i:%s') desc, id_PrecioVenta desc limit 0,1),0) precioVenta";
+        $consulta .= " , ifnull((SELECT comision FROM lasueca.precioventa where estado like 'activo' and producto_id=p.id_producto order by STR_TO_DATE(fecha,'%e/%c/%Y %H:%i:%s') desc, id_PrecioVenta desc limit 0,1),0) comision";
         $consulta .= " , ifnull((SELECT SUBSTRING(fecha , 1, 10) FROM lasueca.detallecompra where estado like 'activo' and producto_id=p.id_producto order by  STR_TO_DATE(fecha,'%e/%c/%Y %H:%i:%s') desc, id_detalleCompra desc limit 0,1),'-') fechaCompra";
         $consulta .= " , ifnull((SELECT SUBSTRING(fecha , 1, 10) FROM lasueca.detalleventa where  estado like 'activo' and producto_id=p.id_producto order by  STR_TO_DATE(fecha,'%e/%c/%Y %H:%i:%s') desc, id_detalleventa desc limit 0,1),'-') fechaVenta";
         $consulta .= " FROM lasueca.producto p where empresa_id=" . $this->CON->empresa_id . " $estado";

@@ -240,6 +240,7 @@ function registrar() {
     json.generarCodigo = 0;
     json.posicionProducto = json.posicionProducto === "" ? 0 : json.posicionProducto;
     json.precioVenta = json.precioVenta === "" ? 0 : parseFloat(json.precioVenta);
+    json.comision = json.comision === "" ? 0 : parseFloat(json.comision);
 
     if (window.parent.conf[10]) {
         json.generarCodigo = 1;
@@ -265,12 +266,12 @@ function registrar() {
     } else {
         $("#marca").removeClass("rojoClarito");
     }
-    if (json.precioVenta < 0) {
-        $("#errorPop").html("El precio de venta no puede ser menor a 0.");
-        $("input[name=precioVenta]").addClass("rojoClarito");
+    if (json.comision < 0) {
+        $("#errorPop").html("La comision no puede ser menor a 0.");
+        $("input[name=comision]").addClass("rojoClarito");
         return;
     } else {
-        $("input[name=precioVenta]").removeClass("rojoClarito")
+        $("input[name=comision]").removeClass("rojoClarito")
     }
 
     $("#errorPop").html("");

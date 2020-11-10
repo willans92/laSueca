@@ -215,11 +215,16 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-12">
-                                <h6>
-                                    Registro de Ventas
+                                <h6 style="border-top: solid 1px silver; padding-top: 10px;">
+                                        <span>Tipo</span>
+                                        <select class="medio" id="tipoDoc" onchange="cobranzaPop()">
+                                            <option class="Venta">Venta</option>
+                                            <option class="Prestamo">Prestamo</option>
+                                        </select>
+                                    
 
-                                    <span style="float: right; font-size: 12px;">
-                                        <input type="checkbox" name="chkverfactura" onchange="verFacturaDeuda(this)"/> Solo ver factura con deuda
+                                    <span style="float: right; font-size: 12px; margin-top: 10px;">
+                                        <input type="checkbox" name="chkverfactura" onchange="verFacturaDeuda(this)"/> Solo ver documentos con deuda
                                     </span>
                                 </h6>
                                 <div class="minitext" >
@@ -231,7 +236,7 @@
                                         <tr>
                                             <th><div class="pequeno">Fecha</div></th>
                                             <th><div class="pequeno">Nro. Doc.</div></th>
-                                            <th><div class="pequeno">Monto Fact</div></th>
+                                            <th><div class="pequeno">Monto Deuda</div></th>
                                             <th><div class="pequeno">Monto Pagado</div></th>
                                             <th><div class="pequeno">Saldo Deuda</div></th>
                                             <th><div class="normal">Vendedor</div></th>
@@ -243,27 +248,6 @@
                                         <tr>
 
                                         </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="row mt-3" id="contenedorCobranza">
-                            <div class="col-12">
-                                <h6>Histórico de Pago</h6>
-                                <table class="table" id="tblCobranza">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th><div class="pequeno">Fecha</div></th>
-                                            <th><div class="pequeno">Nro. Doc.</div></th>
-                                            <th><div class="normal">Detalle</div></th>
-                                            <th><div class="pequeno">Monto</div></th>
-                                            <th><div class="normal">Método de Pago</div></th>
-                                            <th><div class="normal">Cobrador</div></th>
-                                        </tr>
-
-                                    </thead>
-                                    <tbody>
 
                                     </tbody>
                                 </table>

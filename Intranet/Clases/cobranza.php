@@ -81,6 +81,7 @@ class cobranza {
         $consulta = "select * from lasueca.cobranza  where empresa_id=" . $this->CON->empresa_id . "  and id_cobranza=$idcobranza";
         return $this->CON->consulta2($consulta)[0];
     }
+
     function buscarXidVenta($idventa) {
         $consulta = "select c.* from lasueca.cobranza c,lasueca.detallecobranza d  where empresa_id=" . $this->CON->empresa_id . "  and d.venta_id=$idventa and c.id_cobranza=d.cobranza_id";
         return $this->CON->consulta2($consulta)[0];
@@ -96,7 +97,7 @@ class cobranza {
         $consulta .= " group by v.id_venta,if(v.tipoDocumento='Factura',v.nroDocumento,v.nroNota) ,";
         $consulta .= "		v.fecha, v.descripcion ,v.id_venta,v.usuario_id , v.tipoDocumento";
         $consulta .= " union ";
-        
+
         $consulta .= " SELECT c.id_cobranza id,CONCAT('DC-',c.nroDocumento), 'cobranza' tipoDocumento,c.fecha,d.detalle,sum(d.monto),v.id_venta,c.cobradoPor usuario, c.estado";
         $consulta .= " FROM lasueca.cobranza c, lasueca.detallecobranza d, lasueca.venta v";
         $consulta .= " where  c.id_cobranza=d.cobranza_id and d.venta_id=v.id_venta and v.cliente_id=$idcliente";
@@ -119,11 +120,31 @@ class cobranza {
         if ($idcliente !== "") {
             $cliente = " and v.cliente_id=$idcliente";
         }
-        $consulta = " select v.cliente_id, c.limiteCredito ,sum(d.precioTotal) deuda ,ifnull((select sum(monto) from detallecobranza where venta_id=v.id_venta and estado like 'activo'),0) pagado";
-        $consulta .= " from detalleventa d, venta v, lasueca.cliente c ";
+        $fechaactual = date("d/m/Y");
+        //venta contado
+        $consulta = " select a.cliente_id, a.limiteCredito , sum(a.deuda) deuda, sum(a.pagado) pagado from ( ";
+        
+        $consulta .= " select v.cliente_id, c.limiteCredito ,sum(d.precioTotal) deuda, 'ventaContado' tipo ,ifnull((select sum(monto) from lasueca.detallecobranza where venta_id=v.id_venta and estado like 'activo'),0) pagado";
+        $consulta .= " from lasueca.detalleventa d, lasueca.venta v, lasueca.cliente c ";
         $consulta .= " where v.estado='activo' and v.id_venta=d.venta_id $cliente  and c.id_cliente=v.cliente_id";
-        $consulta .= " and v.estado like 'activo' and v.empresa_id=" . $this->CON->empresa_id;
+        $consulta .= " and v.empresa_id=" . $this->CON->empresa_id;
         $consulta .= " group by v.cliente_id , c.limiteCredito";
+
+        $consulta .= " union";
+
+        
+        $cliente = "";
+        if ($idcliente !== "") {
+            $cliente = " and p.cliente_id=$idcliente";
+        }
+        $consulta .= "  SELECT p.cliente_id, c.limiteCredito, sum(d.cuotaActual) deuda, 'prestamo' tipo ";
+        $consulta .= "  ,ifnull((select sum(monto) from lasueca.detallecobranza where planprestamo_id=d.id_planprestamo and estado like 'activo'),0) pagado";
+        $consulta .= "  FROM lasueca.prestamo p, lasueca.planprestamo d, lasueca.cliente c";
+        $consulta .= "  where p.empresa_id=" . $this->CON->empresa_id." $cliente and p.id_prestamo=d.prestamo_id and d.estado like 'activo'";
+        $consulta .= "  and c.id_cliente=p.cliente_id and STR_TO_DATE(d.vencimientoActual,'%e/%c/%Y')<=STR_TO_DATE('$fechaactual','%e/%c/%Y')";
+        $consulta .= "  group by p.cliente_id , c.limiteCredito";
+        
+        $consulta .= "   ) a  group by a.cliente_id , a.limiteCredito";
         return $this->CON->consulta2($consulta);
     }
 
@@ -180,10 +201,11 @@ class cobranza {
         }
         return $this->CON->consulta2($consulta);
     }
-    function reporteCobranzaXCobrador($de, $hasta,$empleado) {
-        $cobrador="";
-        if($empleado!=="0"){
-            $cobrador=" and c.cobradoPor=$empleado ";
+
+    function reporteCobranzaXCobrador($de, $hasta, $empleado) {
+        $cobrador = "";
+        if ($empleado !== "0") {
+            $cobrador = " and c.cobradoPor=$empleado ";
         }
         $consulta = " select SUBSTRING(c.fecha, 1, 10) fecha,c.cobradoPor,sum(d.monto) monto ";
         $consulta .= " from lasueca.cobranza c, lasueca.detallecobranza d";
@@ -194,10 +216,11 @@ class cobranza {
         $consulta .= " order by STR_TO_DATE(c.fecha,'%e/%c/%Y') desc";
         return $this->CON->consulta2($consulta);
     }
-    function reporteCobranzaXCliente($de, $hasta,$cliente) {
-        $cli="";
-        if($cliente!=="0"){
-            $cli=" and v.cliente_id=$cliente ";
+
+    function reporteCobranzaXCliente($de, $hasta, $cliente) {
+        $cli = "";
+        if ($cliente !== "0") {
+            $cli = " and v.cliente_id=$cliente ";
         }
         $consulta = " select SUBSTRING(c.fecha, 1, 10) fecha,v.cliente_id,sum(d.monto) monto ";
         $consulta .= " from lasueca.cobranza c, lasueca.detallecobranza d, lasueca.venta v";

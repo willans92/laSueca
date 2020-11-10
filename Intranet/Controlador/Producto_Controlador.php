@@ -23,7 +23,7 @@ if ($proceso === "registrarProducto") {//posicionProducto
             $idproducto = $producto->id_producto;
             if ($precioVenta !== "0") {
                 $precio = new precioVenta($con);
-                $precio->contructor(0, $precioVenta, $fechaactual, $idproducto, $sessionUsuario["id_usuario"]);
+                $precio->contructor(0, $precioVenta, $fechaactual, $idproducto, $sessionUsuario["id_usuario"],$comision);
                 if (!$precio->insertar()) {
                     $error = 'No se logró registrar el precio de venta. Intente nuevamente.';
                 }

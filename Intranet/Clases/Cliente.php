@@ -68,6 +68,10 @@ class Cliente {
         $consulta = "UPDATE lasueca.cliente SET ci = '$this->ci',nombre = '$this->nombre',telefono = '$this->telefono',direccion = '$this->direccion',foto = '$this->foto',codigo = '$this->codigo',limiteCredito = '$this->limiteCredito',personaContacto = '$this->personaContacto',telefonoContacto = '$this->telefonoContacto',nit = '$this->nit',razonSocial = '$this->razonSocial',email = '$this->email',emailContacto = '$this->emailContacto',descuento = '$this->descuento',comentario = '$this->comentario',fechaNacimiento = '$this->fechaNacimiento',descuentoMax = '$this->descuentoMax' WHERE empresa_id=".$this->CON->empresa_id." and id_cliente = " . $id_cliente;
         return $this->CON->manipular($consulta);
     }
+   function modificarBasica($id_cliente) {
+        $consulta = "UPDATE lasueca.cliente SET ci = '$this->ci',nombre = '$this->nombre',telefono = '$this->telefono',direccion = '$this->direccion' ,email = '$this->email' WHERE empresa_id=".$this->CON->empresa_id." and id_cliente = " . $id_cliente;
+        return $this->CON->manipular($consulta);
+    }
    function modificarDatosFacturacion($id_cliente,$nit,$rz) {
         $consulta = "UPDATE lasueca.cliente SET nit = '$nit' ,razonSocial = '$rz' WHERE empresa_id=".$this->CON->empresa_id." and id_cliente = " . $id_cliente;
         return $this->CON->manipular($consulta);

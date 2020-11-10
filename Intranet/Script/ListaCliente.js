@@ -8,7 +8,6 @@ var posicion = 0;
 var listaDeuda = [];
 var id_venta = 0;
 $(document).ready(function () {
-    debugger
     $(".fecha").datepicker();
     $(".fecha").val(fechaActual());
     var listaUsuario = window.parent.listaUsuario;
@@ -25,11 +24,9 @@ $(document).ready(function () {
     $("#contenedorRegistroCobranza input[name=cobrador]").val(usuarioLocal.nombre);
     $("#contenedorRegistroCobranza input[name=cobrador]").data("cod", usuarioLocal.id_usuario);
     $("#tblcliente tbody").css("height", tamanopantalla);
-    $("#popCliente .modal-body").css("max-height", tamanopantalla + 45);
     $(window).resize(function () {
         var tamanopantalla = $(window).height() - 275;
         $("#tblcliente tbody").css("height", tamanopantalla);
-        $("#popCliente .modal-body").css("max-height", tamanopantalla + 45);
     });
     var clienteLocal = localStorage.getItem("idcliente");
     if (clienteLocal !== null) {
@@ -325,9 +322,10 @@ function cobranzaPop() {
     $("#contenedorRegistroCobranza input[name=cobrador]").data("cod", usuarioLocal.id_usuario);
     id_venta = 0;
     $('#popCobranza').modal('show');
+    var tipo=$("#tipoDoc option:selected").val();
     cargando(true);
     setTimeout(() => {
-        $.get(url, {proceso: "historicoVenta", idcliente: cliente_id}, function (response) {
+        $.get(url, {proceso: "historicoVenta", idcliente: cliente_id,tipo:tipo}, function (response) {
             cargando(false);
             var json = $.parseJSON(response);
             if (json.error.length > 0) {
@@ -376,54 +374,15 @@ function cobranzaPop() {
 
 }
 function historicoCobranza(idventa, deuda) {
-    if (deuda === 0) {
-        $("#contenedorCobranza").ocultar();
-        $("#contenedorRegistroCobranza").ocultar();
-        $("#errorCobranza").html("");
-        $("#contenedorCobranza input").removeClass("rojoClarito");
-        return;
-    }
+    $("#txtDeuda").html(format(deuda));
+    $("#txtsaldo").html(0.00);
+    $("input[name=comentario]").val("Pago Parcial");
+    $("input[name=fechaCobro]").val(fechaActual());
+    $("input[name=montoApagar]").val(deuda);
+    $("#contenedorRegistroCobranza").css("display", "flex");
+    $("#errorCobranza").html("");
+    $("#contenedorRegistroCobranza input").removeClass("rojoClarito");
     id_venta = idventa;
-    $("#contenedorCobranza").ocultar();
-    cargando(true);
-    $.get(url, {proceso: "detalleCobranzaXVenta", idventa: idventa}, function (response) {
-        cargando(false);
-        var json = $.parseJSON(response);
-        if (json.error.length > 0) {
-            if ("Error Session" === json.error) {
-                window.parent.cerrarSession();
-            }
-            alertaRapida(json.error, "error");
-        } else {
-            var listaCobranza = json.result;
-            var html = "";
-            for (var i = 0; i < listaCobranza.length; i++) {
-                var registro = listaCobranza[i];
-                var cobrado = parseFloat(registro.pagado);
-                html += "<tr>";
-                html += "<td><div class='pequeno'>" + registro.fecha + "</div></td>";
-                html += "<td><div class='pequeno'>" + registro.nroDocumento + "</div></td>";
-                html += "<td><div class='normal'>" + registro.detalle + "</div></td>";
-                html += "<td><div class='pequeno'>" + format(cobrado) + "</div></td>";
-                html += "<td><div class='normal'>" + registro.metodoPago + "</div></td>";
-                html += "<td><div class='normal'>" + registro.cobrador + "</div></td>";
-                html += "</tr>";
-            }
-            $("#txtDeuda").html(format(deuda));
-            $("#txtsaldo").html(0.00);
-            $("input[name=comentario]").val("Pago Parcial");
-            $("input[name=fechaCobro]").val(fechaActual());
-            $("input[name=montoApagar]").val(deuda);
-            $("#contenedorCobranza").css("display", "flex");
-            $("#contenedorRegistroCobranza").css("display", "flex");
-            $("#tblCobranza tbody").html(html);
-            $("#tblCobranza").igualartabla();
-
-            $("#errorCobranza").html("");
-            $("#contenedorCobranza input").removeClass("rojoClarito");
-        }
-    });
-
 }
 function verFacturaDeuda(ele) {
     var check = $(ele).is(":checked");

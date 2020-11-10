@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Prestamo de Dinero</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Impresion.css" rel="stylesheet" media="print" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?2" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js" type="text/javascript"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-messaging.js" type="text/javascript"></script>
+        <script src="../Script/PrestamoDinero.js" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Prestamo de Dinero</h1>
+            <div class="row" id="formVenta">
+                <div class="col-12">
+                    <div class="inlineblock">
+                        <span class='negrillaenter' id="nroDocumentoTxt">Nro Doc.</span>
+                        <input type='text' class='normal' disabled  name='nroDocumento' readonly autocomplete="off"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Fecha</span>
+                        <input type='text' class='fecha' name='fecha' autocomplete="off" readonly />
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Cliente</span>
+                        <input type='text' class='grande' autocomplete="off" placeholder="-- Cliente --"  data-cod="0" name='cliente'/>
+
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Entrega</span>
+                        <select id="entrega" class="medio" >
+                            <option value="Entregado">Entregado</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+
+                    <br>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Sucursal</span>
+                        <select id="sucursal" class=" medio"  ></select>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Detalle</span>
+                        <input type='text' class='grande' autocomplete="off" name='detalle' placeholder="Detalle del prestamo" />
+                    </div>
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Encargado</span>
+                        <input type='text' class='grande' autocomplete="off" name='encargado' placeholder="Encargado" />
+                    </div>
+                    <br>
+
+
+                </div>
+            </div>
+            <div class="row" style="    border-top: 1px solid silver; padding: 15px; margin-top: 15px;">
+                <div class="col-3 col-sm-3 col-md-3 col-lg-3" id="boxDataPrestamo">
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Capital</span>
+                        <input type='number'  autocomplete="off" name='capital'  />
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Nro Cuota</span>
+                        <input type='number'  autocomplete="off" name='nroCuotas' value="12" />
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Tasa Anual %</span>
+                        <input type='number' autocomplete="off" name='tasaAnual'  value="36"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Cargos Administrativos %</span>
+                        <input type='number' autocomplete="off" name='gastoAdministrativos'  value="36"/>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Primera Cuota</span>
+                        <input type='text' autocomplete="off" class="fecha" readonly="" name='primerCuota'  value=""/>
+                    </div>
+
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Desenbolso</span>
+                        <select id="desenbolso"  >
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                    <div class="inlineblock">
+                        <span class='negrillaenter'>Doc. Desenbolso</span>
+                        <input type='text'  autocomplete="off" name='nroDesenbolso'  />
+                    </div>
+                    <div class="centrar" style="margin-top: 22px;">
+                        <button onclick="generarTablaPrestamo()" class='btn-primary' id="btnPlanpago">Generar Plan</button>
+                    </div>
+                </div>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9" >
+                    <div class='negrillaenter'>Plan del Prestamo</div>
+                    <table class="table" id="tblPrestamo">
+                        <thead class="thead-light">
+                        <th><div style='width: 90px;'>Vencimiento</div></th>
+                        <th><div style='width: 90px;'>Detalle</div></th>
+                        <th><div class='pequeno'>Capital</div></th>
+                        <th><div class='pequeno'>Interes</div></th>
+                        <th><div class='pequeno'>Gastos Adm.</div></th>
+                        <th><div class='pequeno'>Cuota</div></th>
+                        <th><div class='pequeno'>Capital Vivo</div></th>
+                        </thead>
+                        <tbody >
+
+                        </tbody>
+                        <tfoot>
+
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-12">
+                    <div class='negrilla inlineblock' id='txtInformacion'></div>
+                    <div id='vlueInformacion' class="inlineblock" ></div>
+                </div>
+            </div>
+        </div>
+        <div class='background'></div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 580px">
+                <button onclick="actualizar()" id="actualizar" style="display: none;"></button>
+                <button onclick="nuevo(0)" class='btn-secondary' id="btncancelar" style="display: none;">Cancelar</button>
+                <button onclick="modificar()" class='btn-warning per56'  id="btnmodificar" style="display: none;">Modificar</button>
+                <button onclick="nuevo(1)" class='btn-primary per54'  id="btnnuevo" >Nuevo</button>
+                <button onclick="registrar()" class='btn-primary' id="btnregistrar">Registrar</button>
+                <button onclick="anular()" class='btn-link per55'  id="btnanular" style="display: none;">Anular Documento</button>
+                <!--<img onclick="imprimir(false)"  id="btnimprimir" style="display: none;" src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/> -->
+                <div class="inlineblock per58" id="navegadorRegistro">
+                    <img onclick="cargarPrestamo('primero')" src="../Imagen/Iconos/primero.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarPrestamo('anterior')" src="../Imagen/Iconos/anterior.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarPrestamo('siguiente')" src="../Imagen/Iconos/siguiente.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="cargarPrestamo('ultimo')" src="../Imagen/Iconos/ultimo.png" alt="Imprimir" class="iconBtn"/>
+                </div>
+
+            </div>
+        </div>
+        <div class='cuerposearch' id="searchLote" style="width: 197px;"></div>
+        <div class='cuerposearch searchProducto' id="searchProducto" style="width:498px;"></div>
+
+
+
+
+
+
+        <div class="modal fade" id="popVenta" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Venta</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Total Venta</label>
+                                <div id="totalVenta" class="txt"></div>
+                            </div>
+                            <div class="col-2">
+                                <label>Desc. Bs</label>
+                                <div id="descuentoTxt" class="txt"></div>
+                            </div>
+                            <div class="col-3">
+                                <label>NIT / CI</label>
+                                <input type='text' class="form-control" name='nit2' value="" autocomplete="off" maxlength="30"/>
+                            </div>
+                            <div class="col-4">
+                                <label>Razon Social</label>
+                                <input type='text' class="form-control" name='rz2' value="" autocomplete="off" maxlength="100"/>
+                            </div>
+                        </div>
+                        <div class="row  ContenedorPago" >
+                            <div class="col-3">
+                                <label>Monto Cobrado</label>
+                                <input type='number' class="form-control per64" name='montoCobrado' value="0" onkeyup="calcularSaldo()"/>
+                            </div>
+                            <div class="col-3">
+                                <label>Saldo</label>
+                                <div id="saldo"  class="txt">Vendedor</div>
+                            </div>
+                            <div class="col-3">
+                                <label>Metodo Pago</label>
+                                <select id="tipoPago" class="normal">
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta Credito o Debito">Tarjeta Credito o Debito</option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="row" >
+                            <div class="col-6">
+                                <label>Vendedor</label><br> 
+                                <select id="vendedor" class="form-control per65"></select>
+                            </div>
+                            <div class="col-6 ContenedorPago2" >
+                                <label>Cobrador</label><br>
+                                <select id="cobrador" class="form-control per66"></select>
+                            </div>
+                        </div>
+                        <div class="row" id="boxEntrega">
+                            <div class="col-3">
+                                <label>Entrega</label><br>
+                                <select id="entrega" class="form-control" onchange="cambioEstadoEntrega()">
+                                    <option value="Entregado">Al Vender</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Programado">Programado</option>
+                                </select>
+                            </div>
+                            <div class="col-3 entregaFecha">
+                                <label>Fecha de Entrega</label><br>
+                                <input type='text' class="form-control fecha" readonly name='fechaEntrega' value="" />
+                            </div>
+                            <div class="col-6 entregaDireccion">
+                                <label>Dirección</label><br>
+                                <input type='text' class="form-control" name='direccion' value="" maxlength="600" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="row" >
+
+                            <div class="col-12">
+                                <label>Comentario</label><br>
+                                <input type='text' class="form-control" name='Comentario' value="" maxlength="600" autocomplete="off"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <img onclick="vistaPrevia(1)" src="../Imagen/Iconos/view.png" alt="Vista Previa" class="iconBtn per67"/>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar Venta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popVistaPrevia" tabindex="-1" role="dialog" style="overflow: hidden;" aria-hidden="true">
+            <div class="modal-dialog" role="document" style="width: 97%; max-width: 100%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Vista Previa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="height: 426px;">
+                        <iframe id="impresion" style="width: 100%; height: 97%;"></iframe>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

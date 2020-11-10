@@ -74,7 +74,11 @@ function buscar(e) {
             listaCategoria = json.result.categoria;
             var html="";
             for (var i = 0; i < listaCategoria.length; i++) {
-                html+="<div onclick='modificar(1,this)' class='boxCategoriaProducto' id='c"+listaCategoria[i].id_categoriaProducto+"' data-index='"+i+"'>"+listaCategoria[i].nombre+"<div class='lineabox'> </div></div>"
+                var tipo="";
+                if(listaCategoria[i].tipo==="especial"){
+                    tipo="background: #86b386;"
+                }
+                html+="<div onclick='modificar(1,this)'  class='boxCategoriaProducto' id='c"+listaCategoria[i].id_categoriaProducto+"' data-index='"+i+"'>"+listaCategoria[i].nombre+"<div class='lineabox' style='"+tipo+"'> </div></div>"
             }
             $("#contenedorUsuarop").html(html);
             listaLineaCatalogo = json.result.linea;
@@ -183,6 +187,7 @@ function modificar(tipo,ele) {
         $("#popUsuario .modal-title").text("Modificando Categoria");
         $("input[name=nombre]").val(categoria.nombre);
         $("#estado option[value='" + categoria.estado + "']").prop("selected", true);
+        $("#tipo option[value='" + categoria.tipo + "']").prop("selected", true);
         $("#foto").attr("src", categoria.foto);
         $("#foto").data("peque", categoria.foto);
         for (var i = 0; i < listaLineaCatalogo.length; i++) {

@@ -14,7 +14,7 @@ if ($proceso === "stockActual") {
 if ($proceso === "registrarPrecio") {
     $precio= new precioVenta($con);
     $fechaactual = date("d/m/Y");
-    $precio->contructor(0, $venta, $fechaactual, $idproducto, $sessionUsuario["id_usuario"]);
+    $precio->contructor(0, $venta, $fechaactual, $idproducto, $sessionUsuario["id_usuario"],$comision);
     if(!$precio->insertar()){
         $error='No se logró registrar el precio de venta. Intente nuevamente. COD.0x33';
     }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html manifest="../manifest.appcache">
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Categoria Producto</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/TIENDA_ConfiguracionTienda.js" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Configuracion de la tienda</h1>
+            <div class="row m-2">
+
+                <div class="col-12" >
+                    <div style="    width: 500px;">
+                        <div class="inlineblock mr-2">
+                            <span class="negrillaenter">Buscador</span>
+                            <input type='text' class='grande buscar centrar'  autocomplete="off"  name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event)"/>
+                        </div>
+                    </div>
+                    <div class="minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar.
+                    </div>
+                    <div id="contenedorUsuarop">
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 300px">
+                <button type="button" class="btn btn-primary per160"  data-toggle="modal" data-target="#popUsuario" data-whatever="@mdo" onclick="registrar(1)">Guardar Cambios</button>
+            </div>
+        </div>
+
+    </body>
+</html>
+

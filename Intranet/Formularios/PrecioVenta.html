@@ -62,8 +62,8 @@
                         </div>
                     </div>
                     <div class="minitext" >
-                            <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
-                            * Al utilizar el buscador presionar enter para filtrar. * Para modificar los precios seleccione el registro.
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar los precios seleccione el registro.
                     </div>
                     <div id='preciocontenedor'>
                         <table class="table" id='tblprd'>
@@ -77,11 +77,12 @@
                             <th><div class="chico">Precio Venta</div></th>
                             <th><div class="chico">Ganancia</div></th>
                             <th><div class="chico">Margen Ganancia</div></th>
+                            <th><div class="chico">Comision %</div></th>
                             </thead>
                             <tbody></tbody>
                         </table>
                     </div>
-                    
+
                     <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Más Productos (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
                 </div>
             </div>
@@ -110,17 +111,20 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label>Código</label>
                                 <div id="txtcod" class="p-2"></div>
 
                             </div>
-                            <div class="col-8">
+                            <div class="col-6">
                                 <label>Producto</label>
                                 <div  id="txtprod" class="p-2"></div>
 
                             </div>
-
+                            <div class="col-3">
+                                <label>Comision %</label>
+                                <input class="form-control" type="number" step="0.5" name="comision" onclick="selectText(this)" >
+                            </div>
                         </div>
 
                         <div class="row">

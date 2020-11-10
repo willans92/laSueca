@@ -6,13 +6,14 @@ if ($proceso === "deudaClientes") {
     $cobranza = new cobranza($con);
     $resultado = $cobranza->deudaCliente();
 }
-if ($proceso === "detalleCobranzaXVenta") {
-    $cobranza = new cobranza($con);
-    $resultado = $cobranza->detalleCobranzaXVenta($idventa);
-}
 if ($proceso === "historicoVenta") {
     $venta = new venta($con);
-    $resultado = $venta->ventaXCliente($idcliente);
+    if($tipo==="Venta"){
+        $resultado = $venta->ventaXCliente($idcliente);
+    }
+    if($tipo==="Prestamo"){
+        $resultado = $venta->ventaXCliente($idcliente);
+    }
 }
 if ($proceso === "registrar") {
     $con->transacion();

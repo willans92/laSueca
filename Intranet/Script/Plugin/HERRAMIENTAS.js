@@ -261,7 +261,11 @@ $(document).ready(function () {
     $(window).resize(function () {
         $(".cuerposearch").ocultar();
     });
-    validarPermisos();
+    var usuarioLocal = localStorage.getItem("usuario");
+    if (usuarioLocal !== null) {
+        validarPermisos();
+    }
+    
 });
 function validar(tipo, texto) {
     texto = (texto + "").trim();

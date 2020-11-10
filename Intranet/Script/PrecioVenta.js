@@ -84,6 +84,7 @@ function buscar(e, tipo) {
         var nombre = (producto.nombre+ "").toUpperCase();
         var stockProducto = parseInt(listaStock[i].stock);
         var precioVenta = parseFloat(listaStock[i].precioVenta);
+        var comision = parseFloat(listaStock[i].comision);
         var estadomarca = (marcaAUX === '0' || marcaAUX === (producto.marca_id+ ""));
         var estadolinea = (lineaAUX === '0' || lineaAUX === (producto.linea_producto_id+ ""));
         var estadoCodigo = codigo.indexOf(buscador) >= 0;
@@ -125,7 +126,7 @@ function buscar(e, tipo) {
                 fechaCompra = parseInt((fechaActual - fecha) / (1000 * 60 * 60 * 24))
             }
             posicion++;
-            html += "<tr onclick='modificar(1)' id='p" + producto.id_producto + "' data-id='" + producto.id_producto + "' data-preciocompra='" + precioCompra + "' data-precioventa='" + precioVenta + "'>";
+            html += "<tr onclick='modificar(1)' id='p" + producto.id_producto + "' data-id='" + producto.id_producto + "' data-preciocompra='" + precioCompra + "' data-precioventa='" + precioVenta + "' data-comision='" + comision + "'>";
             html += "<td><div class='normal'>" + codigo + "</div></td>";
             html += "<td><div class='medio'>" + nombre + "</div></td>";
             html += "<td><div class='chico'>" + stockProducto + "</div></td>";
@@ -135,6 +136,7 @@ function buscar(e, tipo) {
             html += "<td><div class='chico'>" + format(precioVenta) + "</div></td>";
             html += "<td><div class='chico'>" + format(ganancia) + "</div></td>";
             html += "<td><div class='chico'>" + format(margen) + "</div></td>";
+            html += "<td><div class='chico'>" + format(comision) + "</div></td>";
             html += "</tr>";
             inicia--;
         }
@@ -186,7 +188,6 @@ function buscar(e, tipo) {
         $("#btncargarMas").ocultar();
     }
 }
-
 function calcularPrecio(tipo){
     var venta=parseFloat($('input[name=precioVenta]').val());
     var margen=parseFloat($('input[name=margen]').val());
@@ -218,13 +219,20 @@ function calcularPrecio(tipo){
     $('input[name=precioVenta]').val(venta.toFixed(2))
 }
 function registrar(){
-    var venta=parseFloat($('input[name=precioVenta]').val());
+    var venta=$('input[name=precioVenta]').val().trim();
+    venta=venta===""?0:parseFloat(venta);
+    var comision=$('input[name=comision]').val().trim();
+    comision=comision===""?0:parseFloat(comision);
     if(venta<=0){
-        alertaRapida('El precio de venta no puede ser meno o igual a 0');
+        alertaRapida('El precio de venta no puede ser menor o igual a 0');
+        return;
+    }
+    if(comision<=0){
+        alertaRapida('Comision de venta no puede ser menor o igual a 0');
         return;
     }
      cargando(true);
-    $.post(url, {proceso: "registrarPrecio",idproducto:id_Producto,venta:venta}, function (response) {
+    $.post(url, {proceso: "registrarPrecio",idproducto:id_Producto,comision:comision,venta:venta}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
         if (json.error.length > 0) {
@@ -242,6 +250,7 @@ function registrar(){
             for (var i = 0; i < listaStock.length; i++) {
                 if(listaStock[i].id_producto==id_Producto){
                     listaStock[i].precioVenta=venta;
+                    listaStock[i].comision=comision;
                     break;
                 }
             }
@@ -262,6 +271,8 @@ function modificar(tipo){
         var precioCompra = seleccionado.data("preciocompra");
         var precioVenta = seleccionado.data("precioventa");
         precioVenta = parseFloat(precioVenta);
+        var comision = seleccionado.data("comision");
+        comision = parseFloat(comision);
         precioCompra = parseFloat(precioCompra);
         var listaProducto = window.parent.listaProducto;
         var producto = listaProducto['p' + id_Producto];
@@ -282,6 +293,7 @@ function modificar(tipo){
         var ganancia=precioVenta-precioCompra;
         $('#txtultprecio').html(precioCompra.toFixed(2));
         $('input[name=precioVenta]').val(precioVenta.toFixed(2));
+        $('input[name=comision]').val(comision.toFixed(2));
         $('input[name=margen]').val(margen.toFixed(2));
         $('input[name=ganancia]').val(ganancia.toFixed(2));
         $('#creditopop').modal('show');
