@@ -9,6 +9,7 @@ var categoria_id = "0";
 var listaCategoria=[];
 $(document).ready(function () {
     var tiendaLocal = localStorage.getItem("tienda");
+    debugger
     if (tiendaLocal === null) {
         window.parent.cerrarSession();
         return;

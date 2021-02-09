@@ -55,7 +55,8 @@ $resultado = "";
 session_start();
 if (empty($activar)) {
     if (isset($_COOKIE["PHPSESSID"])) {
-        $sessionUsuario = $_SESSION["usuario"];
+        $tipoSession=$tipoSession?$tipoSession:"usuario";
+        $sessionUsuario = $_SESSION[$tipoSession];
         $has_session = session_status() == PHP_SESSION_ACTIVE;
         if ($sessionUsuario == null || !$has_session) {
             $error = "Error Session";

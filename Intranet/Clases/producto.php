@@ -60,24 +60,74 @@ class producto {
         return $this->CON->consulta2($consulta)[0];
     }
 
-    function productoTienda($id_tienda,$linea,$categoria,$text,$pibote) {
+    function productoMasVendidoHome($id_tienda) {
+        $consulta = "select * from ( ";
+        $consulta .= " select p.nombre,p.id_producto, p.foto,";
+        $consulta .= " (select count(p1.id_pedidoApp) from lasueca.pedidoApp p1, lasueca.detallepedidoapp d1 where p1.estado like 'entregado' and d1.pedidoApp_id=p1.id_pedidoApp and d1.producto_id=p.id_producto) vendido";
+        $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c";
+        $consulta .= " , lasueca.producto p, lasueca.linea_producto_tienda lp ";
+        $consulta .= " where l.linea_producto_id=lin.id_linea_producto ";
+        $consulta .= " and l.categoriaProducto_id=c.id_categoriaProducto and p.linea_producto_id=l.linea_producto_id ";
+        $consulta .= " and lp.linea_producto_id=l.linea_producto_id and c.estado like 'activo' ";
+        $consulta .= " and p.estado like 'activo'  and p.app  like 'activo'  and lp.tienda_id=$id_tienda ";
+        $consulta .= " group by p.nombre,p.id_producto, p.foto limit 0,15) a";
+        $consulta .= " order by vendido desc , nombre asc, id_producto desc";
+        return $this->CON->consulta2($consulta);
+    }
+
+    function nuestrosProductosHome($id_tienda, $text, $categoria, $subcategoria, $contador, $cantidad) {
+        $strSub="";
+        if($subcategoria!="0"){
+            $strSub=" and l.linea_producto_id in ($subcategoria) ";
+        }
+        $strCat="";
+        if($categoria!="0"){
+            $strCat=" and c.id_categoriaproducto=$categoria ";
+        }
+        $consulta = " select * from ( ";
+        $consulta .= " select p.nombre,p.id_producto, p.foto";
+        $consulta .= " ,ifnull((select precio from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
+        $consulta .= " from lasueca.categoriaproducto_linea l,lasueca.categoriaproducto c";
+        $consulta .= " , lasueca.producto p, lasueca.linea_producto_tienda lp ";
+        $consulta .= " where l.categoriaProducto_id=c.id_categoriaProducto and p.linea_producto_id=l.linea_producto_id ";
+        $consulta .= " and lp.linea_producto_id=l.linea_producto_id and c.estado like 'activo' ";
+        $consulta .= " and p.estado like 'activo'  and p.app  like 'activo'  ";
+        $consulta .= " and lp.tienda_id=$id_tienda and p.nombre like '%$text%' $strCat $strSub";
+        $consulta .= " group by p.nombre,p.id_producto, p.foto limit $contador,$cantidad) a";
+        $consulta .= " order by id_producto desc";
+        $resultado=array();
+        $resultado["data"]=$this->CON->consulta2($consulta);
+        $consulta = " select a.cant  from ( ";
+        $consulta .= " select count(p.id_producto) cant";
+        $consulta .= " from lasueca.categoriaproducto_linea l,lasueca.categoriaproducto c";
+        $consulta .= " , lasueca.producto p, lasueca.linea_producto_tienda lp ";
+        $consulta .= " where l.categoriaProducto_id=c.id_categoriaProducto and p.linea_producto_id=l.linea_producto_id ";
+        $consulta .= " and lp.linea_producto_id=l.linea_producto_id and c.estado like 'activo' ";
+        $consulta .= " and p.estado like 'activo'  and p.app  like 'activo'  ";
+        $consulta .= " and lp.tienda_id=$id_tienda and p.nombre like '%$text%' $strCat $strSub";
+        $consulta .= ") a";
+        $resultado["limite"]=$this->CON->consulta2($consulta)[0]["cant"];
+        return $resultado;
+    }
+
+    function productoTienda($id_tienda, $linea, $categoria, $text, $pibote) {
         $consulta .= " select lin.descripcion linea,lin.id_linea_producto,c.nombre categoria,p.nombre,p.codigo ";
-        $consulta .= " ,ifnull((select precio from precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
-        $consulta .= " ,ifnull((select comision from precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) comision";
+        $consulta .= " ,ifnull((select precio from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
+        $consulta .= " ,ifnull((select comision from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) comision";
         $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c, lasueca.producto p, lasueca.linea_producto_tienda lp";
         $consulta .= " where ($linea=0 or  l.linea_producto_id=$linea) and ($categoria=0 or  c.id_categoriaProducto=$categoria) and (p.codigo like '%$text%' or p.nombre like '%$text%')";
         $consulta .= " and l.linea_producto_id=lin.id_linea_producto and l.categoriaProducto_id=c.id_categoriaProducto";
         $consulta .= " and p.linea_producto_id=l.linea_producto_id and lp.linea_producto_id=l.linea_producto_id";
         $consulta .= " and c.estado like 'activo' and p.estado like 'activo'  and p.app  like 'activo'  and lp.tienda_id=$id_tienda limit $pibote,50";
-        $resultado=array();
-        $resultado["data"]=$this->CON->consulta2($consulta);
+        $resultado = array();
+        $resultado["data"] = $this->CON->consulta2($consulta);
         $consulta = " select count(p.id_producto) limite";
         $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c, lasueca.producto p, lasueca.linea_producto_tienda lp";
         $consulta .= " where ($linea=0 or  l.linea_producto_id=$linea) and ($categoria=0 or  c.id_categoriaProducto=$categoria) and (p.codigo like '%$text%' or p.nombre like '%$text%')";
         $consulta .= " and l.linea_producto_id=lin.id_linea_producto and l.categoriaProducto_id=c.id_categoriaProducto";
         $consulta .= " and p.linea_producto_id=l.linea_producto_id and lp.linea_producto_id=l.linea_producto_id";
         $consulta .= " and c.estado like 'activo' and p.estado like 'activo'  and p.app  like 'activo'  and lp.tienda_id=$id_tienda";
-        $resultado["limite"]= $this->CON->consulta2($consulta)[0]["limite"];
+        $resultado["limite"] = $this->CON->consulta2($consulta)[0]["limite"];
         return $resultado;
     }
 

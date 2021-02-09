@@ -63,6 +63,10 @@ class Sucursal {
         $consulta = "select documentoVenta from lasueca.sucursal where id_sucursal=$sucursal_id and empresa_id=".$this->CON->empresa_id;
         return $this->CON->consulta2($consulta)[0]["documentoVenta"];
     }
+    function TodassucursalLocalizacion() {
+        $consulta = "select s.id_sucursal, s.nombre, s.ciudad_id, s.lon ,s.lat from lasueca.sucursal s where estado like 'activo'";
+        return $this->CON->consulta2($consulta);
+    }
     function todas() {
         $consulta = "select s.id_sucursal,s.empresa_id, s.nombre, s.telefono, s.nit, s.direccion,  s.correo, s.logo, s.documentoVenta,s.estructuraDocumentoVenta ,s.estado,s.pais, s.ciudad_id, s.horarioDe1, s.horarioHasta1, s.horarioDe2, s.horarioHasta2, s.app, s.lon ,s.lat,c.nombre ciudad from lasueca.sucursal s, lasueca.ciudad c where s.ciudad_id=c.id_ciudad and s.empresa_id=".$this->CON->empresa_id."";
         return $this->CON->consulta2($consulta);

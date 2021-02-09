@@ -12,23 +12,35 @@ class pedidoApp {
     var $motivo;
     var $costoDelivery;
     var $totalPedido;
-    var $direccionApp_id;
     var $sucursal_id;
     var $cliente;
     var $venta_id;
+    var $delivery_id;
     var $recepcionado;
     var $llamarMoto;
     var $enCamino;
+    var $cancelado;
     var $aceptarPedido;
     var $descuento;
     var $usuario_id;
+    var $metodoPago;
+    var $fechaProgramada;
+    var $horaProgramada;
+    var $id_tienda;
+    var $direccion;
+    var $lon;
+    var $lat;
     var $CON;
 
     function __construct($con) {
         $this->CON = $con;
     }
 
-    function contructor($id_pedidoApp, $solicitada, $entregada, $nit, $rz, $montoBillete, $estado, $motivo, $costoDelivery, $totalPedido, $direccionApp_id, $sucursal_id, $cliente) {
+    function contructor($id_pedidoApp, $solicitada, $entregada, $nit, $rz, $montoBillete,
+            $estado, $motivo, $costoDelivery, $totalPedido, $sucursal_id, $cliente, $venta_id,
+            $delivery_id, $recepcionado, $llamarMoto, $enCamino, $cancelado, $aceptarPedido,
+            $descuento, $usuario_id, $metodoPago, $fechaProgramada, $horaProgramada, $id_tienda,
+            $direccion, $lon, $lat) {
         $this->id_pedidoApp = $id_pedidoApp;
         $this->solicitada = $solicitada;
         $this->entregada = $entregada;
@@ -39,13 +51,28 @@ class pedidoApp {
         $this->motivo = $motivo;
         $this->costoDelivery = $costoDelivery;
         $this->totalPedido = $totalPedido;
-        $this->direccionApp_id = $direccionApp_id;
         $this->sucursal_id = $sucursal_id;
         $this->cliente = $cliente;
+        $this->venta_id = $venta_id;
+        $this->delivery_id = $delivery_id;
+        $this->recepcionado = $recepcionado;
+        $this->llamarMoto = $llamarMoto;
+        $this->enCamino = $enCamino;
+        $this->cancelado = $cancelado;
+        $this->aceptarPedido = $aceptarPedido;
+        $this->descuento = $descuento;
+        $this->usuario_id = $usuario_id;
+        $this->metodoPago = $metodoPago;
+        $this->fechaProgramada = $fechaProgramada;
+        $this->horaProgramada = $horaProgramada;
+        $this->id_tienda = $id_tienda;
+        $this->direccion = $direccion;
+        $this->lon = $lon;
+        $this->lat = $lat;
     }
 
     function insertar() {
-        $consulta = "INSERT INTO lasueca.pedidoapp (id_pedidoApp,solicitada,entregada,nit,rz,montoBillete,estado,motivo,costoDelivery,totalPedido,direccionApp_id,sucursal_id,cliente,descuento,usuario_id) VALUES ('$this->id_pedidoApp','$this->solicitada','$this->entregada','$this->nit','$this->rz','$this->montoBillete','$this->estado','$this->motivo','$this->costoDelivery','$this->totalPedido','$this->direccionApp_id','$this->sucursal_id','$this->cliente',0,0);";
+        $consulta = "INSERT INTO lasueca.pedidoapp (id_pedidoApp,solicitada,entregada,nit,rz,montoBillete,estado,motivo,costoDelivery,totalPedido,sucursal_id,cliente,venta_id,delivery_id,recepcionado,llamarMoto,enCamino,cancelado,aceptarPedido,descuento,usuario_id,metodoPago,fechaProgramada,horaProgramada,id_tienda,direccion,lon,lat) VALUES ('$this->id_pedidoApp','$this->solicitada','$this->entregada','$this->nit','$this->rz','$this->montoBillete','$this->estado','$this->motivo','$this->costoDelivery','$this->totalPedido','$this->sucursal_id','$this->cliente','$this->venta_id','$this->delivery_id','$this->recepcionado','$this->llamarMoto','$this->enCamino','$this->cancelado','$this->aceptarPedido','$this->descuento','$this->usuario_id','$this->metodoPago','$this->fechaProgramada','$this->horaProgramada','$this->id_tienda','$this->direccion','$this->lon','$this->lat');";
         if (!$this->CON->manipular($consulta)) {
             return false;
         }
@@ -78,6 +105,19 @@ class pedidoApp {
         $nro = $this->CON->consulta2($consulta);
         return $nro[0];
     }
+    
+    function buscarPedidoTienda($estado, $de, $hasta, $buscador) {
+        
+        if($estado!=""){
+            $strEstado=" and p.estado like '$estado'";    
+        }
+        $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente, sum(d.precioU*(pr.comision/100)) comision";
+        $consulta .= " from lasueca.pedidoapp p , lasueca.detallepedidoapp d, lasueca.precioventa pr, lasueca.clienteApp c";
+        $consulta .= " where p.id_pedidoApp=d.pedidoApp_id and d.producto_id=pr.producto_id and p.cliente=c.id_clienteApp";
+        $consulta .= " $strEstado and c.nombre like '%$buscador%' and STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y') ";
+        $consulta .= " group by p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre ";
+        return $this->CON->consulta2($consulta);
+    }
 
     function reporteIngresosDeDelivery($id_delivery, $de, $hasta) {
         $consulta = "select estado, count(id_pedidoApp) pedidos, sum(costoDelivery) ingresos from pedidoapp";
@@ -96,14 +136,14 @@ class pedidoApp {
         return $this->CON->consulta2($consulta);
     }
 
-    function pedidosRecepcionadosDelivery($ciudad_id, $contador, $cantidad, $lon2, $lat2,$empresa=0) {
-        $strEmp="";
-        $strAfiliacion=" and e.delivery like 'emprendedor'";
-        if($empresa!=0){
-            $strEmp=" and s.empresa_id=$empresa ";
-            $strAfiliacion=" and e.delivery like 'propia'";
+    function pedidosRecepcionadosDelivery($ciudad_id, $contador, $cantidad, $lon2, $lat2, $empresa = 0) {
+        $strEmp = "";
+        $strAfiliacion = " and e.delivery like 'emprendedor'";
+        if ($empresa != 0) {
+            $strEmp = " and s.empresa_id=$empresa ";
+            $strAfiliacion = " and e.delivery like 'propia'";
         }
-        
+
         $consulta = "select *";
         $consulta .= "  from (";
         $consulta .= "	select '1' tipo,e.appLogo,p.llamarMoto,p.totalPedido,e.nombreempresa,p.id_pedidoApp,s.lat,s.lon,c.nombre cliente,";
@@ -111,8 +151,8 @@ class pedidoApp {
         $consulta .= "	from lasueca.pedidoapp p , lasueca.sucursal s, lasueca.empresa e, lasueca.clienteapp c";
         $consulta .= "	where s.ciudad_id=$ciudad_id $strEmp $strAfiliacion and p.estado like 'recogiendo pedido' and (p.delivery_id=0 || p.delivery_id is null) ";
         $consulta .= "	and s.id_sucursal=p.sucursal_id and e.id_empresa=s.empresa_id and c.id_clienteApp=p.cliente";
-        
-        if($empresa===0){
+
+        if ($empresa === 0) {
             $consulta .= "	union";
             $consulta .= "	SELECT '2' tipo,'img/logo/logoDelivery.png' as appLogo, solicitado llamarMoto";
             $consulta .= "	    ,costo totalPedido , 'Emprendedor Express' nombreempresa,p.id_pedidoCurrier id_pedidoApp,";
@@ -120,9 +160,8 @@ class pedidoApp {
             $consulta .= "		((acos((sin(p.lat * 0.01745329) * sin($lat2 * 0.01745329)) +  (cos(p.lat * 0.01745329) * cos($lat2 * 0.01745329) * cos((p.lon-$lon2) * 0.01745329)) )* 57.29577951)*111.302 *1000) distancia ";
             $consulta .= "	FROM lasueca.pedidocurrier p, lasueca.clienteApp c";
             $consulta .= "	where p.estado like 'pendiente' and p.ciudad_id=$ciudad_id and (p.delivery_id=0 || p.delivery_id is null) and p.clienteApp_id=c.id_clienteApp";
-
         }
-        
+
 
         $consulta .= "  ) a";
         $consulta .= " order by STR_TO_DATE(a.llamarMoto,'%e/%c/%Y %H:%i:%s') asc limit $contador,$cantidad";
@@ -132,12 +171,11 @@ class pedidoApp {
         $consulta .= "	from lasueca.pedidoapp p , lasueca.sucursal s, lasueca.empresa e";
         $consulta .= "	where s.ciudad_id=$ciudad_id and p.estado like 'recogiendo pedido' $strEmp $strAfiliacion and (p.delivery_id=0 || p.delivery_id is null) ";
         $consulta .= "	and s.id_sucursal=p.sucursal_id and e.id_empresa=s.empresa_id";
-        if($empresa===0){
+        if ($empresa === 0) {
             $consulta .= "	union";
             $consulta .= "	SELECT count(p.id_pedidoCurrier) cantidad, '2' tipo";
             $consulta .= "	FROM lasueca.pedidocurrier p";
             $consulta .= "	where p.estado like 'pendiente' and p.ciudad_id=$ciudad_id and (p.delivery_id=0 || p.delivery_id is null)";
-
         }
         $consulta .= "	) a ";
         $limiteData = $this->CON->consulta($consulta);
@@ -332,10 +370,11 @@ class pedidoApp {
         $consulta = "update lasueca.pedidoapp set venta_id=$idventa where id_pedidoApp=$idpedido";
         return $this->CON->manipular($consulta);
     }
-    function cambiarUbicacionPedido($idpedido, $lon,$lat,$costo,$descuento,$usuario_id) {
+
+    function cambiarUbicacionPedido($idpedido, $lon, $lat, $costo, $descuento, $usuario_id) {
         $consulta = "update direccionApp set lon='$lon',lat='$lat' where id_direccionApp=(select direccionApp_id from pedidoapp where id_pedidoApp=$idpedido limit 0,1)";
-        if($this->CON->manipular($consulta)){
-            $consulta = "update pedidoapp set costoDelivery=$costo,descuento=$descuento,usuario_id=$usuario_id where id_pedidoApp=$idpedido";    
+        if ($this->CON->manipular($consulta)) {
+            $consulta = "update pedidoapp set costoDelivery=$costo,descuento=$descuento,usuario_id=$usuario_id where id_pedidoApp=$idpedido";
             return $this->CON->manipular($consulta);
         }
         return false;

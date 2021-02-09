@@ -4,56 +4,67 @@
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
         <link href="Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
         <script src="Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/popper.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
         <script src="Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
-        <script src="Script/index.js" type="text/javascript"></script>
+        <script src="Script/buscador.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
         include_once "Intranet/Clases/catalogoProducto.php";
         include_once "Intranet/Clases/producto.php";
-        include_once "Libreria/CONN.php";
         include_once "Intranet/Clases/Sucursal.php";
-        
-        
-        
-        
+        include_once "Intranet/Clases/linea_producto_tienda.php";
+        include_once "Libreria/CONN.php";
         $tienda_id = 4;
         $con = new CONN(0);
-        $categoria = new catalogoProducto($con);
-        $listaCategoria = $categoria->catalogoAsignadoTienda($tienda_id);
+        $categoriabusqueda = isset($_GET["c"]) ? $_GET["c"] : "0";
+        $subcategoriabusqueda = isset($_GET["s"]) ? $_GET["s"] : "0";
+        $txtbusqueda = isset($_GET["b"]) ? $_GET["b"] : "";
+        $tipobusqueda = isset($_GET["t"]) ? $_GET["t"] : "0";
         $htmlCategoria = "";
-        for ($i = 0; $i < count($listaCategoria); $i++) {
-            $cat = $listaCategoria[$i];
-            $id_categoria = $cat["id_categoriaProducto"];
-            $htmlCategoria .= "<div class='col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 p-0'>";
-            $htmlCategoria .= "    <div class='item'>";
-            $htmlCategoria .= "        <div class='titulo'>" . $cat["nombre"] . "</div>";
-            $htmlCategoria .= "        <a href='buscador.php?c=$id_categoria'><img src='" . $cat["foto"] . "'></a>";
-            $htmlCategoria .= "        <a class='link' href='buscador.php?c=$id_categoria'>Comprar Ahora</a>";
-            $htmlCategoria .= "    </div>";
-            $htmlCategoria .= "</div>";
+        $htmlSubCategoria = "";
+
+        if ($tipobusqueda === "0") {
+            $sub = new linea_producto_tienda($con);
+            $lista = $sub->lineaXidCategoria($categoriabusqueda, $tienda_id);
+            for ($i = 0; $i < count($lista); $i++) {
+                $selected = "";
+                $arrayid = explode(",", $subcategoriabusqueda);
+                $index = in_array($lista[$i]["id_linea_producto"], $arrayid);
+                $query = $subcategoriabusqueda;
+                if ($index) {
+                    $selected = "selectedSubcategoria";
+                    $str = $query = str_replace("," . $lista[$i]["id_linea_producto"], "", $query);
+                    $query = str_replace("" . $lista[$i]["id_linea_producto"], "", $query);
+                } else {
+                    $query = $query . "," . $lista[$i]["id_linea_producto"];
+                }
+
+                $htmlSubCategoria .= "<a class='boxSubcategoria $selected' href='./buscador.php?c=" . $categoriabusqueda . "&t=$tipobusqueda&b=$txtbusqueda&s=$query' >" . $lista[$i]["descripcion"] . "</a>";
+            }
+            $categoria = new catalogoProducto($con);
+            $listaCategoria = $categoria->catalogoAsignadoTienda($tienda_id);
+            for ($i = 0; $i < count($listaCategoria); $i++) {
+                $selected = "";
+                if ($categoriabusqueda == $listaCategoria[$i]["id_categoriaProducto"]) {
+                    $selected = "selectedSubcategoria";
+                }
+                $htmlCategoria .= "<a class='boxcategoria $selected' href='./buscador.php?c=" . $listaCategoria[$i]["id_categoriaProducto"] . "&t=$tipobusqueda&b=$txtbusqueda&s=0' >";
+                $htmlCategoria .= "<img src='" . $listaCategoria[$i]["foto"] . "'>";
+                $htmlCategoria .= "<span>" . $listaCategoria[$i]["nombre"] . "</span>";
+                $htmlCategoria .= "</a>";
+            }
         }
-
-
         $producto = new producto($con);
-        $listaProducto = $producto->productoMasVendidoHome($tienda_id);
-        $htmlProductoMasVendido = "";
-        for ($i = 0; $i < count($listaProducto); $i++) {
-            $prod = $listaProducto[$i];
-            $foto = $prod["foto"];
-            $htmlProductoMasVendido .= "<img src='$foto' />";
-        }
-
-
-
-        $listaProducto = $producto->nuestrosProductosHome($tienda_id, "", "0", "0", 0, 30)["data"];
+        $data = $producto->nuestrosProductosHome($tienda_id, $txtbusqueda, $categoriabusqueda, $subcategoriabusqueda, 0, 30);
+        $listaProducto = $data["data"];
+        $limite = $data["limite"];
         $htmlProducto = "";
         for ($i = 0; $i < count($listaProducto); $i++) {
             $prod = $listaProducto[$i];
@@ -68,13 +79,27 @@
             $htmlProducto .= "<div class='nombre'>$nombre</div>";
             $htmlProducto .= "</div>";
         }
+        $msn = "Productos Encontrados : $limite";
+        if ($limite == "0") {
+            $msn = "No se encontro productos";
+        }
+        $ocultarMas = "";
+        if (count($listaProducto) === $limite) {
+            $ocultarMas = "style='display:none'";
+        }
         $tarifario = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
         
         $sucursal=new Sucursal($con);
         $sucursalesDisponibles=$sucursal->TodassucursalLocalizacion();
         ?>
+
         <script>
+            var tipo = '<?php echo $tipobusqueda ?>';
+            var categoria = '<?php echo $categoriabusqueda ?>';
+            var subcategoria = '<?php echo $subcategoriabusqueda ?>';
+            var limite = '<?php echo $msn ?>';
             var id_tienda = '<?php echo $tienda_id ?>';
+            var pibote = '<?php echo count($listaProducto) ?>';
             var tarifario=<?php echo $tarifario?>;
             var listaSucursales=<?php echo json_encode($sucursalesDisponibles) ?>;
         </script>
@@ -92,7 +117,7 @@
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text" onkeyup="buscador(event)" name="buscador">
+                    <input type="text" onkeyup="buscador(event)" name="buscador" autocomplete="off">
                     <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('')">
                 </div>
             </div>
@@ -105,57 +130,35 @@
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text">
+                    <input type="text" autocomplete="off">
                     <img src="Imagen/Iconos/lupa.svg" title="buscador">
                 </div>
             </div>
         </div>
         <div style="margin-top: 45px" class="d-inline-block d-sm-none"></div>
-        <div class="container-fluid" style="max-width: 1600px; margin: 0 auto;" id="bodyPage">
-            <ul id="banner">
 
-                <li class="item">
-                    <img src="https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Fuji/2020/May/Hero/Fuji_TallHero_45M_es_US_1x._CB432534552_.jpg" />
-                </li>
-                <li class="item">
-                    <img src="https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Fuji/2020/May/Hero/Fuji_TallHero_Sports_es_US_1x._CB431860453_.jpg" />" />
-                </li>
-                <li class="item">
-                    <img src="https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Fuji/2020/May/Hero/Fuji_TallHero_Home_es_US_1x._CB428980075_.jpg" />
-                </li>
-            </ul>
-            <div id="arrowBanner" style="visibility: hidden">
-                <div class="arrow"> &lt;</div>
-                <div class="arrow"> &gt;</div>
-            </div>
-            <div id="contenedorCategoria" class="row ">
 
+
+        <div class="container-fluid" style="max-width: 1600px; margin: 0 auto; "  id="bodyPage">
+            <div class="submenuLateral" id="menuCategoria">
                 <?php echo $htmlCategoria; ?>
-
-
             </div>
-            <div id="ProductoHome">
-                <div class="titulo">Nuestros Productos<a class='vermas' href='buscador.php'>Ver más Productos</a></div>
-                <div class="content">
+            <div class="submenuLateral mt-2" id="menuSubcategoria">
+                <?php echo $htmlSubCategoria; ?>
+            </div>
+            <div class="submenuLateral mt-2" id="menuProducto">
+                <div id="resumenResultado">
+                    <?php echo $msn; ?>
 
+                </div>
+                <div class="cuerpo">
                     <?php echo $htmlProducto; ?>
 
-
                 </div>
-            </div>
-            <div id="ProductoMasVendido">
-                <div class="titulo">Producto Mas Vendidos <a class='vermas' href='buscador.php?t=2'>Ver más Productos</a></div>
-                <div class="content">
-
-                    <?php echo $htmlProductoMasVendido; ?>
-                </div>
+                <div id="buscarMas" <?php echo $ocultarMas; ?> onclick="cargarMas()">Cargar mas productos</div>
             </div>
         </div>
-        
-        
-        
-        
-        
+
         <div id="popup" >
             <div class="background" onclick="ocultarPopup()"></div>
             <div id="popCarrito" class="pop">

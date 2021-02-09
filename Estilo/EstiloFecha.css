@@ -1153,3 +1153,38 @@ body .ui-tooltip {
 .ui-datepicker tr{
     display: table-row;
 }
+.ui-datepicker-inline.ui-datepicker.ui-widget.ui-widget-content.ui-helper-clearfix.ui-corner-all{
+    width: 100%;
+}
+a.ui-state-default {
+    font-size: 17px;
+    margin: 2px;
+    text-align: center !important;
+    font-weight: bold !important;
+    color: #676262 !important;
+}
+.ui-datepicker-header.ui-widget-header.ui-helper-clearfix.ui-corner-all {
+    border: none !important;
+}
+span.ui-icon {
+    display: none !important;
+}
+.ui-datepicker th{
+        background: #f7951b;
+}
+.ui-state-disabled {
+    background: silver;
+    border: 1px white solid;
+    margin: 19px;
+}
+.ui-state-active {
+    background: #83d89d !important;
+}
+.ui-state-default {
+    border: solid 1px #6f6e6e !important;
+    font-size: 17px;
+    margin: 2px;
+    text-align: center !important;
+    font-weight: bold !important;
+    color: #676262 !important;
+}

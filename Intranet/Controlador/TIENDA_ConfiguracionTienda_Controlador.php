@@ -1,7 +1,7 @@
 
 
 <?php
-
+$tipoSession="tienda";
 include_once('../Libreria/variables.php');
 
 if ($proceso === "iniciar") {

@@ -1,4 +1,4 @@
-var url = '../Controlador/CategoriaProducto_Controlador.php';
+var url = '../Controlador/CategoriaTienda_Controlador.php';
 var contador = 0;
 var posicion = 0;
 var tamanopantalla = $(window).height() - 265;

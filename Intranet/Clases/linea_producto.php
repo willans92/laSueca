@@ -24,11 +24,9 @@ class linea_producto {
     }
 
     function lineaNroProducto() {
-        $consulta = " select l.id_linea_producto,l.descripcion,l.posicion,count(p.id_producto) producto ";
-        $consulta .= " from lasueca.linea_producto l ,lasueca.producto  p";
-        $consulta .= " where l.id_linea_producto=p.linea_producto_id";
-        $consulta .= " and l.empresa_id=" . $this->CON->empresa_id . "";
-        $consulta .= " group by l.id_linea_producto,l.descripcion,l.posicion";
+        $consulta = " select l.id_linea_producto,l.descripcion,l.posicion ";
+        $consulta .= " from lasueca.linea_producto l";
+        $consulta .= " where l.empresa_id=" . $this->CON->empresa_id . "";
         $consulta .= " order by l.posicion asc, l.id_linea_producto asc";
         return $this->CON->consulta2($consulta);
     }

@@ -114,8 +114,6 @@ body{
     background: red;
     color: white;
     text-align: center;
-    max-width: 396px;
-    border-radius: 7px;
     box-shadow: 0 0 2px 0px red;
     padding: 5px 20px;
     display: inline-block;
@@ -124,6 +122,7 @@ body{
     right: 0;
     top: 15px;
     border: 1px solid red;
+    width: 100%;
     margin-top: -500px;
 }
 .alertaConfirmacion{
@@ -449,9 +448,13 @@ ul{
 }
 
 #menu{
-    margin-left: 0;
+  margin-left: 0;
     padding: 6px 0;
-    background-color:black;
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    z-index: 2;
+    top: 0;
 }
 .iconMenu:hover{
     border: solid 1px white;
@@ -587,11 +590,345 @@ ul{
     background: white;
     margin: 0px 10px;
     padding: 20px 20px;
+    margin-top: 15px;
+
+}
+
+#ProductoHome .titulo{
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+#ProductoHome .content{
+    overflow-y: hidden;
+    overflow-x: hidden;
+    max-height: 953px;
+}
+.vermas{
+    color: #0066c0 !important;
+    font-size: 13px;
+    float: right;
+    cursor: pointer;
+}
+#ProductoHome{
+    background: white;
+    margin: 0px 10px;
+    padding: 20px 20px;
 }
 #ProductoMasVendido img{
     max-height: 200px;
 }
+.itemProducto img:hover{
+    cursor: pointer;
+    transform: scale(0.9);
+}
+.itemProducto img{
+    width: 140px;
+    height: 140px;
 
+}
+.itemProducto .btnadd span{
+    position: relative;
+    top: -11px;
+}
+.itemProducto .btnadd:hover{
+    background:#01467d ;
+    color:white;
+    opacity: 0.7;
+}
+
+.itemProducto .btnadd{
+    border: solid 3px #01467d;
+    color: #01467d;
+    border-radius: 25px;
+    font-weight: bold;
+    float: right;
+    background: white;
+    margin-bottom: -32px;
+    position: relative;
+    margin-left: -12px;
+    cursor: pointer;
+    font-size: 28px;
+    height: 28px;
+    padding: 0px 2px;
+    z-index: 2;
+}
+
+.itemProducto .precio{
+    text-align: left;
+    font-weight: 600;
+    color: #565555;
+}
+.itemProducto .nombre:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+.itemProducto .nombre{
+    text-align: left;
+    font-weight: normal;
+    color: #565555;
+    height: 71px;
+    overflow: hidden;
+}
+.itemProducto{
+    width: 160px;
+    text-align: center;
+    height: 247px;
+    display: inline-block;
+}
+
+.addCarrito span{
+    position: relative;
+    top: 0px;
+}
+.addCarrito:hover{
+    background:#01467d ;
+    color:white;
+}
+.addCarrito{
+    display: none;
+    color: white;
+    border-radius: 25px;
+    font-weight: bold;
+    float: right;
+    background: red;
+    position: relative;
+    margin-left: -12px;
+    cursor: pointer;
+    font-size: 11px;
+    height: 19px;
+    padding: 0px 2px;
+    min-width: 18px;
+    text-align: center;
+}
+.itemProducto .btnaddNro{
+    color: white ;
+    background: #01467d ;
+    font-size: 20px ;
+    padding: 0 5px ;
+    z-index: 2;
+}
+.itemProducto .btnaddNro span{
+    top: -3px;
+}
+.submenuLateral{
+    background: white;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.boxSubcategoria{
+    display: inline-block;
+    background: #cecece;
+    padding: 4px 13px;
+    border-radius: 12px;
+    margin: 10px;
+    font-size: 15px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+.boxcategoria span{
+    margin-left: 7px;
+}
+.boxcategoria img{
+    width: 50px;
+    height: 50px;
+}
+.boxcategoria{
+    text-decoration: none;
+    display: inline-block;
+    background: #cecece;
+    border-radius: 12px;
+    margin: 10px;
+    font-size: 15px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    padding-right: 15px;
+}
+.boxcategoria:hover ,.boxSubcategoria:hover{
+    opacity: 0.7;
+    color: black;
+}
+.boxcategoria:link, .boxcategoria:visited, .boxcategoria:active,
+.boxSubcategoria:link, .boxSubcategoria:visited, .boxSubcategoria:active{
+    text-decoration:none !important;
+
+}
+.selectedSubcategoria{
+    background: #4CAF50;
+    color: white;
+}
+#menuProducto{
+    padding: 20px;
+    white-space: normal;
+
+}
+#resumenResultado{
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+#menuProducto .itemProducto{
+    margin: 10px 25px;
+}
+#buscarMas:hover{
+    opacity: 0.7;
+}
+#buscarMas{
+    text-align: center;
+    font-size: 18px;
+    color: #0066c0;
+    cursor: pointer;
+}
+#popup{
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+#popup .background{
+    background: #79747447;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: block;
+}
+.pop .cuerpo{
+    padding-bottom: 30px;
+    height: 450px;
+    overflow: auto;
+}
+.pop{
+    background: white;
+    max-width: 600px;
+    width: 100%;
+    z-index: 2;
+    border-radius: 8px;
+    box-shadow: 0 0 2px 0px black;
+}
+#popup .titulo{
+    font-size: 17px;
+    padding: 7px 10px;
+    font-weight: bold;
+    border-bottom: solid 3px silver;
+    font-style: italic;
+}
+
+.pop .foot  span{
+    margin-left: 20px;
+    margin-right: 11px;
+    font-style: italic;
+    font-weight: bold;
+    cursor: pointer;
+}
+.pop .foot{
+    text-align: right;
+    padding: 12px 13px;
+    border-top: solid 3px silver;
+}
+.boxItemCarrito img{
+    width: 80px;
+    height: 80px;
+    flex: 2;
+    display: flex;
+}
+.boxItemCarrito{
+    border-bottom: solid 1px silver;
+    margin-top: 10px;
+    padding: 8px 15px;
+    flex-direction: row;
+    display: flex;
+}
+.boxItemCarrito .cantidad
+, .boxItemCarrito .precio{
+    flex: 2;
+    text-align: right;
+    font-size: 13px;
+    padding-top: 24px;
+}
+.boxItemCarrito .cantidad{
+    text-align: center;
+    text-align: center;
+    padding-top: 24px;
+}
+.boxItemCarrito .cantidad .btn span{
+    top: -10px;
+    position: relative;
+}
+.boxItemCarrito .cantidad img{
+    width: 10px;
+    height: 10px;
+    position: relative;
+    top: 6px;
+    left: 6px;
+}
+.boxItemCarrito input{
+    width: 100%;
+    position: relative;
+    top: -23px;
+    text-align: center;
+    padding: 1px 21px;
+    font-size: 12px;
+}
+.boxItemCarrito .cantidad .btn{
+    border: solid 1px silver;
+    border-radius: 8px;
+    width: 23px;
+    height: 24px;
+    padding: 0;
+    color: black;
+    z-index: 5;
+    position: relative;
+    background: #d6d6d6;
+}
+.boxItemCarrito .precioUni{
+    font-size: 14px;
+    font-style: italic;
+    color: #676161;
+}
+.boxItemCarrito .desripcion{
+    flex: 7;
+    padding: 0 14px;
+}
+.boxItemCarrito .nombre{
+    height: 50px;
+    overflow: hidden;
+}
+.boxItemCarrito .contenido{
+    flex: 8;
+    display: flex;
+}
+.cerrar:hover{
+    transform: scale(1.2);
+}
+.cerrar{
+    float: right;
+    cursor: pointer;
+}
+label{
+    display: block;
+}
+.rojoClarito{
+    background: #ff000033;
+}
+.iconLabel{
+    color: white;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: bold;
+    position: relative;
+    top: 4px;
+    cursor: pointer;
+    margin-left: 9px;
+}
+#bodyPage{
+        max-width: 1600px;
+    margin: 0 auto;
+    margin-top: 51px !important;
+}
 @media screen and (max-width : 1024px) {
     #contenedorCategoria img{
         height: 200px;

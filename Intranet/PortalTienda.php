@@ -37,7 +37,7 @@
                     </div>
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_CatalogoProducto.html',this)">Catalogo de Producto</div>
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ConfiguracionTienda.html',this)">Configuracion de la tienda</div>
-                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_CatalogoProducto.html',this)">Reporte de Pedidos</div>
+                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ReportePedidos.html',this)">Reporte de Pedidos</div>
                 </div>
 
                 <iframe src="" class="col-12" id="cuerpoProyeto" style="padding: 0px 30px;"></iframe>
