@@ -96,7 +96,7 @@ function reporteMensual(tipo) {
         $("#txtEmpleado").ocultar();
         $("#fechabox").visible();
         $("#detalladoFiltro").ocultar();
-        $("#filtrosMenu > div").css("width", 550);
+        $("#filtrosMenu > div").css("width", 560);
     } else {
         $("#fechabox").ocultar();
         $("#filtrosMenu > div").css("width", 561);
@@ -492,7 +492,7 @@ function reporteProducto() {
     var sucursal = $("#sucursal").data("cod") + "";
     $("h1").text("Ventas Por Producto");
     $("#fechabox").visible();
-    $("#filtrosMenu > div").css("width", 904);
+    $("#filtrosMenu > div").css("width", 914);
     $("#filtrocheck").visible();
     $("#detalladoFiltro").visible();
     $("#filtroProducto").visible();
@@ -613,7 +613,7 @@ function reporteLineaProducto() {
     var sucursal = $("#sucursal").data("cod");
     $("h1").text("Ventas Por Línea Producto");
     $("#fechabox").visible();
-    $("#filtrosMenu > div").css("width", 539);
+    $("#filtrosMenu > div").css("width", 559);
     $("#filtrocheck").visible();
     $("#detalladoFiltro").ocultar();
     $("#filtroProducto").ocultar();
@@ -725,7 +725,7 @@ function reporteMarcaProducto() {
     var sucursal = $("#sucursal").data("cod");
     $("h1").text("Ventas Por Marca Producto");
     $("#fechabox").visible();
-    $("#filtrosMenu > div").css("width", 539);
+    $("#filtrosMenu > div").css("width", 559);
     $("#filtrocheck").visible();
     $("#detalladoFiltro").ocultar();
     $("#filtroProducto").ocultar();
@@ -895,8 +895,19 @@ function reporteDetallado() {
                     it = 0;
                 }
                 var neto = (margenBruto - it - iva);
+                var estadoCss="";
+                if(lista[i].estado != "activo"){
+                    estadoCss="background: #ff0e0e2e;"
+                    vendido=0;
+                    descuento=0;
+                    compra=0;
+                    margenBruto=0;
+                    iva=0;
+                    it=0;
+                    neto=0;
+                }
 
-                html += "<tr data-sucursal='" + lista[i].sucursal_id + "' data-usuario='" + lista[i].usuario_id + "' >";
+                html += "<tr data-sucursal='" + lista[i].sucursal_id + "' data-usuario='" + lista[i].usuario_id + "' style='"+estadoCss+"' >";
                 html += "<td><div  style='width:80px'>" + lista[i].fecha + "</div></td>";
                 html += "<td><div class=' subrayar'  style='width:80px' onclick=\"redireccionar('Venta'," + lista[i].id_venta + ")\">" + lista[i].nroDocumento + "</div></td>";
                 html += "<td><div class=' ci' style='width:80px'>" + lista[i].nit + "</div></td>";

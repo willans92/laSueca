@@ -4,73 +4,227 @@ include_once('../Libreria/variables.php');
 
 if ($proceso === "buscarPedido") {
     $pedido = new pedidoApp($con);
-    $resultado = $pedido->buscarPedido($de, $hasta, $ciudad_id, $estado, $cliente, $empresa, $contador, 50,$express,$ver);
+    $resultado = $pedido->buscarPedido($de, $hasta, $estado, $cliente, $tienda, $contador, 50);
 }
-if ($proceso === "ciudades") {
-    $ciudad = new ciudad($con);
-    $tarifarioApp = new tarifarioApp($con);//revisar en caliente
-    $resultado=array();
-     $resultado["ciudad"] = $ciudad->todo();
-    $resultado["tarifario"] = $tarifarioApp->todas();
+if ($proceso === "tarifario") {
+    $resultado = array();
+    $resultado["tarifario"] = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
 }
-if ($proceso === "cambioUbicacion") {
-    if($tipoCarrera==="1"){
-        $pedido=new pedidoApp($con);
-        if(!$pedido->cambiarUbicacionPedido($id_pedido, $lon2, $lat2,$costo,$descuento,$sessionUsuario["id_usuario"])){
-            $error="No se logro registrar el cambio.";
-        }
-        
-    }else{
-       $pedidocurrier = new pedidoCurrier($con);
-        if(!$pedidocurrier->modificarLocalizacion($id_pedido, $lon, $lat, $lon2, $lat2,$costo,$descuento,$sessionUsuario["id_usuario"])){
-            $error="No se logro registrar el cambio.";
-        } 
+if ($proceso === "cambioUbicacion") {// sincronizar con emprendedor
+    $pedido = new pedidoApp($con);
+    if (!$pedido->cambiarUbicacionPedido($id_pedido, $lon2, $lat2, $costo, 0, $sessionUsuario["id_usuario"])) {
+        $error = "No se logro registrar el cambio.";
     }
-    
 }
 if ($proceso === "cambioDatosPedido") {
-    if ($tipo === "1") {
-        $pedido = new pedidoApp($con);
-        if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $delivery_id, $estado)) {
-            $error = "No se logro realizar los cambios";
-        }
-    } else {
-        $pedidocurrier = new pedidoCurrier($con);
+    $con->transacion();
+    $venta = new Venta($con);
+    if ($venta_id != "0") {
         $fechaactual = date("d/m/Y H:i:s");
-        if (!$pedidocurrier->modificarEstado($id_pedido, $estado, "aceptado='$fechaactual'", $delivery_id)) {
-            $error = "No se logro realizar los cambios";
+        if (!$venta->anularFactura($venta_id, $fechaactual)) {
+            $error = "No se logro anular la factura.Intente nuevamente.";
+        } else {
+            $venta_id = 0;
         }
     }
+    if ($estado === "entregado") {
+        $con->transacion();
+        $pedido = new pedidoApp($con);
+        $pedido = $pedido->buscarXid($id_pedido);
 
-    if ($notificar === "1") {
-        if ($estado === "cancelado") {
-            /*  $clienteapp = new clienteapp($con);
-              $clienteapp = $clienteapp->buscarXid($id_cliente);
-              $re = $con->enviarCurlFireBase($clienteapp["tokenFirebase"], array("cliente" => $clienteapp["id_clienteApp"]), "El pedido fue cancelado por " + $nombreEmpresa);
-              $resultado = $pedido->nroPendientes($sucursal_id); */
+        $detallePedido = new detallePedidoApp($con);
+        $detallePedido = $detallePedido->buscarxIdpedido($id_pedido);
+
+        $fecha = date("d/m/Y");
+        $cliente = new Cliente($con);
+        $cliente = $cliente->buscarXidClienteApp($pedido["id_cliente"], $con->empresa_id);
+        $id_Cliente = 0;
+        if (count($cliente) > 0) {
+            $cliente = $cliente[0];
+            $id_Cliente = $cliente["id_cliente"];
+            $clienteObj = new Cliente($con);
+            if ($pedido["nit"] !== "") {
+                if (!$clienteObj->modificarDatosFacturacion($cliente["id_cliente"], $pedido["nit"], $pedido["rz"])) {
+                    $error = "No se logro registrar la venta. Intentelo Nuevamente";
+                } else {
+                    $version = new version($con);
+                    $ultVersion = $clienteObj->ultimaVersion();
+                    $version->contructor(0, "cliente", $ultVersion, $id_Cliente);
+                    if (!$version->insertar()) {
+                        $error = "No se logro registrar. Intente nuevamente.";
+                    }
+                }
+            } else {
+                $cliente = new Cliente($con);
+                if ($cliente->existeVersion($id_Cliente, $con->empresa_id, "cliente") === "0") {
+                    $version = new version($con);
+                    $ultVersion = $cliente->ultimaVersion();
+                    $version->contructor(0, "cliente", $ultVersion, $id_Cliente);
+                    if (!$version->insertar()) {
+                        $error = "No se logro registrar. Intente nuevamente.";
+                    }
+                }
+            }
+        } else {
+            $clienteApp = new clienteapp($con);
+            $clienteApp = $clienteApp->buscarXid($pedido["id_cliente"]);
+
+            $cliente = new Cliente($con);
+            $codigoApp = "APP-" . $pedido["cliente"];
+            $cliente->contructor(0              , $codigoApp, ""    , $clienteApp["nombre"] , $clienteApp["telefono"]   , ""        , $clienteApp->foto , 0         , $pedido["nit"] , $pedido["rz"], 0             , ""                , ""                , 0             , $clienteApp->correo   , $fecha          , "Cliente Creado por la APP" , $pedido["id_cliente"]);
+                              //($id_cliente    ,$codigo    ,$ci    ,$nombre                ,$telefono                  ,$direccion ,$foto              ,$descuento ,$nit            ,$razonSocial  ,$descuentoMax  ,$telefonoContacto  ,$personaContacto   ,$limiteCredito ,$email                 ,$fechaNacimiento   ,$comentario                , $clienteApp_id=0)
+            if (!$cliente->insertar()) {
+                $error = "No se logro registrar la venta. Intentelo Nuevamente";
+            } else {
+                $id_Cliente = $cliente->id_cliente;
+                $version = new version($con);
+                $clienteObj = new Cliente($con);
+                $ultVersion = $clienteObj->ultimaVersion();
+                $version->contructor(0, "cliente", $ultVersion, $id_Cliente);
+                if (!$version->insertar()) {
+                    $error = "No se logro registrar. Intente nuevamente.";
+                }
+            }
         }
-        if ($estado === "entregado") {
-            
+
+        $venta = new venta($con);
+
+        $sucursal = new Sucursal($con);
+        $sucursal = $sucursal->buscarXid($sessionUsuario["sucursal_id"]);
+        $nroVenta = $venta->generarNroDocumento($sucursal["id_sucursal"]);
+        $nroDocumento = 0;
+
+        if ($error === "") {
+            $venta = new venta($con);
+            $fechaactual = date("d/m/Y H:i:s");
+            $horaactual = date("H:i:s");
+
+
+            $venta->contructor(0, "Venta Al Contado APP", "Contado", "$fecha $horaactual", $sessionUsuario["id_usuario"], $fechaactual, $pedido["nit"], $pedido["rz"]
+                    , "", "", 'activo', $id_Cliente, $sucursal["id_sucursal"], "Efectivo", $nroDocumento, "", ""
+                    , "", "Entregado", $fecha, "", "", $sucursal["documentoVenta"], $nroVenta, $sessionUsuario["id_usuario"]);
+            if (!$venta->insertar()) {
+                $error = "No se logro registrar la venta. Intente Nuevamente ";
+            } else {
+                $id_Venta = $venta->id_venta;
+                $cobranza = new cobranza($con);
+                $nroDoc = $cobranza->generarNroComprobante();
+                $usuario = new usuario($con);
+                $usuario = $usuario->buscarXid($sessionUsuario["id_usuario"]);
+                $sucursal_id = $usuario["sucursal_id"];
+                $cobranza->contructor(0, $nroDoc, "Cobranza", $fechaactual, $sessionUsuario["id_usuario"]
+                        , $fechaactual, $sessionUsuario["id_usuario"], $sucursal["id_sucursal"], "Efectivo", 'activo');
+                if (!$cobranza->insertar()) {
+                    $error = "No se logro registrar la cobranza. Intente de nuevo";
+                } else {
+                    $detalle = new detalleCobranza($con);
+                    $detalle->contructor(0, $cobranza->id_cobranza, $id_Venta, $pedido["totalPedido"], "Se cobro al realizar la venta", 'activo');
+                    if (!$detalle->insertar()) {
+                        $error = "No se logro registrar la cobranza. Intente de nuevo";
+                    }
+                }
+            }
+
+            if ($error === "") {
+                $repetir = false;
+                for ($i = 0; $i < count($detallePedido); $i++) {
+                    $item = $detallePedido[$i];
+                    $iddetalle = "0";
+                    $cant = (int) ($item["cantidad"]);
+                    $historico = 0;
+                    $desc = 0.00;
+                    $precio = floatval($item["precioU"]);
+                    $detallecompra = new detalleCompra($con);
+
+                    if ($repetir) {// si tiene activado stock negativo
+                        $repetir = false;
+                    } else {
+                        $listaEnlace = $detallecompra->buscarEnlaceParaVenta($item["producto_id"], $sucursal["id_sucursal"], $iddetalle);
+                    }
+                    if ($iddetalle !== "0") {
+                        $listaEnlace[0]["cantidad"] = (int) ($listaEnlace[0]["cantidad"]) + $historico;
+                    }
+                    for ($j = 0; $j < count($listaEnlace) && $cant > 0; $j++) {
+                        $enlace = $listaEnlace[$j];
+                        $cantidadEnlace = floatval($enlace["cantidad"]);
+                        $id_detallecompra = $enlace["id_detallecompra"];
+                        $almacen_id = $enlace["almacen_id"];
+                        $cantAux = 0;
+                        if ($cant > $cantidadEnlace) {
+                            $cant -= $cantidadEnlace;
+                            $cantAux = $cantidadEnlace;
+                        } else {
+                            $cantAux = $cant;
+                            $cant = 0;
+                        }
+                        $preciototal = ($precio * $cantAux) - $desc;
+                        $detalleVenta = new detalleventa($con);
+                        $detalleVenta->contructor(0, $item["producto_id"], $cantAux, $precio, $almacen_id, $id_detallecompra, $desc, $preciototal, $id_Venta, 'activo', "$fecha $horaactual");
+                        if (!$detalleVenta->insertar()) {
+                            $error = "No se logro registrar la venta. Intente Nuevamente ";
+                            break;
+                        }
+                    }
+                    if ($cant > 0) {
+                        $datosEmpresa = new empresa($con);
+                        $permiso = $datosEmpresa->tieneConfiguracion(4);
+                        if ($permiso > 0) {// si tiene activado stock negativo
+                            $listaEnlace = $detallecompra->buscarEnlaceParaVentaUltimaCompra($item["producto_id"]);
+                            if (count($listaEnlace) === 0) {
+                                $almacen = new almacen($con);
+                                $almacenDisponible = $almacen->buscarXsucursal($sucursal["id_sucursal"]);
+                                if (count($almacenDisponible) === 0) {
+                                    $error = "La sucursal no cuenta con ningun almácen.";
+                                    break;
+                                }
+                                $listaEnlace = array();
+                                $listaEnlace[] = array("id_detallecompra" => null, "almacen_id" => $almacenDisponible[0]["id_almacen"], "cantidad" => 7777);
+                                //$error = "El producto solo puede vender en negativo cuando tiene por lo menos una compra realizada y que cada venta se enlaza con las compras para sacar costo.";
+                                //break;
+                            }
+                            $repetir = true;
+                            $listaVenta[$i]["cant"] = $cant;
+                            $i -= 1;
+                        } else {
+                            $error = "No se logro registrar la venta por falta de stock. Intente Nuevamente ";
+                            break;
+                        }
+                    }
+                    if ($error !== "")
+                        break;
+                }
+            }
         }
-        if ($estado === "en camino") {
-            
+
+        if ($error === "") {
+            $pedido = new pedidoApp($con);
+            if (!$pedido->realizarVentaPedido($id_pedido, $id_Venta)) {
+                $error = "No se logro registrar la venta. Intente Nuevamente ";
+                $con->rollback();
+            } else {
+                $con->commit();
+                $resultado = $id_Venta;
+            }
+        } else {
+            $con->rollback();
         }
-        if ($estado === "recepcionado") {
-            
-        }
-        if ($estado === "recogiendo pedido") {
-            
-        }
+        $venta_id=$id_Venta;
+    }
+    $pedido = new pedidoApp($con);
+    if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id)) {
+        $error = "No se logro realizar los cambios";
+    }
+    if($error === "") {
+        $con->commit();
+    }else{
+        $con->rollback();
     }
 }
 if ($proceso === "deliveryXciudad") {
     $delivery = new delivery($con);
     $detalle = new detallePedidoApp($con);
     $resultado = array();
-    if ($tipo === "1") {
-        $resultado["detalle"] = $detalle->buscarxIdpedido($id_pedido);
-    }
-    $resultado["delivery"] = $delivery->buscarXciudad($ciudad_id);
+    $resultado["detalle"] = $detalle->buscarxIdpedido($id_pedido);
 }
 
 $con->closed();

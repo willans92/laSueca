@@ -177,13 +177,13 @@ class venta {
     }
 
     function reporteVentaDetallada($de, $hasta) {
-        $consulta = " select v.sucursal_id,v.fecha,if(v.tipoDocumento='Factura',CONCAT('VF-',v.nroDocumento),CONCAT('NV-',v.nroNota)) nroDocumento,v.nit,v.razonsocial";
+        $consulta = " select v.sucursal_id,v.estado,v.fecha,if(v.tipoDocumento='Factura',CONCAT('VF-',v.nroDocumento),CONCAT('NV-',v.nroNota)) nroDocumento,v.nit,v.razonsocial";
         $consulta .= "  ,v.usuario_id,u.nombre vendedor,sum(d.precioTotal) venta,sum(ifnull(c.precio,0)*d.cantidad) compra";
         $consulta .= "  ,sum(d.descuento) descuento,v.id_venta";
         $consulta .= "  from lasueca.venta v,lasueca.usuario u , lasueca.detalleventa d left join (select id_detalleCompra,precio,cantidad from lasueca.detallecompra where estado like 'activo') c on  d.detallecompra_id = c.id_detalleCompra";
-        $consulta .= "  where v.id_venta=d.venta_id and d.estado like 'activo'  and v.estado like 'activo'";
+        $consulta .= "  where v.id_venta=d.venta_id ";//and d.estado like 'activo'  and v.estado like 'activo'
         $consulta .= "  and v.empresa_id=".$this->CON->empresa_id." and v.usuario_id=u.id_usuario and STR_TO_DATE(v.fecha,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
-        $consulta .= "  group by v.sucursal_id,v.fecha,v.sucursal_id ,v.nroDocumento ,v.nit,v.razonsocial,v.id_venta ,if(v.tipoDocumento='Factura',CONCAT('VF-',v.nroDocumento),CONCAT('NV-',v.nroNota))";
+        $consulta .= "  group by v.sucursal_id,v.estado,v.fecha,v.sucursal_id ,v.nroDocumento ,v.nit,v.razonsocial,v.id_venta ,if(v.tipoDocumento='Factura',CONCAT('VF-',v.nroDocumento),CONCAT('NV-',v.nroNota))";
         $consulta .= "  ,v.usuario_id,u.nombre ";
 
         return $this->CON->consulta2($consulta);

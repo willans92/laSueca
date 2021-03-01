@@ -101,15 +101,21 @@ class pedidoApp {
     }
 
     function buscarXid($idpedido) {
-        $consulta = "select p.venta_id,p.nit,p.rz,c.nombre nombrecliente, p.montoBillete,p.costoDelivery, c.telefono telefonoc, d.telefono telefonod, d.direccion direccionc,d.lon lonc,d.lat latc, d.referencia,p.cliente,p.delivery_id, p.estado ,p.id_pedidoApp, s.direccion , s.lon,s.lat ,s.telefono, p.solicitada,p.recepcionado,p.llamarMoto, e.nombreempresa ,p.totalPedido, s.id_sucursal from lasueca.pedidoapp p, lasueca.sucursal s, lasueca.empresa e, lasueca.clienteApp c , lasueca.direccionApp d where p.id_pedidoApp=$idpedido and p.sucursal_id=s.id_sucursal and s.empresa_id=e.id_empresa  and p.cliente=c.id_clienteApp and d.id_direccionApp=p.direccionApp_id";
+        $consulta = "  select p.descuento, p.montoBillete,p.nit,p.rz,p.costoDelivery,p.entregada,p.id_pedidoapp,p.venta_id";
+        $consulta .= " ,p.fechaProgramada, p.horaProgramada,c.nombre cliente,c.telefono teflCliente";
+        $consulta .= " , t.nombre tienda, ct.telefono telftienda,s.lat late,s.lon lone,p.lat";
+        $consulta .= " ,p.lon,p.direccion,p.cliente id_cliente, p.estado, p.totalPedido ";
+        $consulta .= " from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.tienda t,lasueca.sucursal s, lasueca.cliente ct";
+        $consulta .= " where p.id_pedidoApp=$idpedido and p.cliente=c.id_clienteapp and t.id_tienda=p.id_tienda";
+        $consulta .= " and s.id_sucursal=p.sucursal_id and ct.id_cliente=t.cliente_id ";
         $nro = $this->CON->consulta2($consulta);
         return $nro[0];
     }
-    
+
     function buscarPedidoTienda($estado, $de, $hasta, $buscador) {
-        
-        if($estado!=""){
-            $strEstado=" and p.estado like '$estado'";    
+
+        if ($estado != "") {
+            $strEstado = " and p.estado like '$estado'";
         }
         $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente, sum(d.precioU*(pr.comision/100)) comision";
         $consulta .= " from lasueca.pedidoapp p , lasueca.detallepedidoapp d, lasueca.precioventa pr, lasueca.clienteApp c";
@@ -207,112 +213,41 @@ class pedidoApp {
         return $resultado;
     }
 
-    function buscarPedido($de, $hasta, $ciudad_id, $estado, $cliente, $empresa, $contador, $cantidad, $express, $ver) {
-        $ciudad = "";
-        $ciudadCurrier = "";
-        $ciudadCurrier2 = "";
-        if ($ciudad_id !== "") {
-            $ciudad = " and dir.ciudad_id=$ciudad_id";
-            $ciudadCurrier = " where ciudad_id = $ciudad_id";
-            $ciudadCurrier2 = " and p.ciudad_id = $ciudad_id";
-        }
+    function buscarPedido($de, $hasta, $estado, $cliente, $tienda, $contador, $cantidad) {
         $est = "";
         if ($estado !== "") {
             $est = " and p.estado like '%$estado%' ";
         }
-        $exp = "";
-        if ($express !== "") {
-            $exp = " and p.estado like '%$express%' ";
-        }
-        $consulta = "select estado,sum(a.cant) cant,sum(a.totalPedido) totalPedido,sum(a.repartidor) repartidor from (";
-        if ($ver === "-" || $ver === "pedido") {
-            $consulta .= "select p.estado, count(p.id_pedidoApp) cant, sum(p.totalPedido) totalPedido, sum(costoDelivery) repartidor";
-            $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.empresa e,";
-            $consulta .= "        lasueca.sucursal s, lasueca.direccionapp dir";
-            $consulta .= "   where STR_TO_DATE(solicitada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
-            $consulta .= "         and p.cliente=c.id_clienteapp and e.id_empresa=s.empresa_id";
-            $consulta .= "         and s.id_sucursal=p.sucursal_id ";
-            $consulta .= "         and c.nombre like '%$cliente%' and e.nombreEmpresa like '%$empresa%'  $ciudad $est ";
-            $consulta .= "  and dir.id_direccionapp=p.direccionApp_id";
-            $consulta .= " group by p.estado";
-        }
 
-        if ($ver === "-") {
-            $consulta .= " union";
-        }
-
-        if ($ver === "-" || $ver === "express") {
-            $consulta .= " select p.estado, COUNT(p.id_pedidoCurrier) cant, 0 totalPedido, SUM(costo) repartidor";
-            $consulta .= " from lasueca.clienteapp c,lasueca.pedidocurrier p ";
-            $consulta .= " where STR_TO_DATE(solicitado, '%e/%c/%Y') BETWEEN STR_TO_DATE('$de', '%e/%c/%Y') AND STR_TO_DATE('$hasta', '%e/%c/%Y')";
-            $consulta .= " $ciudadCurrier2 AND c.nombre LIKE '%$cliente%' $exp AND p.clienteApp_id = c.id_clienteapp ";
-            $consulta .= " group by p.estado";
-        }
-        $consulta .= " )a group by a.estado";
+        $consulta = "select p.estado, count(p.id_pedidoApp) cant, sum(p.totalPedido) totalPedido, sum(costoDelivery) repartidor";
+        $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.tienda t";
+        $consulta .= "   where STR_TO_DATE(fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
+        $consulta .= "         and p.cliente=c.id_clienteapp and t.id_tienda=p.id_tienda";
+        $consulta .= "         and c.nombre like '%$cliente%' and t.nombre like '%$tienda%' $est ";
+        $consulta .= " group by p.estado";
 
         $resumen = $this->CON->consulta2($consulta);
 
-        $consulta = "select * from (";
-        if ($ver === "-" || $ver === "pedido") {
-            $consulta .= " select  p.descuento,'1' tipo, p.montoBillete,p.nit,p.rz,p.costoDelivery,p.entregada,p.id_pedidoapp,p.solicitada,p.recepcionado,p.llamarMoto,p.enCamino,c.nombre cliente,c.telefono teflCliente, dir.telefono telfDir,";
-            $consulta .= "   e.nombreEmpresa, e.telefono telfEmpresa, s.telefono telfSuc,dir.ciudad_id,s.lat late,s.lon lone,dir.lat,dir.lon,dir.direccion,p.cliente id_cliente, p.sucursal_id,";
-            $consulta .= "   p.estado, p.totalPedido, (select nombre from lasueca.delivery where id_delivery=p.delivery_id limit 0,1) delivery, p.delivery_id ";
-            $consulta .= "   ,'' detalle ,'' tipoCarrera ,'' referenciaOrigen  ,'' contactoOrigen ,'' telefonoOrigen ,'' referenciaDestino ,'' contactoDestino ,'' telefonoDestino ";
-            $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.empresa e,";
-            $consulta .= "        lasueca.sucursal s, lasueca.direccionapp dir";
-            $consulta .= "   where STR_TO_DATE(solicitada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
-            $consulta .= "         and c.nombre like '%$cliente%' and e.nombreEmpresa like '%$empresa%'  $ciudad $est ";
-            $consulta .= "         and p.cliente=c.id_clienteapp and e.id_empresa=s.empresa_id";
-            $consulta .= "         and s.id_sucursal=p.sucursal_id ";
-            $consulta .= "  and dir.id_direccionapp=p.direccionApp_id";
-        }
-
-
-        if ($ver === "-") {
-            $consulta .= " union";
-        }
-
-        if ($ver === "-" || $ver === "express") {
-            $consulta .= " select  p.descuento,'2' tipo , '' montoBillete , '' nit ,'' rz ,p.costo costoDelivery , p.entregado entregada ";
-            $consulta .= " , p.id_pedidocurrier id_pedidoapp , p.solicitado solicitada , p.recogido recepcionado , p.entregado llamarMoto ,p.vuelta enCamino";
-            $consulta .= " , c.nombre cliente , p.telefonoOrigen teflCliente , c.telefono telfDir , '' nombreEmpresa , p.telefonoDestino telfEmpresa";
-            $consulta .= " , '' telfSuc , c.ciudad_id , p.lat2 late , p.lon2 lone , p.lat , p.lon , '' direccion , p.clienteApp_id id_cliente";
-            $consulta .= " , '0' sucursal_id , p.estado , '0' totalPedido , d.nombre delivery , p.delivery_id ,p.detalle ";
-            $consulta .= " ,p.tipo tipoCarrera ,p.referenciaOrigen ,p.contactoOrigen ,p.telefonoOrigen ,p.referenciaDestino ,p.contactoDestino ,p.telefonoDestino";
-            $consulta .= " from lasueca.clienteapp c,lasueca.pedidocurrier p left join ";
-            $consulta .= " (SELECT id_delivery, nombre FROM lasueca.delivery $ciudadCurrier) d on p.delivery_id=d.id_delivery";
-            $consulta .= " where STR_TO_DATE(solicitado, '%e/%c/%Y') BETWEEN STR_TO_DATE('$de', '%e/%c/%Y') AND STR_TO_DATE('$hasta', '%e/%c/%Y')";
-            $consulta .= " $ciudadCurrier2 AND c.nombre LIKE '%$cliente%' $exp AND p.clienteApp_id = c.id_clienteapp ";
-        }
-        $consulta .= " ) a";
-        $consulta .= " ORDER BY STR_TO_DATE(a.solicitada, '%e/%c/%Y %H:%i:%s') DESC limit $contador,$cantidad";
+        $consulta = " select p.descuento, p.montoBillete,p.nit,p.rz,p.costoDelivery,p.entregada,p.id_pedidoapp,p.venta_id";
+        $consulta .= "   ,p.fechaProgramada, p.horaProgramada,p.recepcionado,p.llamarMoto,p.enCamino,c.nombre cliente,c.telefono teflCliente";
+        $consulta .= "   , t.nombre tienda, ct.telefono telftienda,s.lat late,s.lon lone,p.lat";
+        $consulta .= "   ,p.lon,p.direccion,p.cliente id_cliente, p.estado, p.totalPedido ";
+        $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.tienda t,lasueca.sucursal s, lasueca.cliente ct";
+        $consulta .= "   where STR_TO_DATE(fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
+        $consulta .= "         and c.nombre like '%$cliente%' and t.nombre like '%$tienda%'  $est ";
+        $consulta .= "         and p.cliente=c.id_clienteapp and t.id_tienda=p.id_tienda";
+        $consulta .= "         and s.id_sucursal=p.sucursal_id and ct.id_cliente=t.cliente_id ";
+        $consulta .= " ORDER BY STR_TO_DATE(p.fechaProgramada, '%e/%c/%Y') DESC, STR_TO_DATE(p.horaProgramada, '%H:%i:%s') DESC limit $contador,$cantidad";
 
 
 
         $data = $this->CON->consulta2($consulta);
-        $consulta = "select sum(cant) cantidad from (";
-        if ($ver === "-" || $ver === "pedido") {
-            $consulta .= " select count(p.id_pedidoapp) cant";
-            $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.empresa e,";
-            $consulta .= "        lasueca.sucursal s, lasueca.direccionapp dir";
-            $consulta .= "   where STR_TO_DATE(solicitada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
-            $consulta .= "         and c.nombre like '%$cliente%' and e.nombreEmpresa like '%$empresa%'  $ciudad $est ";
-            $consulta .= "         and p.cliente=c.id_clienteapp and e.id_empresa=s.empresa_id";
-            $consulta .= "         and s.id_sucursal=p.sucursal_id ";
-            $consulta .= "  and dir.id_direccionapp=p.direccionApp_id";
-        }
+        $consulta = " select count(p.id_pedidoapp) cantidad";
+        $consulta .= "   from lasueca.pedidoapp p, lasueca.clienteapp c, lasueca.tienda t";
+        $consulta .= "   where STR_TO_DATE(fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
+        $consulta .= "         and c.nombre like '%$cliente%' and t.nombre like '%$tienda%'  $est ";
+        $consulta .= "         and p.cliente=c.id_clienteapp and t.id_tienda=p.id_tienda";
 
-
-        if ($ver === "-") {
-            $consulta .= " union";
-        }
-        if ($ver === "-" || $ver === "express") {
-            $consulta .= " select count(p.id_pedidocurrier) cant";
-            $consulta .= " from lasueca.clienteapp c,lasueca.pedidocurrier p ";
-            $consulta .= " where STR_TO_DATE(solicitado, '%e/%c/%Y') BETWEEN STR_TO_DATE('$de', '%e/%c/%Y') AND STR_TO_DATE('$hasta', '%e/%c/%Y') $exp";
-            $consulta .= " $ciudadCurrier2 AND c.nombre LIKE '%$cliente%' AND p.clienteApp_id = c.id_clienteapp ";
-        }
-        $consulta .= " ) a";
         $limiteData = $this->CON->consulta($consulta);
         $limite = $limiteData->fetch_assoc()['cantidad'];
         $resultado = array();
@@ -334,12 +269,8 @@ class pedidoApp {
         return false;
     }
 
-    function cambiarDeliveryYestadoPedido($id_pedido, $id_delivery, $estado) {
-        $estadoStr = " delivery_id=null, ";
-        if ($id_delivery !== "0") {
-            $estadoStr = " delivery_id=$id_delivery, ";
-        }
-        $consulta = "update pedidoapp set $estadoStr estado='$estado' where id_pedidoApp=$id_pedido ";
+    function cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id) {
+        $consulta = "update pedidoapp set $estadoStr estado='$estado', venta_id='$venta_id' where id_pedidoApp=$id_pedido ";
         return $this->CON->manipular($consulta);
     }
 

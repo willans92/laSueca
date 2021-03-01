@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
+<html>
     <head>
         <meta http-equiv="Expires" content="0" />
         <meta http-equiv="Last-Modified" content="0" />
