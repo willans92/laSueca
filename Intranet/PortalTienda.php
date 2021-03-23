@@ -26,6 +26,9 @@
                 <div class='p-1 d-inline-block ' >
                     <img src='Imagen/Iconos/menuIcon.png' class='menuicon' onclick='menuApp()'/>
                 </div>
+                <div class='p-1 d-inline-block ' id="codTienda" style="color: white; top: 2px; position: relative;">
+                    
+                </div>
                 <div class='pr-2 p-1 d-inline-block float-right' >
                     <img src='Imagen/Iconos/salir.png' class='menuicon' onclick='cerrarSession(1)'/>
                 </div>
@@ -38,6 +41,8 @@
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_CatalogoProducto.html',this)">Catalogo de Producto</div>
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ConfiguracionTienda.html',this)">Configuracion de la tienda</div>
                     <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ReportePedidos.html',this)">Reporte de Pedidos</div>
+                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ReportePedidosHijos.html',this)">Reporte de Pedidos Hijos</div>
+                    <div class='point item' onclick="redireccionarUrl('./Formularios/TIENDA_ReportePedidosNietos.html',this)">Reporte de Pedidos Nietos</div>
                 </div>
 
                 <iframe src="" class="col-12" id="cuerpoProyeto" style="padding: 0px 30px;"></iframe>

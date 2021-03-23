@@ -16,7 +16,7 @@ if ($proceso === "buscarXtext") {
 if ($proceso === "registrar") {
     $con->transacion();
     $categoria = new catalogoProducto($con);
-    $categoria->contructor($categoria_id, $nombre, $estado, $foto,$tipo);
+    $categoria->contructor($categoria_id, $nombre, $estado, $foto,$tipo,$posicion);
     if ($categoria_id == "0") {
         if (!$categoria->insertar()) {
             $error = "No se logro registra. Intente nuevamente";

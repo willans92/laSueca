@@ -47,7 +47,7 @@
                         <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
                         * Al utilizar el buscador presionar enter para filtrar. * Para modificar una categoria seleccione el registro. 
                     </div>
-                    <div id="contenedorUsuarop">
+                    <div id="contenedorUsuarop" style="overflow: auto">
 
                     </div>
                 </div>
@@ -69,7 +69,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" >Usuario</h5>
+                        <h5 class="modal-title" ></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -100,10 +100,17 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="inlineblock">
-                                        <div class='negrillaenter'>SubCategoria</div>
-                                        <input type="text" class="grande mb-2" name="buscadorLinea" placeholder="Buscar"   maxlength="300" autocomplete="off" onkeyup="filtrarCategoria()">
+                                    <div>
+                                        <div class="inlineblock">
+                                            <div class='negrillaenter'>SubCategoria</div>
+                                            <input type="text" class="grande mb-2" name="buscadorLinea" placeholder="Buscar"   maxlength="300" autocomplete="off" onkeyup="filtrarCategoria()">
+                                        </div>    
+                                        <div class="inlineblock">
+                                            <div class='negrillaenter'>Posicion</div>
+                                            <input type="number" class="normal" name="posicion" maxlength="5" autocomplete="off" value='0'>
+                                        </div>    
                                     </div>
+                                    
                                 </div>
 
                                 <table class="table" id='tbllinea'>

@@ -60,12 +60,13 @@
             $foto = $prod["foto"];
             $precio = $prod["precio"];
             $nombre = $prod["nombre"];
+            $detalle= $prod["descripcion"];
             $id_producto = $prod["id_producto"];
-            $htmlProducto .= "<div class='itemProducto' >";
+            $htmlProducto .= "<div class='itemProducto'  >";
             $htmlProducto .= "<div class='btnadd i" . $id_producto . "' onclick=\"modificarCarrito('',$id_producto,'$nombre','$foto','$precio')\"><span>+</span></div>";
-            $htmlProducto .= "<img src='$foto' >";
-            $htmlProducto .= "<div class='precio'>Bs. $precio</div>";
-            $htmlProducto .= "<div class='nombre'>$nombre</div>";
+            $htmlProducto .= "<img src='$foto' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">";
+            $htmlProducto .= "<div class='precio' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">Bs. $precio</div>";
+            $htmlProducto .= "<div class='nombre' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">$nombre</div>";
             $htmlProducto .= "</div>";
         }
         $tarifario = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
@@ -151,7 +152,9 @@
                 </div>
             </div>
         </div>
-        
+        <div id='btnFlotante'>
+            <img src="Imagen/Iconos/whatsapp.png" alt=""/>
+        </div>
         
         
         
@@ -163,7 +166,7 @@
                 <div class="cuerpo"></div>
                 <div class="foot">
                     <span onclick="ocultarPopup()">Seguir Comprando</span>
-                    <button onclick="realizarCompra()">Realizar Compra <span class="total"></span></button>
+                    <button id='btncontinuar1' onclick="realizarCompra()">Realizar Compra <span class="total"></span></button>
                 </div>
             </div>
             <div id="popDatosEnvio" class="pop">
@@ -176,6 +179,7 @@
                     <label>Dirección</label>
                     <input type="text" class="grande2" name="direccion" autocomplete="off">
                     <label>Dirección Gps</label>
+                    <label style="font-weight: normal; font-style: italic; font-size: 13px;">Marca en el mapa la dirección de entrega con un clic</label>
                     <div id="mapa"></div>
                 </div>
                 <div class="foot">
@@ -218,13 +222,26 @@
                     <div class="cuerpobox">
                         
                     </div>
-
+                    <br>
+                    <label>Intrucciones de Entrega</label>
+                    <input type='text' name='intrucciones' autocomplete="off" style="width:100%">
                 </div>
                 <div class="foot">
                     <span onclick="continuarDelivery()">Atras</span>
                     <button onclick="finalizarVenta()">Realizar Pedido <span class="total"></span></button>
                 </div>
             </div>
+            <div id="popDetalle" class="pop">
+                <img src="" alt=""/>
+                <div id="detallePrecio"></div>
+                <div id="detalleNombre"></div>
+                <div id="detalleDesc"></div>
+                <div style="margin-top: 15px;">
+                    <button onclick="ocultarPopup()" class="btn-danger">Salir</button>
+                    <button onclick="agregarCarritoDetalleProducto()"> Agregar Carrito</button>
+                </div>
+            </div>
         </div>
+      
     </body>
 </html>

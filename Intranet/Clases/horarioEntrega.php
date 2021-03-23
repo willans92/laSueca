@@ -28,8 +28,12 @@ class horarioEntrega {
         return $this->CON->consulta2($consulta)[0];
     }
     
-    function buscarXestado($estado) {
-        $consulta = "select * from lasueca.horarioentrega where estado like '$estado'";
+    function buscarXestado($estado,$dia) {
+        $strDia="";
+        if($dia!="-1"){
+            $strDia=" and dia=$dia";
+        }
+        $consulta = "select * from lasueca.horarioentrega where estado like '$estado' $strDia";
         return $this->CON->consulta2($consulta);
     }
 

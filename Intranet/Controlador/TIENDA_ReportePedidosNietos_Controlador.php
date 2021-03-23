@@ -7,13 +7,13 @@ include_once('../Libreria/variables.php');
 
 if ($proceso === "buscador") {
     $pedido = new pedidoApp($con);
-    $resultado = $pedido->buscarPedidoTienda($estado, $de, $hasta, $buscador, $sessionUsuario["id_tienda"]);
+    $resultado = $pedido->buscarPedidoNietos($de, $hasta, $buscador, $sessionUsuario["id_tienda"]);
 }
 if ($proceso === "solicitarPago") {
     $con->transacion();
     $solicitud=new solicitudComision($con);
     $fechaactual = date("d/m/Y H:i:s");
-    $solicitud->contructor(0, $fechaactual, "pendiente", "","" , $sessionUsuario["id_tienda"] , "", $monto,"Comision Propia",$fechaactual);
+    $solicitud->contructor(0, $fechaactual, "pendiente", "","" , $sessionUsuario["id_tienda"] , "", $monto,"Comision Nietos",$fechaactual);
     if(!$solicitud->insertar()){
         $error="No se logro procesar la solicitud. Intente nuevamente";
     }else{
@@ -22,7 +22,7 @@ if ($proceso === "solicitarPago") {
             $id=$lista[$i]["id"];
             $monto=$lista[$i]["monto"];
             $detalle= new detalleSolicitudComision($con);
-            $detalle->contructor($solicitud->id_SolicitudComision, $id, "pendiente", $monto, $sessionUsuario["id_tienda"]);
+            $detalle->contructor($solicitud->id_SolicitudComision, $id, "pendiente", $monto,$sessionUsuario["id_tienda"]);
             if(!$detalle->insertar()){
                 $error="No se logro procesar la solicitud. Intente nuevamente";
                 break;

@@ -211,7 +211,7 @@ if ($proceso === "cambioDatosPedido") {
         $venta_id=$id_Venta;
     }
     $pedido = new pedidoApp($con);
-    if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id)) {
+    if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id,$motivo)) {
         $error = "No se logro realizar los cambios";
     }
     if($error === "") {

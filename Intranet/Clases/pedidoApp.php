@@ -30,6 +30,7 @@ class pedidoApp {
     var $direccion;
     var $lon;
     var $lat;
+    var $intrucciones;
     var $CON;
 
     function __construct($con) {
@@ -40,7 +41,7 @@ class pedidoApp {
             $estado, $motivo, $costoDelivery, $totalPedido, $sucursal_id, $cliente, $venta_id,
             $delivery_id, $recepcionado, $llamarMoto, $enCamino, $cancelado, $aceptarPedido,
             $descuento, $usuario_id, $metodoPago, $fechaProgramada, $horaProgramada, $id_tienda,
-            $direccion, $lon, $lat) {
+            $direccion, $lon, $lat,$intrucciones="") {
         $this->id_pedidoApp = $id_pedidoApp;
         $this->solicitada = $solicitada;
         $this->entregada = $entregada;
@@ -69,10 +70,11 @@ class pedidoApp {
         $this->direccion = $direccion;
         $this->lon = $lon;
         $this->lat = $lat;
+        $this->intrucciones= $intrucciones;
     }
 
     function insertar() {
-        $consulta = "INSERT INTO lasueca.pedidoapp (id_pedidoApp,solicitada,entregada,nit,rz,montoBillete,estado,motivo,costoDelivery,totalPedido,sucursal_id,cliente,venta_id,delivery_id,recepcionado,llamarMoto,enCamino,cancelado,aceptarPedido,descuento,usuario_id,metodoPago,fechaProgramada,horaProgramada,id_tienda,direccion,lon,lat) VALUES ('$this->id_pedidoApp','$this->solicitada','$this->entregada','$this->nit','$this->rz','$this->montoBillete','$this->estado','$this->motivo','$this->costoDelivery','$this->totalPedido','$this->sucursal_id','$this->cliente','$this->venta_id','$this->delivery_id','$this->recepcionado','$this->llamarMoto','$this->enCamino','$this->cancelado','$this->aceptarPedido','$this->descuento','$this->usuario_id','$this->metodoPago','$this->fechaProgramada','$this->horaProgramada','$this->id_tienda','$this->direccion','$this->lon','$this->lat');";
+        $consulta = "INSERT INTO lasueca.pedidoapp (id_pedidoApp,solicitada,entregada,nit,rz,montoBillete,estado,motivo,costoDelivery,totalPedido,sucursal_id,cliente,venta_id,delivery_id,recepcionado,llamarMoto,enCamino,cancelado,aceptarPedido,descuento,usuario_id,metodoPago,fechaProgramada,horaProgramada,id_tienda,direccion,lon,lat,intrucciones) VALUES ('$this->id_pedidoApp','$this->solicitada','$this->entregada','$this->nit','$this->rz','$this->montoBillete','$this->estado','$this->motivo','$this->costoDelivery','$this->totalPedido','$this->sucursal_id','$this->cliente','$this->venta_id','$this->delivery_id','$this->recepcionado','$this->llamarMoto','$this->enCamino','$this->cancelado','$this->aceptarPedido','$this->descuento','$this->usuario_id','$this->metodoPago','$this->fechaProgramada','$this->horaProgramada','$this->id_tienda','$this->direccion','$this->lon','$this->lat','$this->intrucciones');";
         if (!$this->CON->manipular($consulta)) {
             return false;
         }
@@ -112,16 +114,52 @@ class pedidoApp {
         return $nro[0];
     }
 
-    function buscarPedidoTienda($estado, $de, $hasta, $buscador) {
-
+    function buscarPedidoTienda($estado, $de, $hasta, $buscador,$tienda) {
         if ($estado != "") {
             $strEstado = " and p.estado like '$estado'";
         }
-        $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente, sum(d.precioU*(pr.comision/100)) comision";
-        $consulta .= " from lasueca.pedidoapp p , lasueca.detallepedidoapp d, lasueca.precioventa pr, lasueca.clienteApp c";
-        $consulta .= " where p.id_pedidoApp=d.pedidoApp_id and d.producto_id=pr.producto_id and p.cliente=c.id_clienteApp";
+        if ($tienda != "" && $tienda != "0") {
+            $strTienda = " and p.id_tienda=$tienda";
+        }
+        $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente,p.pagado, sum(d.precioU*(d.comision/100)) comision";
+        $consulta .= " from (select p2.id_pedidoApp,p2.solicitada, p2.estado, p2.totalPedido";
+	$consulta .= " ,p2.fechaProgramada, p2.horaProgramada,p2.cliente,p2.id_tienda,ifnull(c2.estado,'Sin Cobrar') pagado";
+        $consulta .= " from lasueca.pedidoapp p2 left join lasueca.detallesolicitudcomision c2";
+	$consulta .= "  on p2.id_pedidoApp=c2.pedido_id) p , lasueca.detallepedidoapp d, lasueca.clienteApp c";
+        $consulta .= " where p.id_pedidoApp=d.pedidoApp_id  and p.cliente=c.id_clienteApp $strTienda";
         $consulta .= " $strEstado and c.nombre like '%$buscador%' and STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y') ";
-        $consulta .= " group by p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre ";
+        $consulta .= " group by p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre,p.pagado ";
+        return $this->CON->consulta2($consulta);
+    }
+    function buscarPedidoHijo($de, $hasta, $buscador,$tienda) {
+        $consulta = "select comisionHijo,comisionNieto from lasueca.empresa";
+        $comisiones=$this->CON->consulta2($consulta)[0];
+        $comisionHijo= floatval($comisiones["comisionHijo"])/100;
+        
+        $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente,p.pagado,  ifnull(sum(d.precioU*(d.comision/100)),0)*$comisionHijo comision";
+        $consulta .= " from (select p2.id_pedidoApp,p2.solicitada, p2.estado, p2.totalPedido";
+	$consulta .= " ,p2.fechaProgramada, p2.horaProgramada,p2.cliente,p2.id_tienda,ifnull(c2.estado,'Sin Cobrar') pagado";
+        $consulta .= " from lasueca.pedidoapp p2 left join lasueca.detallesolicitudcomision c2";
+	$consulta .= "  on p2.id_pedidoApp=c2.pedido_id where id_tienda in (select id_tienda from lasueca.tienda where padre=$tienda)) p , lasueca.detallepedidoapp d, lasueca.clienteApp c";
+        $consulta .= " where p.id_pedidoApp=d.pedidoApp_id  and p.cliente=c.id_clienteApp ";
+        $consulta .= " and p.estado like 'entregado' and c.nombre like '%$buscador%' and STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y') ";
+        $consulta .= " group by p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre,p.pagado ";
+        return $this->CON->consulta2($consulta);
+    }
+    
+    function buscarPedidoNietos($de, $hasta, $buscador,$tienda) {
+        $consulta = "select comisionHijo,comisionNieto from lasueca.empresa";
+        $comisiones=$this->CON->consulta2($consulta)[0];
+        $comisionHijo= floatval($comisiones["comisionNieto"])/100;
+        
+        $consulta = "select p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre cliente,p.pagado,  ifnull(sum(d.precioU*(d.comision/100)),0)*$comisionHijo comision";
+        $consulta .= " from (select p2.id_pedidoApp,p2.solicitada, p2.estado, p2.totalPedido";
+	$consulta .= " ,p2.fechaProgramada, p2.horaProgramada,p2.cliente,p2.id_tienda,ifnull(c2.estado,'Sin Cobrar') pagado";
+        $consulta .= " from lasueca.pedidoapp p2 left join lasueca.detallesolicitudcomision c2";
+	$consulta .= "  on p2.id_pedidoApp=c2.pedido_id where id_tienda in (select id_tienda from lasueca.tienda where padre in (select id_tienda from lasueca.tienda where padre=$tienda)) ) p , lasueca.detallepedidoapp d, lasueca.clienteApp c";
+        $consulta .= " where p.id_pedidoApp=d.pedidoApp_id  and p.cliente=c.id_clienteApp ";
+        $consulta .= " and p.estado like 'entregado' and c.nombre like '%$buscador%' and STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y') ";
+        $consulta .= " group by p.id_pedidoApp,p.solicitada, p.estado,totalPedido, p.fechaProgramada, p.horaProgramada,c.nombre,p.pagado ";
         return $this->CON->consulta2($consulta);
     }
 
@@ -269,8 +307,8 @@ class pedidoApp {
         return false;
     }
 
-    function cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id) {
-        $consulta = "update pedidoapp set $estadoStr estado='$estado', venta_id='$venta_id' where id_pedidoApp=$id_pedido ";
+    function cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id,$motivo) {
+        $consulta = "update pedidoapp set $estadoStr motivo='$motivo' , estado='$estado', venta_id='$venta_id' where id_pedidoApp=$id_pedido ";
         return $this->CON->manipular($consulta);
     }
 
@@ -346,40 +384,47 @@ class pedidoApp {
         return $this->CON->consulta2($consulta);
     }
 
-    function reportePedido($tipo, $de, $hasta, $empresa, $ciudad, $estado) {
-        $empStr = "";
-        if ($empresa !== "0") {
-            $empStr = " e.id_empresa=$empresa and ";
-        }
-        $ciudadStr = "";
-        if ($ciudad !== "0") {
-            $ciudadStr = " s.ciudad_id=$ciudad and ";
+    function reportePedidoDiario($de, $hasta, $tienda, $estado) {
+        
+        if ($tienda != "" && $tienda != "0") {
+            $strTienda = " and p.id_tienda=$tienda";
         }
         $estadoStr = "";
         if ($estado !== "") {
             $estadoStr = " p.estado like '$estado' and ";
         }
-
-        $column = "";
-        $group = "";
-        $orderBy = "";
-        $where = " and STR_TO_DATE(p.solicitada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')";
-        if ($tipo === "Diario") {
-            $column = " SUBSTRING(p.solicitada, 1, 10) fecha, ";
-            $group = " SUBSTRING(p.solicitada, 1, 10) , ";
-            $orderBy = " order by STR_TO_DATE(solicitada,'%e/%c/%Y') desc ";
+       
+        $consulta = " select a.estado , a.fechaProgramada ,sum(a.totalPedido) totalPedido , sum(a.comision) comision   from (";
+       
+        $consulta .= " select p.id_pedidoApp, p.estado,totalPedido, p.fechaProgramada , sum(d.precioU*(d.comision/100)) comision  ";
+        $consulta .= " from lasueca.pedidoapp p , lasueca.detallepedidoapp d ";
+        $consulta .= " where $strTienda $estadoStr p.id_pedidoApp=d.pedidoApp_id ";
+        $consulta .= " and STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y') between STR_TO_DATE('$de','%e/%c/%Y') and STR_TO_DATE('$hasta','%e/%c/%Y')  ";
+        $consulta .= " group by p.id_pedidoApp, p.estado, p.fechaProgramada,p.totalPedido )a  ";
+        
+        $consulta .= " group by  a.estado, a.fechaProgramada ";
+        
+        return $this->CON->consulta2($consulta);
+    }
+    function reportePedidoMensual($tienda, $estado) {
+        
+        if ($tienda != "" && $tienda != "0") {
+            $strTienda = " and p.id_tienda=$tienda";
         }
-        if ($tipo === "Mensual") {
-            $column = "  year(STR_TO_DATE(p.solicitada,'%e/%c/%Y')) ano,month(STR_TO_DATE(p.solicitada,'%e/%c/%Y')) mes, ";
-            $group = "";
-            $orderBy = " order by year(STR_TO_DATE(p.solicitada,'%e/%c/%Y')) desc ,month(STR_TO_DATE(p.solicitada,'%e/%c/%Y')) desc ";
-            $where = "";
+        $estadoStr = "";
+        if ($estado !== "") {
+            $estadoStr = " p.estado like '$estado' and ";
         }
-        $consulta = " select $column p.estado,e.id_empresa,e.nombreEmpresa, ifnull(e.comision,0) comision ,sum(totalPedido) vendido, sum(totalPedido*(ifnull(e.comision,0)/100)) comisionBs ";
-        $consulta .= " from pedidoapp p, sucursal s, empresa e";
-        $consulta .= " where $empStr $ciudadStr $estadoStr";
-        $consulta .= " p.sucursal_id=s.id_sucursal and e.id_empresa=s.empresa_id $where";
-        $consulta .= " group by $group p.estado,e.nombreEmpresa, e.comision $orderBy";
+       
+        $consulta = " select a.ano,a.mes,a.estado,sum(a.totalPedido) totalPedido, sum(a.comision) comision  from ( ";
+        
+        $consulta .= " select  p.id_pedidoApp,p.estado,totalPedido, year(STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y')) ano,month(STR_TO_DATE(p.fechaProgramada,'%e/%c/%Y')) mes , sum(d.precioU*(d.comision/100)) comision";
+        $consulta .= " from lasueca.pedidoapp p , lasueca.detallepedidoapp d ";
+        $consulta .= " where $strTienda $estadoStr p.id_pedidoApp=d.pedidoApp_id ";
+        $consulta .= " group by  p.id_pedidoApp,p.estado, p.fechaProgramada  ";
+        
+        $consulta .= " ) a   group by a.ano,a.mes, a.estado ";
+        
         return $this->CON->consulta2($consulta);
     }
 

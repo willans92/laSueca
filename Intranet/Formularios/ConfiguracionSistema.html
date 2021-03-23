@@ -23,169 +23,26 @@
         <div class="container-fluid p-0"  >
             <h1>Configuración de Sistema</h1>
 
-            <div class="row mt-2" id='contenedorBox' style="overflow: auto;">
-                <div class="col-12">
-                    <div class="inlineblock">
-                        <span class='negrillaenter'>Nombre de la Empresa</span>
-                        <input type='text' class='grande'  autocomplete="off"  name='nombre' placeholder="Nombre de la empresa" />
-                    </div>
-                    <div class="inlineblock">
-                        <span  class='negrillaenter'>Tipo de Cambio</span>
-                        <input type='number' class='normal'  autocomplete="off"  name='tipoCambio' />
-                    </div>
+            <div class="mt-2" id='contenedorBox' style="overflow: auto;">
+                <div class="">
+                        <span class='negrillaenter'>Telefono Soporte LaSueca</span>
+                        <input type='text' class='medio'  autocomplete="off"  name='telefono' placeholder="Telefono Soporte Cliente"  maxlength="20"/>
                 </div>
-                <div class="col-12 mt-1">
-                    <table class="table" style="font-size: 15px;" id='tblFuncionalidad'>
-                        <thead>
-                        <th style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'>Funcionamiento del sistema</div></th>
-                        <th style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'>SI</div></th>
-                        <th style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'>NO</div></th>
-                        </thead>
-                        <tbody style="font-size: 14px;">
-
-                        </tbody>
-                    </table>
+                <div class="">
+                        <span class='negrillaenter'>Comision Hijo</span>
+                        <input type='number' class='medio'  autocomplete="off"  name='comisionHijo'  />%
                 </div>
-                <div class="col-12 mt-3">
-                    <h6>Firmas Nota De Venta</h6>
-                    <div class="minitext" >
-                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
-                        * Si dejas en blanco una firma, esta ya no aparecera en la Nota de Venta.
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 1</span>
-                        <input type='text' class='medio' onkeyup="firma(this)" data-view='ventabox1'  autocomplete="off"  name='fventa1' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='ventabox1'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 2</span>
-                        <input type='text' class='medio'  onkeyup="firma(this)" autocomplete="off"  data-view='ventabox2' name='fventa2' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='ventabox2'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 3</span>
-                        <input type='text' class='medio'  onkeyup="firma(this)" autocomplete="off"  data-view='ventabox3' name='fventa3' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='ventabox3'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 4</span>
-                        <input type='text' class='medio' onkeyup="firma(this)"  autocomplete="off"  data-view='ventabox4' name='fventa4' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='ventabox4'>*</div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <h6>Firmas Nota De Recepción de Compra</h6>
-                    <div class="minitext" >
-                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
-                        * Si dejas en blanco una firma, esta ya no aparecera en la Nota De Recepción de Compra.
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 1</span>
-                        <input type='text' class='medio' onkeyup="firma(this)" data-view='comprabox1'  autocomplete="off"  name='fcompra1' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='comprabox1'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 2</span>
-                        <input type='text' class='medio'  onkeyup="firma(this)" autocomplete="off"  data-view='comprabox2' name='fcompra2' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='comprabox2'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 3</span>
-                        <input type='text' class='medio'  onkeyup="firma(this)" autocomplete="off"  data-view='comprabox3' name='fcompra3' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='comprabox3'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 4</span>
-                        <input type='text' class='medio' onkeyup="firma(this)"  autocomplete="off"  data-view='comprabox4' name='fcompra4' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='comprabox4'>*</div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <h6>Firmas Documento De Cobranza</h6>
-                    <div class="minitext" >
-                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
-                        * Si dejas en blanco una firma, esta ya no aparecera en la Documento de Cobranza.
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 1</span>
-                        <input type='text' class='medio' onkeyup="firma(this)" data-view='cobranzabox1'  autocomplete="off"  name='fcobranza1' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='cobranzabox1'>*</div>
-                    </div>
-                    <div class="inlineblock" style="height: 143px;">
-                        <span  class='negrillaenter'>Firma 2</span>
-                        <input type='text' class='medio'  onkeyup="firma(this)" autocomplete="off"  data-view='cobranzabox2' name='fcobranza2' />
-                        <div style='height: 50px;border-top: solid 1px black; margin: 5px 8px; margin-top: 33px; text-align: center;' id='cobranzabox2'>*</div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3" id='contenedorApp'>
-                    <h6>Ventas En Línea</h6>
-                    <table class="table" style="font-size: 15px;" id='tblenLine'>
-                        <thead>
-                        <th style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'></div></th>
-                        <th style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'>SI</div></th>
-                        <th style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'>NO</div></th>
-                        </thead>
-                        <tbody style="font-size: 14px;">
-                            <tr>
-                                <td style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'>Activar Ventas en Línea por la App</div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='activo' name='online' onchange="cambioVentasOnline()"></div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='inactivo' name='online' onchange="cambioVentasOnline()"></div></td>
-                            </tr>
-                            <tr id="facbox">
-                                <td style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'>Al Vender por la App se emitirá Factura</div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='activo' name='onlinefactura' onchange="cambioVentasOnline()"></div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='inactivo' name='onlinefactura' onchange="cambioVentasOnline()"></div></td>
-                            </tr>
-                            <tr id="deliverybox">
-                                <td style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'>Usare mi propia flota de repartidores para las entregas de pedidos</div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='propia' name='delivery' onchange="cambioDelivery()"/></div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='emprendedor' name='delivery' onchange="cambioDelivery()"/></div></td>
-                            </tr>
-                            <tr id="deliveryTarifa">
-                                <td style="border-top: none; color: #343a40; font-weight: 500; margin-left: -6px;"><div class='grande4 izquierda'>Usare mi propio tarifario de costo de Delivery</div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='propia' name='tarifa' /></div></td>
-                                <td style="border-top: none; color: #343a40; font-weight: 500;"><div class='chico2'><input type='radio' value='emprendedor' name='tarifa'/></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="boxonline" style="display: none;" >
-                        <span class='negrillaenter' style="font-weight: bold;">¿Qué Categoría Pertenece tu empresa?</span>
-                        <span>Selecciona cuidadosamente ya que de acuerdo a esto tu empresa se posicionará en la app</span>
-                        <ul id="categoriaEmpresa"></ul>
-                        <div class="inlineblock" style="height: 133px; overflow: hidden;">
-                            <div id='boxalertOnlineRojo'>
-                                Al activar esta función tienes que configurar la <a href="Sucursal.html">Sucursal</a> que venderá en línea y los <a href="Producto.html">productos</a> que estarán visible para la venta en la app.
-                            </div>
-                            <div id="boxalertOnlineVerde">
-                                Subir el logo de la empresa ya que eso veran los clientes al comprar en la app
-                            </div>
-                        </div>
-                        <div class="inlineblock centrar medio" style="height: 133px; overflow: hidden;">
-                            <span class='negrillaenter' style="font-weight: bold;">Logo Empresa</span>
-                            <img src="../Imagen/Iconos/earth190.svg" class="normal" onclick="cargarImagen(this, 1)" id="logo">
-                        </div>
-
-                        <div id="boxalertOnlineBlue" class="mb-4">
-                            <div style="font-weight: bold;" class="centrar mb-3">Clausula del uso de la App</div>
-                            <p>Una vez usted concluya con el registro de su empresa en la App Emprendedor, Un funcionario se contactará con usted para activarle el acceso de sus productos a la App sin ningún costo inicial alguno, por lo que podrá ofertar y vender la gama de productos y servicios que su negocio tenga actualmente. </p>
-                            <p>Hacerle notar, que la persona elegida por la App Emprendedor (Repartidor) cancelará el pedido del cliente al contado, por lo que el pago por el servicio del Delívery lo realizará el cliente final al momento de recibir su encargo.</p>
-                            <p>El pago mínimo que calcula la App Emprendedor por Delívery es de Bs. 10, ya que esto es el ingreso (Pago) del chofer que realizó el recojo y llevado del pedido del cliente desde su negocio hasta el lugar de la entrega. </p>
-                            <p>La App Emprendedor calcula el pago de acuerdo a la distancia que existe entre el comercio y el cliente.</p>
-                            <p>Si el cliente se encuentra a una distancia mayor de Km. 6 no le aparecerá el negocio para poder realizar compra ya que la distancia es muy extensa.</p>
-                            <p>Cada 23 de cada mes la App Emprendedor realizará el cierre mensual, en el cual contabilizará todas las transacciones que su negocio haya realizado con nuestra plataforma. El costo mensual que usted cancelará será del 10% por transacción ejecutada atreves de la aplicación Emprendedor, por lo que tendrá como plazo los siguientes 7 días (hasta fin de mes) para poder cancelar nuestros servicios. </p>
-                            <p>Este monto de dinero mencionado líneas arriba, es para el mantenimiento del sistema y APP para poderles brindarle la calidad de servicio que usted necesita para el crecimiento y desarrollo de su negocio. </p>
-                            <p>Nota. - Si usted no realiza el pago hasta fin de mes del mantenimiento de la App en su empresa, la App procederá suspender su cuenta hasta que regularice el pago correspondiente.</p>
-                        </div>
-                    </div>
-                    <br><br>
+                <div class="">
+                        <span class='negrillaenter'>Comision Nieto</span>
+                        <input type='number' class='medio'  autocomplete="off"  name='comisionNieto'  />%
                 </div>
             </div>
+    </div>
+    <div class='container-fluid p-2' id='divflotante'>
+        <div style="width: 254px">
+            <button onclick="registrar()">Registar</button>
         </div>
-        <div class='container-fluid p-2' id='divflotante'>
-            <div style="width: 254px">
-                <button onclick="registrar()">Registar</button>
-            </div>
-        </div>
-    </body>
+    </div>
+</body>
 </html>
 

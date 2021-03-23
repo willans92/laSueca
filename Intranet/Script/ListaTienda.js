@@ -107,6 +107,7 @@ function buscador(e, tipo) {
 }
 function tiendaPop(tipo) {
     if (tipo === 1) {
+        $("input[name=codigoPadre]").prop("readonly",false);
         $("#popTienda .modal-title").text("Nueva Tienda");
         $('table tr').removeClass("Tuplaseleccionada");
         $('#btnmodificar').ocultar();
@@ -129,7 +130,15 @@ function registrar() {
     json.proceso = "registrar";
     var foto = $("#foto").prop("src");
     json.logo = foto;
-    debugger
+    json.codigoPadre = json.codigoPadre.trim()==""?0:json.codigoPadre.replace("00LS","");
+    if(!validar("entero",json.codigoPadre)){//00LS4
+        $("#errorPop").html("El codigo de tienda es incorrecto.");
+        $("input[name=codigoPadre]").addClass("rojoClarito");
+        return;
+    } else {
+        $("input[name=codigoPadre]").removeClass("rojoClarito");
+    }
+    
     if (json.nombre.length === 0) {
         $("#errorPop").html("No se ha ingresado el nombre de la tiendas.");
         $("input[name=nombre]").addClass("rojoClarito");
@@ -233,6 +242,8 @@ function modificar(tipo) {
         var cliente = listaCliente["c" + cliente_id];
         $("#popTienda .modal-title").text("Modificando Tienda");
         $("input[name=fecha]").val(tienda.registrado);
+        $("input[name=codigoPadre]").val("00LS"+tienda.padre);
+        $("input[name=codigoPadre]").prop("readonly",true);
         $("input[name=nombre]").val(tienda.nombre);
         $("#estado option[value='" + tienda.estado + "']").prop("selected", true);
         $("input[name=cuenta]").val(tienda.cuenta);

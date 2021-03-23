@@ -4,22 +4,20 @@ include_once('../Libreria/variables.php');
 
 
 if ($proceso === "iniciar") {
-    $ciudad = new ciudad($con);
-    $resultado=array();
-    $resultado["ciudad"] = $ciudad->todoOption();
-    $empresa= new empresa($con);
-    $empresa=$empresa->buscarXid($sessionUsuario["empresa_id"]);
-    if($empresa["empresaADM"]==="ADM"){
-        $empresa= new empresa($con);
-        $resultado["empresa"] = $empresa->todasEmpresas();
-        $resultado["buscadorEmp"]="<span class='negrillaenter'>Empresa</span><input type='text' class='grande' name='empresa' placeholder='--Empresa--' autocomplete='off'/> ";
-    }else{
-        $resultado["idempresa"] = $sessionUsuario["empresa_id"];
-    }
+    $tienda = new tienda($con);
+    $resultado = $tienda->todo();
 }
-if ($proceso === "reportePedido") {
+if ($proceso === "reportePedidoDiario") {
     $pedido = new pedidoApp($con);
-    $resultado = $pedido->reportePedido($tipo, $de, $hasta,$empresa,$ciudad,$estado);
+    $resultado = $pedido->reportePedidoDiario($de, $hasta,$tienda,$estado);
+}
+if ($proceso === "reportePedidoMensual") {
+    $pedido = new pedidoApp($con);
+    $resultado = $pedido->reportePedidoMensual($tienda,$estado);
+}
+if ($proceso === "pedidosDetallados") {
+    $pedido= new pedidoApp($con);
+    $resultado=$pedido->buscarPedidoTienda($estado, $de, $hasta, $buscador,$tienda);
 }
 
 

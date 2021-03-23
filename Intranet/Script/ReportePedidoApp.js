@@ -22,86 +22,37 @@ $(document).ready(function () {
             }
             alertaRapida(json.error, "error");
         } else {
-            var listaempresas = json.result.empresa;
-            
-            if(listaempresas){
-                var buscadorEmp = json.result.buscadorEmp;
-                $("#boxEmp").html(buscadorEmp);
-                comboBox({identificador: "input[name=empresa]", datos: listaempresas
-                    , codigo: "id_empresa", texto: "nombreEmpresa", todos: true,callback: ()=>generar()});
-            }else{
-                id_empresa=json.result.idempresa;
-            }
-            var listaciudad = json.result.ciudad;
-            comboBox({identificador: "input[name=ciudad]", datos: listaciudad
-                , codigo: "id_ciudad", texto: "nombre", todos: true,callback: ()=>generar()});
+            var listaTienda = json.result;
+            comboBox({identificador: "input[name=tienda]", datos: listaTienda
+                , codigo: "id_tienda", texto: "nombre"
+                , todos: true,callback: ()=>generar()});
             generar();
         }
     });
-
-
-
 });
 function generar() {
-    if (estadoReporte === "Diario" || estadoReporte === "Mensual") {
-        reporteMensual(estadoReporte);
-    }
-}
-function imprimir() {
-    var contenido = $("#tblPedido").html();
-    var usuarioLocal = localStorage.getItem("usuario");
-    if (usuarioLocal === null) {
-        window.parent.cerrarSession();
-        return;
-    }
-    usuarioLocal = $.parseJSON(usuarioLocal);
-    var filtro = "<div class='row' id='filtroReporte'>";
-    var de = $("input[name=de]").val();
-    var hasta = $("input[name=hasta]").val();
-    var empresa = $("input[name=empresa]").val();
-    var ciudad = $("input[name=ciudad]").val();
-    var estado = $("#estado option:selected").text();
-    var titulo = "";
-    filtro += "<div class='col-12'><span class='negrilla'>FILTROS</div>";
-    if (estadoReporte === "Diario") {
-        titulo = "REPORTE DE PEDIDO DIARIA";
-        filtro += "<div class='col-4'><span class='negrilla'>Fecha: </span>" + de + " - " + hasta + "</div>";
-    }
     if (estadoReporte === "Mensual") {
-        titulo = "REPORTE DE PEDIDO MENSUAL";
+        reporteMensual();
     }
-    if(empresa!==""){
-        filtro += "<div class='col-3'><span class='negrilla'>Empresa: </span>" + empresa + "</div>";
+    if (estadoReporte === "Diario") {
+        reporteDiario();
     }
-    if(ciudad!==""){
-        filtro += "<div class='col-2'><span class='negrilla'>Ciudad: </span>" + ciudad + "</div>";
+    if (estadoReporte === "Detalle") {
+        reporteDetallado();
     }
-    if(estado!=="-- Estado --"){
-        filtro += "<div class='col-2'><span class='negrilla'>Estado: </span>" + estado + "</div>";
-    }
-    filtro += "</div>";
-    imprimirReporte({contenido: contenido, sucursal_id: usuarioLocal.sucursal_id, titulo: titulo, datosHead: filtro, encabezadoThead: true});
 }
-function reporteMensual(tipo) {
+
+function reporteDetallado() {
     var de = $("input[name=de]").val();
     var hasta = $("input[name=hasta]").val();
-    var empresa = id_empresa;
-    if ($("input[name=empresa]").length > 0) {
-        empresa = $("input[name=empresa]").data("cod");
-    }
-    var ciudad = $("input[name=ciudad]").data("cod");
+    var tienda = $("input[name=tienda]").data("cod");
     var estado = $("#estado option:selected").val();
-    $("h1").text("Reporte de Pedido " + tipo);
-    if (tipo === "Diario") {
-        $("#fechabox").visible();
-        $("#filtrosMenu > div").css("width", 800);
-    } else {
-        $("#fechabox").ocultar();
-        $("#filtrosMenu > div").css("width", 620);
-    }
-    estadoReporte = tipo;
+    $("h1").text("Reporte de Pedido Detallado");
+    $("#fechabox").visible();
+    $("#filtrosMenu > div").css("width", 800);
+    estadoReporte = "Detalle";
     cargando(true);
-    $.get(url, {proceso: 'reportePedido', ciudad: ciudad, empresa: empresa, tipo: tipo
+    $.get(url, {proceso: 'pedidosDetallados', tienda: tienda, buscador:""
         , de: de, hasta: hasta, estado: estado}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
@@ -116,49 +67,37 @@ function reporteMensual(tipo) {
             var lista = json.result;
             var html = "<table class='table'>";
             html += "<thead  class='thead-light'>";
-            if (estadoReporte === "Mensual") {
-                html += "<th><div style='width:115px;'>Periodo</div></th>";
-            } else {
-                html += "<th><div style='width:115px;'>Fecha</div></th>";
-            }
-            if ($("input[name=empresa]").length > 0) {
-                html += "<th><div class='medio'>Empresa</div></th>";
-            }
+            html += "<th><div class='normal'>Solicitado</div></th>";
+            html += "<th><div class='normal'>Programado</div></th>";
+            html += "<th><div class='normal'>Cliente</div></th>";
+            html += "<th><div class='normal'>Total Pedido</div></th>";
+            html += "<th><div class='normal'>Comision</div></th>";
             html += "<th><div class='normal'>Estado</div></th>";
-            html += "<th><div class='normal'>Monto Bs</div></th>";
-            html += "<th><div class='normal'>Comision %</div></th>";
-            html += "<th><div class='normal'>Comision Bs</div></th>";
             html += "</thead><tbody style='height:300px'>";
             var totalVenta=0;
             var totalComission=0;
             for (var i = 0; i < lista.length; i++) {
-                var fecha = lista[i].fecha;
-                if (estadoReporte === "Mensual") {
-                    fecha = meses[lista[i].mes] + ", " + lista[i].ano;
-                }
-                totalVenta+=parseFloat(lista[i].vendido);
-                totalComission+=parseFloat(lista[i].comisionBs);
-                html += "<tr>";
-                html += "<td><div style='width:115px;'>" + fecha + "</div></td>";
-                if ($("input[name=empresa]").length > 0) {
-                    html += "<td><div class='medio'>" + lista[i].nombreEmpresa + "</div></td>";
-                }
-                html += "<td><div class='normal'>" + lista[i].estado + "</div></td>";
-                html += "<td><div class='normal derecha'>" + format(lista[i].vendido) + "</div></td>";
-                html += "<td><div class='normal derecha'>" + format(lista[i].comision) + "</div></td>";
-                html += "<td><div class='normal derecha'>" + format(lista[i].comisionBs) + "</div></td>";
-                html += "</tr>";
+                var venta=parseFloat(lista[i]["totalPedido"]);
+                var comision=parseFloat(lista[i]["comision"]);
+                totalVenta+=venta;
+                totalComission+=comision;
+                html+="<tr>";
+                html+="<td><div class='normal'>"+lista[i]["solicitada"]+"</div></td>";
+                html+="<td><div class='normal'>"+lista[i]["fechaProgramada"] + " "+lista[i]["horaProgramada"] +"</div></td>";
+                html+="<td><div class='normal'>"+lista[i]["cliente"]+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(venta)+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(comision)+"</div></td>";
+                html+="<td><div class='normal'>"+lista[i]["estado"]+"</div></td>";
+                html+="</tr>";
             }
             html += "</tbody><tfoot>";
+            html+="<td><div class='normal'></div></td>";
+            html+="<td><div class='normal'></div></td>";
+            html+="<td><div class='normal'>TOTAL</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalVenta)+"</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalComission)+"</div></td>";
+            html+="<td><div class='normal'></div></td>";
             html += "<tr>";
-            html += "<td><div style='width:115px;'></div></td>";
-            if ($("input[name=empresa]").length > 0) {
-                html += "<td><div class='medio'></div></td>";
-            }
-            html += "<td><div class='normal'>Total Bs.</div></td>";
-            html += "<td><div class='normal derecha'>" + format(totalVenta) + "</div></td>";
-            html += "<td><div class='normal derecha'></div></td>";
-            html += "<td><div class='normal derecha'>" + format(totalComission) + "</div></td>";
             html += "</tr>";
             $("#tblPedido").html(html);
             var tamanofiltro = $("#filtrosMenu").outerHeight();
@@ -168,4 +107,154 @@ function reporteMensual(tipo) {
         }
     });
 }
-
+function reporteDiario() {
+    var de = $("input[name=de]").val();
+    var hasta = $("input[name=hasta]").val();
+    var tienda = $("input[name=tienda]").data("cod");
+    var estado = $("#estado option:selected").val();
+    $("h1").text("Reporte de Pedido Diario");
+    $("#fechabox").visible();
+    $("#filtrosMenu > div").css("width", 800);
+    estadoReporte = "Diario";
+    cargando(true);
+    $.get(url, {proceso: 'reportePedidoDiario', tienda: tienda
+        , de: de, hasta: hasta, estado: estado}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var html = "";
+            $("#tblPedido").html("");
+            var lista = json.result;
+            var html = "<table class='table'>";
+            html += "<thead  class='thead-light'>";
+            html += "<th><div class='normal'>Fecha</div></th>";
+            html += "<th><div class='normal'>Estado</div></th>";
+            html += "<th><div class='normal'>Vendido</div></th>";
+            html += "<th><div class='normal'>Comision</div></th>";
+            html += "</thead><tbody style='height:300px'>";
+            var totalVenta=0;
+            var totalComission=0;
+            for (var i = 0; i < lista.length; i++) {
+                var venta=parseFloat(lista[i]["totalPedido"]);
+                var comision=parseFloat(lista[i]["comision"]);
+                totalVenta+=venta;
+                totalComission+=comision;
+                html+="<tr>";
+                html+="<td><div class='normal'>"+lista[i]["fechaProgramada"]+"</div></td>";
+                html+="<td><div class='normal'>"+lista[i]["estado"]+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(venta)+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(comision)+"</div></td>";
+                html+="</tr>";
+            }
+            html += "</tbody><tfoot>";
+            html+="<td><div class='normal'></div></td>";
+            html+="<td><div class='normal'>TOTAL</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalVenta)+"</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalComission)+"</div></td>";
+            html += "<tr>";
+            html += "</tr>";
+            $("#tblPedido").html(html);
+            var tamanofiltro = $("#filtrosMenu").outerHeight();
+            tamanopantalla = $(window).height() - 195;
+            var tamanoHead = tamanopantalla - $("#tblPedido thead").outerHeight() - tamanofiltro;
+            $("#tblPedido tbody").css("height", tamanoHead);
+        }
+    });
+}
+function reporteMensual() {
+    var tienda = $("input[name=tienda]").data("cod");
+    var estado = $("#estado option:selected").val();
+    $("h1").text("Reporte de Pedido Mensual");
+    $("#fechabox").ocultar();
+    $("#filtrosMenu > div").css("width", 800);
+    estadoReporte = "Mensual";
+    cargando(true);
+    $.get(url, {proceso: 'reportePedidoMensual', tienda: tienda, estado: estado}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var html = "";
+            $("#tblPedido").html("");
+            var lista = json.result;
+            var html = "<table class='table'>";
+            html += "<thead  class='thead-light'>";
+            html += "<th><div class='normal'>Periodo</div></th>";
+            html += "<th><div class='normal'>Estado</div></th>";
+            html += "<th><div class='normal'>Vendido</div></th>";
+            html += "<th><div class='normal'>Comision</div></th>";
+            html += "</thead><tbody style='height:300px'>";
+            var totalVenta=0;
+            var totalComission=0;
+            for (var i = 0; i < lista.length; i++) {
+                var venta=parseFloat(lista[i]["totalPedido"]);
+                var comision=parseFloat(lista[i]["comision"]);
+                totalVenta+=venta;
+                totalComission+=comision;
+                var pediodo=meses[lista[i]["mes"]]+" , "+lista[i]["ano"]
+                html+="<tr>";
+                html+="<td><div class='normal'>"+pediodo+"</div></td>";
+                html+="<td><div class='normal'>"+lista[i]["estado"]+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(venta)+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(comision)+"</div></td>";
+                html+="</tr>";
+            }
+            html += "</tbody><tfoot>";
+            html+="<td><div class='normal'></div></td>";
+            html+="<td><div class='normal'>TOTAL</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalVenta)+"</div></td>";
+            html+="<td><div class='normal derecha'>"+format(totalComission)+"</div></td>";
+            html += "<tr>";
+            html += "</tr>";
+            $("#tblPedido").html(html);
+            var tamanofiltro = $("#filtrosMenu").outerHeight();
+            tamanopantalla = $(window).height() - 195;
+            var tamanoHead = tamanopantalla - $("#tblPedido thead").outerHeight() - tamanofiltro;
+            $("#tblPedido tbody").css("height", tamanoHead);
+        }
+    });
+}
+function imprimir() {
+    var contenido = $("#tblPedido").html();
+    var usuarioLocal = localStorage.getItem("usuario");
+    if (usuarioLocal === null) {
+        window.parent.cerrarSession();
+        return;
+    }
+    usuarioLocal = $.parseJSON(usuarioLocal);
+    var filtro = "<div class='row' id='filtroReporte'>";
+    var de = $("input[name=de]").val();
+    var hasta = $("input[name=hasta]").val();
+    var tienda = $("input[name=tienda]").val();
+    var estado = $("#estado option:selected").text();
+    var titulo = "";
+    filtro += "<div class='col-12'><span class='negrilla'>FILTROS</div>";
+    if (estadoReporte === "Diario") {
+        titulo = "REPORTE DE PEDIDO DIARIA";
+        filtro += "<div class='col-4'><span class='negrilla'>Fecha: </span>" + de + " - " + hasta + "</div>";
+    }
+    if (estadoReporte === "Detalle") {
+        titulo = "REPORTE DE PEDIDO DETALLADO";
+        filtro += "<div class='col-4'><span class='negrilla'>Fecha: </span>" + de + " - " + hasta + "</div>";
+    }
+    if (estadoReporte === "Mensual") {
+        titulo = "REPORTE DE PEDIDO MENSUAL";
+    }
+    if(tienda!==""){
+        filtro += "<div class='col-2'><span class='negrilla'>Tienda: </span>" + tienda + "</div>";
+    }
+    if(estado!=="-- Estado --"){
+        filtro += "<div class='col-2'><span class='negrilla'>Estado: </span>" + estado + "</div>";
+    }
+    filtro += "</div>";
+    imprimirReporte({contenido: contenido, sucursal_id: usuarioLocal.sucursal_id, titulo: titulo, datosHead: filtro, encabezadoThead: true});
+}

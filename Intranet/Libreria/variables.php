@@ -3,9 +3,11 @@
 header("Content-Type: text/html;charset=utf-8");
 error_reporting(0);
 include_once "../Libreria/CONN.php";
-include_once "../Clases/horarioEntrega.php";
 include_once "../Clases/empresa.php";
+include_once "../Clases/horarioEntrega.php";
 include_once "../Clases/prestamo.php";
+include_once "../Clases/solicitudComision.php";
+include_once "../Clases/detalleSolicitudComision.php";
 include_once "../Clases/linea_producto_tienda.php";
 include_once "../Clases/planPrestamo.php";
 include_once "../Clases/tienda.php";

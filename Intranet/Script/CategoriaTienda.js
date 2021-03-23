@@ -1,10 +1,11 @@
 var url = '../Controlador/CategoriaTienda_Controlador.php';
 var contador = 0;
 var posicion = 0;
-var tamanopantalla = $(window).height() - 265;
+var tamanopantalla = $(window).height() - 240;
 var listaUsuario;
 var listaLinea;
 var listaLineaCatalogo=[];
+var subLineaCheck=[];
 var categoria_id = "0";
 var listaCategoria=[];
 $(document).ready(function () {
@@ -16,7 +17,7 @@ $(document).ready(function () {
     usuarioLocal = $.parseJSON(usuarioLocal);
     $("#contenedorUsuarop").css("height", tamanopantalla);
     $(window).resize(function () {
-        var tamanopantalla = $(window).height() - 265;
+        var tamanopantalla = $(window).height() - 240;
         $("#contenedorUsuarop").css("height", tamanopantalla);
     });
     buscarLinea();
@@ -78,7 +79,7 @@ function buscar(e) {
                 if(listaCategoria[i].tipo==="especial"){
                     tipo="background: #86b386;"
                 }
-                html+="<div onclick='modificar(1,this)'  class='boxCategoriaProducto' id='c"+listaCategoria[i].id_categoriaProducto+"' data-index='"+i+"'>"+listaCategoria[i].nombre+"<div class='lineabox' style='"+tipo+"'> </div></div>"
+                html+="<div onclick='modificar(1,this)'  class='boxCategoriaProducto' id='c"+listaCategoria[i].id_categoriaProducto+"' data-index='"+i+"'>("+listaCategoria[i].posicion+") - "+listaCategoria[i].nombre+"<div class='lineabox' style='"+tipo+"'> </div></div>"
             }
             $("#contenedorUsuarop").html(html);
             listaLineaCatalogo = json.result.linea;
@@ -114,19 +115,24 @@ function categoriaPop(tipo) {
         categoria_id=0;
         $("#foto").attr("src", "../Imagen/Iconos/earth190.svg");
         $("#foto").data("peque", "../Imagen/Iconos/earth190.svg");
+        subLineaCheck=[];
     }
 }
 function cambioCheckLinea(ele,id){
     var check=$(ele).prop("checked");
-    for (var i = 0; i < listaLinea.length; i++) {
-        if(listaLinea[i].id_linea_producto==id){
-            listaLinea[i].check=check;
+    if(check){
+        subLineaCheck.push(id);
+    }else{
+        var index=subLineaCheck.findIndex((value)=>value=id);
+        if(index>=0){
+            subLineaCheck.splice(index,1);
         }
     }
 }
 function registrar() {
     var json = variables($("#popUsuario"));
     json.proceso = "registrar";
+    json.posicion=json.posicion=="" || parseInt(json.posicion)<0?0:json.posicion;
     if (json.nombre.length === 0) {
         $("#errorPop").html("No se ha ingresado el nombre de la categoria.");
         $("input[name=nombre]").addClass("rojoClarito");
@@ -138,14 +144,9 @@ function registrar() {
     $("#errorPop").html("");
     var foto = $("#foto").data("peque");
     json.foto = foto;
-    var linea=[];
-    for (var i = 0; i < listaLinea.length; i++) {
-        if(listaLinea[i].check){
-            linea.push(listaLinea[i].id_linea_producto);
-        }
-    }
+    debugger
     json.categoria_id = categoria_id;
-    json.Listalinea = linea;
+    json.Listalinea = subLineaCheck;
     cargando(true);
     $.post(url, json, function (response) {
         cargando(false);
@@ -186,12 +187,15 @@ function modificar(tipo,ele) {
         categoria_id = categoria.id_categoriaProducto;
         $("#popUsuario .modal-title").text("Modificando Categoria");
         $("input[name=nombre]").val(categoria.nombre);
+        $("input[name=posicion]").val(categoria.posicion);
         $("#estado option[value='" + categoria.estado + "']").prop("selected", true);
         $("#tipo option[value='" + categoria.tipo + "']").prop("selected", true);
         $("#foto").attr("src", categoria.foto);
         $("#foto").data("peque", categoria.foto);
+        subLineaCheck=[];
         for (var i = 0; i < listaLineaCatalogo.length; i++) {
             if(listaLineaCatalogo[i].categoriaProducto_id===categoria_id){
+                subLineaCheck.push(listaLineaCatalogo[i].linea_producto_id);
                 $("#tbllinea input[name='l"+listaLineaCatalogo[i].linea_producto_id+"']").prop("checked",true);
             }
         }

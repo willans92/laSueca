@@ -29,7 +29,7 @@ if ($proceso === "registrarPedido") {
         $pedido->contructor(0, $fechaactual,"", "", "" , 0, "pendiente", "", $costoDelivery, $totalFinal
                 , $sucursal, $cliente->id_clienteApp, 0 , 0, "","" /*$llamarMoto*/
                 , "", "", "", 0, 0, $metodoPago, $fechaEntrega, $hora
-                , $id_tienda, $direccion, $lon, $lat);
+                , $id_tienda, $direccion, $lon, $lat,$intrucciones);
         if(!$pedido->insertar()){
              $error="No se logro realizar el pedido. Intente Nuevamente.";    
         }else{

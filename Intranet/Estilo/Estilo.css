@@ -99,27 +99,27 @@ body{
     font-size: 22px;
     font-style: italic;
 }
-#msmOK button{
+#msmOK button,#msmOK2 button{
     background: #4484c2;
     margin: 15px 5px;
     margin-bottom: 1px;
 }
-#msmOK .no{
+#msmOK .no,#msmOK2 .no{
     background: #6c757d;
     border-bottom: #6c757d;
     box-shadow: 0 0 3px 0px #6c757d;
 }
-#msmOK .mensaje{
+#msmOK .mensaje,#msmOK2 .mensaje{
     font-size: 14px;
     font-weight: 600;
     margin-top: 6px;
 }
-#msmOK .titulo{
+#msmOK .titulo,#msmOK2 .titulo{
     font-size: 18px;
     font-weight: bold;
     text-align: center;
 }
-#msmOK .boxmensaje{
+#msmOK .boxmensaje,#msmOK2 .boxmensaje{
     width: 420px;
     margin: 30px auto;
     padding: 11px;
@@ -133,7 +133,7 @@ body{
     outline: 0;
 
 }
-#msmOK{
+#msmOK,#msmOK2{
     position: absolute;
     top: 0px;
     width: 100%;

@@ -7,22 +7,24 @@ class catalogoProducto {
     var $foto;
     var $estado;
     var $tipo;
+    var $posicion;
     var $CON;
 
     function __construct($con) {
         $this->CON = $con;
     }
 
-    function contructor($id_categoriaProducto, $nombre, $estado, $foto, $tipo) {
+    function contructor($id_categoriaProducto, $nombre, $estado, $foto, $tipo,$posicion) {
         $this->id_categoriaProducto = $id_categoriaProducto;
         $this->nombre = $nombre;
         $this->foto = $foto;
         $this->estado = $estado;
         $this->tipo = $tipo;
+        $this->posicion = $posicion;
     }
 
     function buscarXtext($text, $estado) {
-        $consulta = "select * from lasueca.categoriaproducto where nombre like '%$text%' and estado like '$estado' and empresa_id=" . $this->CON->empresa_id . " order by id_categoriaProducto asc";
+        $consulta = "select * from lasueca.categoriaproducto where nombre like '%$text%' and estado like '$estado' and empresa_id=" . $this->CON->empresa_id . " order by posicion asc, id_categoriaProducto asc";
         return $this->CON->consulta2($consulta);
     }
 
@@ -44,7 +46,7 @@ class catalogoProducto {
     }
 
     function modificar() {
-        $consulta = "UPDATE lasueca.categoriaproducto SET tipo='$this->tipo', nombre = '$this->nombre',estado = '$this->estado' WHERE id_categoriaProducto = '$this->id_categoriaProducto' and empresa_id=" . $this->CON->empresa_id . "";
+        $consulta = "UPDATE lasueca.categoriaproducto SET tipo='$this->tipo', posicion='$this->posicion', nombre = '$this->nombre',estado = '$this->estado' WHERE id_categoriaProducto = '$this->id_categoriaProducto' and empresa_id=" . $this->CON->empresa_id . "";
         return $this->CON->manipular($consulta);
     }
 
@@ -54,7 +56,7 @@ class catalogoProducto {
     }
 
     function insertar() {
-        $consulta = "INSERT INTO lasueca.categoriaproducto (id_categoriaProducto,nombre,foto,estado,empresa_id,tipo) VALUES ('$this->id_categoriaProducto','$this->nombre','','$this->estado','" . $this->CON->empresa_id . "','$this->tipo');";
+        $consulta = "INSERT INTO lasueca.categoriaproducto (id_categoriaProducto,nombre,foto,estado,empresa_id,tipo,posicion) VALUES ('$this->id_categoriaProducto','$this->nombre','','$this->estado','" . $this->CON->empresa_id . "','$this->tipo','$this->posicion');";
         $resultado = $this->CON->manipular($consulta);
         if (!$resultado) {
             return false;

@@ -179,6 +179,7 @@
                     <label>Dirección</label>
                     <input type="text" class="grande2" name="direccion" autocomplete="off">
                     <label>Dirección Gps</label>
+                    <label style="font-weight: normal; font-style: italic; font-size: 13px;">Marca en el mapa la dirección de entrega con un clic</label>
                     <div id="mapa"></div>
                 </div>
                 <div class="foot">
@@ -221,11 +222,23 @@
                     <div class="cuerpobox">
                         
                     </div>
-
+                    <br>
+                    <label>Intrucciones de Entrega</label>
+                    <input type='text' name='intrucciones' autocomplete="off" style="width:100%">
                 </div>
                 <div class="foot">
                     <span onclick="continuarDelivery()">Atras</span>
                     <button onclick="finalizarVenta()">Realizar Pedido <span class="total"></span></button>
+                </div>
+            </div>
+            <div id="popDetalle" class="pop">
+                <img src="" alt=""/>
+                <div id="detallePrecio"></div>
+                <div id="detalleNombre"></div>
+                <div id="detalleDesc"></div>
+                <div style="margin-top: 15px;">
+                    <button onclick="ocultarPopup()" class="btn-danger">Salir</button>
+                    <button onclick="agregarCarritoDetalleProducto()"> Agregar Carrito</button>
                 </div>
             </div>
         </div>

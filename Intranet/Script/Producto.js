@@ -61,13 +61,24 @@ function cargar() {
             listaProducto = Object.keys(window.parent.listaProducto).map(function (k) {
                 return window.parent.listaProducto[k]
             });
+            var ordenar=$("#ordenarPor option:selected").val();
             listaProducto.sort(function (a, b) {
-                var idA = parseInt(a.id_producto);
-                var idB = parseInt(b.id_producto);
-                if (idA < idB) {
-                    return 1;
+                if (ordenar=="registro") {
+                    var idA = parseInt(a.id_producto);
+                    var idB = parseInt(b.id_producto);
+                    if (idA < idB) {
+                        return 1;
+                    }
+                    return -1;
+                }else{
+                    var idA = parseInt(a.posicion);
+                    var idB = parseInt(b.posicion);
+                    if (idA > idB) {
+                        return 1;
+                    }
+                    return -1;
                 }
-                return -1;
+
             });
             if (id_producto !== 0) {
                 var listaP = window.parent.listaProducto;
@@ -127,6 +138,7 @@ function buscar(e, tipo) {
             }
             posicion++
             html += "<tr data-id='" + producto.id_producto + "' onclick=modificar(1)>";
+            html += "<td><div class='normal'>" + producto.posicion + "</div></td>";
             html += "<td><div class='normal'>" + producto.codigo + "</div></td>";
             html += "<td><div class='normal'>" + producto.codigoBarra + "</div></td>";
             html += "<td><div class='medio'>" + producto.nombre + "</div></td>";

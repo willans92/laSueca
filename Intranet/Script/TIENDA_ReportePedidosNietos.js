@@ -1,4 +1,4 @@
-var url = '../Controlador/TIENDA_ReportePedidos_Controlador.php';
+var url = '../Controlador/TIENDA_ReportePedidosNietos_Controlador.php';
 var contador = 0;
 var posicion = 0;
 var tamanopantalla = $(window).height() - 235;
@@ -24,12 +24,11 @@ $(document).ready(function () {
     buscar();
 });
 function buscar() {
-    var estado = $("#estado option:selected").val();
     var de = $("input[name=de]").val();
     var hasta = $("input[name=hasta]").val();
     var buscador = ($("input[name=buscar]").val() + "").toUpperCase();
     cargando(true);
-    $.get(url, {proceso: "buscador", estado: estado, de: de, hasta: hasta, buscador: buscador}, function (response) {
+    $.get(url, {proceso: "buscador", de: de, hasta: hasta, buscador: buscador}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
         if (json.error.length > 0) {
@@ -38,11 +37,6 @@ function buscar() {
             }
             alertaRapida(json.error, "error");
         } else {
-            if(estado==="entregado"){
-                $("#btnSolicitudPago").visible();
-            }else{
-                $("#btnSolicitudPago").ocultar();
-            }
             var lista = json.result;
             var html = "<table class='table'>";
             html += "<thead  class='thead-light'>";
@@ -71,7 +65,7 @@ function buscar() {
                     cssPago="estadoPlomo";
                 }
                 html += "<tr>";
-                if(estado==="entregado" && pagado==="Sin Cobrar"){
+                if(pagado==="Sin Cobrar"){
                     html += "<th><div class='pequeno2'><input data-comision='"+comision+"' type='checkbox' checked name='pago' value='"+lista[i]["id_pedidoApp"]+"'></div></th>";    
                 }else{
                     html += "<th><div class='pequeno2'></div></th>";    

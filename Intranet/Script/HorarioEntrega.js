@@ -3,6 +3,7 @@ var contador = 0;
 var listaHorario = {};
 var id_Horario = 0;
 var posicion = 0;
+var diaSemana=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
 var tamanopantalla = $(window).height() - 260;
 $(document).ready(function () {
     var usuarioLocal = localStorage.getItem("usuario");
@@ -16,12 +17,19 @@ $(document).ready(function () {
         var tamanopantalla = $(window).height() - 260;
         $("#tblprd tbody").css("height", tamanopantalla);
     });
+    var html="";
+    for (var i = 0; i < diaSemana.length; i++) {
+        html+="<option value='"+i+"'>"+diaSemana[i]+"</option>";
+    }
+    $("#diaB").html("<option value='-1'>Todas</option>"+html);
+    $("#dia").html(html);
     cargar();
 });
 function cargar() {
     var estado = $("#tpestadoB option:selected").val();
+    var dia = $("#diaB option:selected").val();
     cargando(true);
-    $.get(url, {proceso: "buscarHorario", estado: estado}, function (response) {
+    $.get(url, {proceso: "buscarHorario", estado: estado, dia:dia}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
         if (json.error.length > 0) {
@@ -61,11 +69,11 @@ function buscar(e, tipo) {
         var detalle = (horario.detalle + "").toUpperCase();
         if (detalle.indexOf(buscador) >= 0) {
             posicion++;
-            
             html += "<tr onclick='modificar(1)'  data-pos='" + i + "' data-id='" + horario.id_horarioEntrega + "' data-estado='" + horario.estado + "' >";
             html += "<td><div class='medio'>" + horario.detalle + "</div></td>";
             html += "<td><div class='normal'>" + horario.horarioDe + "</div></td>";
             html += "<td><div class='normal'>" + horario.horarioHasta + "</div></td>";
+            html += "<td><div class='normal'>" + diaSemana[horario.dia] + "</div></td>";
             html += "<td><div class='normal'>" + horario.estado + "</div></td>";
             html += "</tr>";
             inicia--;
@@ -134,6 +142,7 @@ function modificar(tipo) {
         var posicion = $(tupla[0]).data("pos");
         var item=listaHorario[posicion];
         $("#tpestado option[value=" + item.estado + "]").prop("selected", true);
+        $("#dia option[value=" + item.dia + "]").prop("selected", true);
         $("#popHorario h5").text("Modificando Horario");
         $("input[name=detalle]").val(item.detalle);
         var horarioDe=item.horarioDe.split(":");

@@ -72,6 +72,10 @@ class empresa {
         $consulta = "UPDATE lasueca.empresa SET delivery='$this->delivery',tarifaDelivery='$this->tarifaDelivery', appFactura='$this->appFactura', app='$this->app' , appLogo='$this->appLogo' , nombreEmpresa = '$this->nombreEmpresa',tipoCambio = '$this->tipoCambio',firmaCobranza1 = '$this->firmaCobranza1',firmaCobranza2 = '$this->firmaCobranza2',firmaNotaVenta1 = '$this->firmaNotaVenta1',firmaNotaVenta2 = '$this->firmaNotaVenta2',firmaNotaVenta3 = '$this->firmaNotaVenta3',firmaNotaVenta4 = '$this->firmaNotaVenta4',firmaNotaCompra1 = '$this->firmaNotaCompra1',firmaNotaCompra2 = '$this->firmaNotaCompra2',firmaNotaCompra3 = '$this->firmaNotaCompra3',firmaNotaCompra4 = '$this->firmaNotaCompra4' WHERE id_empresa =" . $this->CON->empresa_id;
         return $this->CON->manipular($consulta);
     }
+    function modificarDatos($telefono,$comisionHijo,$comisionNieto) {
+        $consulta = "UPDATE lasueca.empresa SET telefono='$telefono',comisionHijo='$comisionHijo',comisionNieto='$comisionNieto' WHERE id_empresa =" . $this->CON->empresa_id;
+        return $this->CON->manipular($consulta);
+    }
     function cambiarEstadoApp($idempresa,$estado,$aprobado,$comision,$aprobadoPor,$app,$telefono,$logo) {
         $logoStr="";
         if($logo!=="-"){

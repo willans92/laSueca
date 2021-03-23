@@ -12,6 +12,7 @@ var lon = -63.181530;
 var lat2 = -17.782786;
 var lon2 = -63.181530;
 var listaTarifa = [];
+var estadoMsn="";
 $(document).ready(function () {
     $(".fecha").val(fechaActual());
     $(".fecha").datepicker();
@@ -418,17 +419,39 @@ function cambioUbicacion() {
 }
 function cambioDatosPedido(tipo,estado) {
     if(tipo==1){
-        $("body").msmPregunta("¿Esta seguro de cambiar el estado del pedido a "+estado+"?","cambioDatosPedido(2,'"+estado+"')")
+        estadoMsn=estado;
+        if(estado=="cancelado"){
+            $("#popPedido").ocultar();
+            $("#boxcancelacion").visible(1);
+        }else{
+            $("#boxcancelacion").ocultar();
+        }
+        $("#msmOK2 .mensaje").html("¿Esta seguro de cambiar el estado del pedido a "+estado+"?");
+        $("#msmOK2 input[name=motivoCancelacion]").val("");
+        $("#msmOK2").visible(1);
         return;
     }
+    var motivo="";
+    if(estadoMsn=="cancelado"){
+        motivo=$("#msmOK2 input[name=motivoCancelacion]").val().trim();
+        if(motivo==""){
+            $("#msmOK2 input[name=motivoCancelacion]").addClass("rojoClarito");
+            return;
+        }else{
+            $("#msmOK2 input[name=motivoCancelacion]").removeClass("rojoClarito");
+        }
+    }
+    $("#popPedido").visible(1);
+    $("#msmOK2").ocultar();
     var item = listaPedido[id_pedido];
     cargando(true);
     $.post(url, {proceso: "cambioDatosPedido", 
                 id_pedido: id_pedido,
                 venta_id:item.venta_id,
                 sucursal_id: item.sucursal_id, 
-                estado: estado, 
-                id_cliente: item.id_cliente
+                estado: estadoMsn, 
+                id_cliente: item.id_cliente,
+                motivo:motivo
     }, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
@@ -443,6 +466,10 @@ function cambioDatosPedido(tipo,estado) {
             buscarPedido('', 1);
         }
     });
+}
+function cerrarPop(){
+    $("#popPedido").visible(1);
+    $("#msmOK2").ocultar();
 }
 function fijarUbicacion(tipo) {
     if (tipo === 1) {

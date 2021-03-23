@@ -11,6 +11,8 @@ $(document).ready(function () {
     if (usuarioLocal === null) {
         cerrarSession(1);
     }
+    usuarioLocal=JSON.parse(usuarioLocal);
+    $("#codTienda").html("Codigo Tienda: <span >"+usuarioLocal.codigo+"</span>")
 });
 function menuApp() {
     if (estadoMenu) {
