@@ -8,6 +8,24 @@ if ($proceso === "buscarMas") {
     $resultado = $producto->nuestrosProductosHome($id_tienda, $txtbusqueda
             , $categoria, $subcategoria, $pibote, 30);
 }
+if ($proceso === "horarioDisponible") {
+    $horario = new horarioEntrega($con);
+    $resultado = $horario->horarioDisponiblexFecha($fecha);
+}
+if ($proceso === "verPedido") {
+    $pedido = new pedidoApp($con);
+    $detalle=new detallePedidoApp($con);
+    $resultado = array();
+    $resultado["pedido"] = $pedido->buscarXid($id_pedido);
+    $resultado["detalle"] = $detalle->buscarxIdpedido($id_pedido);
+}
+if ($proceso === "verificarCodigo") {
+    $pedido = new pedidoApp($con);
+    $resultado = $pedido->verificarIdpedido($codigo);
+    if($resultado!="0"){
+        $resultado=str_replace("LS","",$codigo);
+    }
+}
 if ($proceso === "registrarPedido") {
     $con->transacion();
     $pedido = new pedidoApp($con);
@@ -33,11 +51,12 @@ if ($proceso === "registrarPedido") {
         if(!$pedido->insertar()){
              $error="No se logro realizar el pedido. Intente Nuevamente.";    
         }else{
+            $resultado=$pedido->id_pedidoApp;
             $lista=$_POST["lista"];
             for ($i = 0; $i < count($lista); $i++) {
                 $obj=$lista[$i];
                 $detalle=new detallePedidoApp($con);
-                $detalle->contructor(0, "", $obj["cantidad"], $obj["precio"], "activo", $pedido->id_pedidoApp, $obj["id"]);
+                $detalle->contructor(0, "", $obj["cantidad"], $obj["precio"], "activo", $pedido->id_pedidoApp, $obj["id"], $obj["comision"]);
                 if(!$detalle->insertar()){
                     $error="No se logro realizar el pedido. Intente Nuevamente."; 
                     break;

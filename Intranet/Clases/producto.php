@@ -87,6 +87,7 @@ class producto {
         $consulta = " select * from ( ";
         $consulta .= " select p.nombre,p.id_producto,p.descripcion, p.foto";
         $consulta .= " ,ifnull((select precio from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
+        $consulta .= " ,ifnull((select comision from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) comision";
         $consulta .= " from lasueca.categoriaproducto_linea l,lasueca.categoriaproducto c";
         $consulta .= " , lasueca.producto p, lasueca.linea_producto_tienda lp ";
         $consulta .= " where l.categoriaProducto_id=c.id_categoriaProducto and p.linea_producto_id=l.linea_producto_id ";

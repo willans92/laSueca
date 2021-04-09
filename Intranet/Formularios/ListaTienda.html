@@ -5,7 +5,7 @@
         <meta http-equiv="Last-Modified" content="0" />
         <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
         <meta http-equiv="Pragma" content="no-cache" />
-        
+
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Lista de Tienda</title>
@@ -54,10 +54,12 @@
                     <div id="contenedorUsuarop">
                         <table class="table" id='tbltienda'>
                             <thead class="thead-light">
-                                <th><div class='medio'>Registrado</div></th>
-                                <th><div class='grande'>Tienda</div></th>
-                                <th><div class='grande'>Cliente</div></th>
-                                <th><div class='normal'>Estado</div></th>
+                            <th><div class='medio'>Registrado</div></th>
+                            <th><div class='grande'>Tienda</div></th>
+                            <th><div class='grande'>Cliente</div></th>
+                            <th><div class='medio'>Banco</div></th>
+                            <th><div class='medio'>Nro Cta Bancaria</div></th>
+                            <th><div class='normal'>Estado</div></th>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -74,98 +76,120 @@
                 <div class="inlineblock">
                     <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/>
                     <img onclick="exportarExcel('tbltienda', 'Lista de tiendas')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn"/>
-            </div>
+                </div>
             </div>
         </div>
-        
-        
+
+
         <div class="modal fade" id="popTienda" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" >Usuario</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 negrilla" style="border-bottom: solid silver 1px; margin: 13px 0;">
-                            DATOS DE TIENDA
-                        </div>
-                        <div class="col-3">
-                            <label>Registrado</label>
-                            <input type="text" class="form-control" name="fecha"   readonly>
-                        </div>
-                        <div class="col-6">
-                            <label>Nombre de la Tienda</label>
-                            <input type="text" class="form-control" name="nombre"   maxlength="300" autocomplete="off">
-                        </div>
-                        <div class="col-3">
-                            <label>Estado</label>
-                            <select id="estado" class="form-control">
-                                <option value="activo">Activo</option>
-                                <option value="inactivo">inActivo</option>
-                            </select>
-                        </div>
-                        <div class="col-3" >
-                            <div class='negrillaenter'>Logo</div>
-                            <img src="../Imagen/Iconos/earth190.svg" data-peque="../Imagen/Iconos/earth190.svg" class="normal" style="min-width: 50; min-height: 50px;" onclick="cargarImagen(this, 1)" id="foto">
-                        </div>
-                        <div class="col-3" >
-                            <label>Cuenta</label>
-                            <input type="text" class="form-control" name="cuenta" maxlength="30" autocomplete="off">
-                        </div>
-                        <div class="col-3">
-                            <label>Contraseña</label>
-                            <input type="password" class="form-control" name="contrasena" maxlength="30" autocomplete="off">
-                        </div>
-                        <div class="col-3">
-                            <label>Código Padre</label>
-                            <input type="text" class="form-control" name="codigoPadre" maxlength="30" autocomplete="off">
-                        </div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Usuario</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="row">
-                        <div class="col-12 negrilla" style="border-bottom: solid silver 1px; margin: 13px 0;">
-                            DATOS DEL CLIENTE
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 negrilla" style="border-bottom: solid silver 1px; margin: 13px 0;">
+                                DATOS DE TIENDA
+                            </div>
+                            <div class="col-3">
+                                <label>Registrado</label>
+                                <input type="text" class="form-control" name="fecha"   readonly>
+                            </div>
+                            <div class="col-6">
+                                <label>Nombre de la Tienda</label>
+                                <input type="text" class="form-control" name="nombre"   maxlength="300" autocomplete="off">
+                            </div>
+                            <div class="col-3">
+                                <label>Estado</label>
+                                <select id="estado" class="form-control">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">inActivo</option>
+                                </select>
+                            </div>
+                            <div class="col-3" >
+                                <div class='negrillaenter'>Logo</div>
+                                <img src="../Imagen/Iconos/earth190.svg" data-peque="../Imagen/Iconos/earth190.svg" class="normal" style="min-width: 50; min-height: 50px;" onclick="cargarImagen(this, 1)" id="foto">
+                            </div>
+                            <div class="col-9 row" >
+                                <div class="col-4" >
+                                    <label>Cuenta</label>
+                                    <input type="text" class="form-control" name="cuenta" maxlength="30" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Contraseña</label>
+                                    <input type="password" class="form-control" name="contrasena" maxlength="30" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Código Padre</label>
+                                    <input type="text" class="form-control" name="codigoPadre" maxlength="30" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Banco</label>
+                                    <input type="text" class="form-control" name="banco" maxlength="60" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Cta Banco</label>
+                                    <input type="text" class="form-control" name="nroCuenta" maxlength="60" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Propietario Banco</label>
+                                    <input type="text" class="form-control" name="nombreCuenta" maxlength="120" autocomplete="off">
+                                </div>
+                                <div class="col-4">
+                                    <label>Moneda</label>
+                                    <select id="moneda" class="form-control">
+                                        <option value="Bs">Bs</option>
+                                        <option value="$us">$us</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="col-3">
-                            <label>CI</label>
-                            <input type="text" class="form-control" name="ci"   maxlength="300" autocomplete="off">
+                        <div class="row">
+                            <div class="col-12 negrilla" style="border-bottom: solid silver 1px; margin: 13px 0;">
+                                DATOS DEL CLIENTE
+                            </div>
+                            <div class="col-3">
+                                <label>CI</label>
+                                <input type="text" class="form-control" name="ci"   maxlength="300" autocomplete="off">
+                            </div>
+                            <div class="col-6">
+                                <label>Cliente</label>
+                                <input type="text" class="form-control" name="cliente"   maxlength="300" autocomplete="off">
+                            </div>
+                            <div class="col-3">
+                                <label>Telefono</label>
+                                <input type="text" class="form-control" name="telefono"   maxlength="300" autocomplete="off">
+                            </div>
+
+
+                            <div class="col-4">
+                                <label>Dirección</label>
+                                <input type="text" class="form-control" name="direccion"   maxlength="300" autocomplete="off">
+                            </div>
+                            <div class="col-4">
+                                <label>Correo</label>
+                                <input type="text" class="form-control" name="correo"   maxlength="300" autocomplete="off">
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <label>Cliente</label>
-                            <input type="text" class="form-control" name="cliente"   maxlength="300" autocomplete="off">
-                        </div>
-                        <div class="col-3">
-                            <label>Telefono</label>
-                            <input type="text" class="form-control" name="telefono"   maxlength="300" autocomplete="off">
-                        </div>
-                        
-                        
-                        <div class="col-4">
-                            <label>Dirección</label>
-                            <input type="text" class="form-control" name="direccion"   maxlength="300" autocomplete="off">
-                        </div>
-                        <div class="col-4">
-                            <label>Correo</label>
-                            <input type="text" class="form-control" name="correo"   maxlength="300" autocomplete="off">
-                        </div>
+
+
                     </div>
-                    
-                    
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <div id="errorPop"></div>
-                  <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
-                  <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
-                </div>
-              </div>
             </div>
-          </div>
-        
-        
-        
+        </div>
+
+
+
     </body>
 </html>
 

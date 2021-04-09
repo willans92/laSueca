@@ -197,10 +197,6 @@
                     <div style="margin: 10px">
                         <label>Horario de entrega</label>
                         <ul id="hora">
-                            <li><input name='hora' type='radio' checked value='9:00:00' > <span>entre 9:00 al 11:00  </span></li>
-                            <li><input name='hora' type='radio' value='14:00:00' > <span>entre 14:00 al 16:00  </span></li>
-                            <li><input name='hora' type='radio' value='16:00:00' > <span>entre 16:00 al 18:00  </span></li>
-                            <li><input name='hora' type='radio' value='18:00:00' > <span>entre 18:00 al 20:00  </span></li>
                         </ul>
                     </div>
 

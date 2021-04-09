@@ -37,7 +37,8 @@ if ($proceso === "registrar") {
         $tienda=new tienda($con);
         $tienda->contructor($tienda_id, $nombre, $cuenta, $contrasena, $estado
                 , $fechaactual, "", $fechaactual, $sessionUsuario["id_usuario"]
-                , $sessionUsuario["id_usuario"], $cliente_id,$codigoPadre);
+                , $sessionUsuario["id_usuario"], $cliente_id,$codigoPadre,
+                $banco,$nroCuenta,$moneda,$nombreCuenta);
         if ($tienda_id === "0") {
             if (!$tienda->insertar()) {
                 $error = "No se logro registrar la tienda.";

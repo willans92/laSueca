@@ -11,6 +11,10 @@ if ($proceso === "solicitudPago") {
     $solicitud = new solicitudComision($con);
     $resultado = $solicitud->buscarSolicitudes($estado, $tienda, $de, $hasta);
 }
+if ($proceso === "detalleSolicitud") {
+    $solicitud = new detalleSolicitudComision($con);
+    $resultado = $solicitud->detalleSolicitudXid($id_solicitud);
+}
 if ($proceso === "registrarPago") {
     $con->transacion();
     $solicitud = new solicitudComision($con);

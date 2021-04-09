@@ -30,7 +30,7 @@ function entrar(e) {
         if (json.error.length > 0) {
             alertaRapida(json.error,"error");
         } else {
-            openRequest = indexedDB.open("solded", 1);
+            openRequest = indexedDB.open("lasueca", 1);
             openRequest.onupgradeneeded = function (e) {
                 var thisDB = e.target.result;
                 if (!thisDB.objectStoreNames.contains("")) {
@@ -93,7 +93,7 @@ function vaciarDBindex(onSusses) {
         window.alert("Su Navegador no soporta el sistema. Actualicelo.");
         return;
     }
-    openRequest = indexedDB.open("solded", 1);
+    openRequest = indexedDB.open("lasueca", 1);
     openRequest.onsuccess = function () {
         var db = openRequest.result;
         var tx = db.transaction("version", "readwrite");

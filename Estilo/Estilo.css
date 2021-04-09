@@ -388,7 +388,7 @@ label{
     padding-bottom: calc(.375rem + 1px);
     margin-bottom: 0;
     font-size: inherit;
-    line-height: 0.5;
+    line-height: 1;
     font-weight: 500;
 }
 .modal-dialog{

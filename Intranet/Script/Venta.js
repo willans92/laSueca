@@ -288,6 +288,10 @@ function cambiarLado(e, elemento) {
 
 }
 function eliminarColumna(ele) {
+    var disable=$(ele).find("input:eq(0)").attr("disabled");
+    if(disable){
+        return;
+    }
     $(ele).remove();
     var cantColuman = $("#tblprd tbody tr").length;
     if (cantColuman <= 3) {

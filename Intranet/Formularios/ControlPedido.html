@@ -24,6 +24,7 @@
         <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
 
         <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
         <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
         <script src="../Script/ControlPedido.js?13" type="text/javascript"></script>
@@ -58,6 +59,7 @@
                                 <select id="estado" class="medio p-2">
                                     <option value=''>-- Estado --</option>
                                     <option value='pendiente' class='estadoPlomo'>Pendiente</option>
+                                    <option value='confirmado' class='estadoCeleste'>Confirmado</option>
                                     <option value='entregado' class='estadoVerde'>Entregado</option>
                                     <option value='cancelado' class='estadoRojo'>Cancelado</option>
                                 </select>
@@ -72,6 +74,11 @@
                                 <div id='pendientebs' class='dato'>0</div>
                             </div>
 
+                            <div class="boxDetallePedido" >
+                                <div class='negrilla centrar'>Confirmado</div>
+                                <div id='confirmadotxt' class='dato'>0</div>
+                                <div id='confirmadobs' class='dato'>0</div>
+                            </div>
                             <div class="boxDetallePedido" >
                                 <div class='negrilla centrar'>Entregado</div>
                                 <div id='entregadotxt' class='dato'>0</div>
@@ -123,7 +130,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         <div class="modal fade" id="popPedido" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -150,29 +157,28 @@
                             </div>
 
                         </div>
-                        <div class="row">
-                            <div class="col-4" >
-                                <label id='txtTelfEmp'>Telf. Emp</label>
-                                <div id="telemp"></div>
-                            </div>
-                            <div class="col-4">
-                                <label id='txtEmpr'>Tienda</label>
-                                <div id="tiendatext"></div>
-                            </div>
-                            <div class="col-3" id="codigBox">
-                                <label>Estado</label>
-                                <div id="tpestado"></div>
-                            </div>
-                        </div>
+
 
 
                         <div class="row">
-                            <div class="col-6" id="codigBox">
+                            <div class="col-6">
+                                <div>
+                                    <label id='txtTelfEmp'>Telf. Emp</label>
+                                    <div id="telemp"></div>
+                                </div>
+                                <div>
+                                    <label id='txtEmpr'>Tienda</label>
+                                    <div id="tiendatext"></div>
+                                </div>
+                                <div>
+                                    <label>Estado</label>
+                                    <div id="tpestado"></div>
+                                </div>
                                 <div id='boxDireccion'>
                                     <label>Dirección</label>
                                     <div id="direccionapp" class="pr-2"></div>
                                 </div>
-                                <div id="codigBox">
+                                <div>
                                     <label>NIT</label>
                                     <div id="nit" class="pr-2"></div>
                                 </div>
@@ -181,18 +187,37 @@
                                     <div id="rz" class="pr-2"></div>
                                 </div>
 
-                                <label id='txtProd'>Producto</label>
-                                <div class="row" id="divProd">
 
-                                </div>
                             </div>
-                            <div class="col-6 mt-2" id="codigBox">
+                            <div class="col-6 mt-2" >
                                 <label>Mapa</label><br>
                                 <div style="width: 20px; height: 20px; background: #84ef84; display: inline-block; border-radius: 26px; position: relative; top: 4px;"></div> Sucursal
                                 <div style="width: 20px; height: 20px; background: #e58900; display: inline-block; border-radius: 26px; position: relative; top: 4px; margin-left: 15px;"></div> Cliente
                                 <br>
                                 <div id="mapa"></div>
 
+                            </div>
+                            <div class="col-12 mt-2 mr-2" >
+                                <label id='txtProd'>Producto <span class='subrayar' style='float: right; font-size: 13px;' onclick="modificarDetallePedido(1)" id='txtModificar'>Modificar Detalle</span></label>
+                                <div class='minitext mb-2'>Para eliminar columna dar doble clic</div>
+                                <table class='table' id="tblprd">
+                                    <thead class='thead-light'>
+                                        <th><div class='grande'>Producto</div></th>
+                                        <th><div class='pequeno'>Cantidad</div></th>
+                                        <th><div class='pequeno'>Precio/U</div></th>
+                                        <th><div class='pequeno'>Total</div></th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                    <tfoot>
+                                        
+                                    </tfoot>
+                                </table>
+                                <div id='boxDetalleProducto' style="margin-bottom: 30px;">
+                                    <button type="button" class="btn btn-danger" onclick="detallePedido()">Cancelar Pedido</button>
+                                    <button type="button" class="btn btn-primary" onclick="realistrarCamboDetalle(1)" >Registrar el Cambio</button>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <div id="btnubicacion" style="    background: #add1e2; padding: 12px; display: inline-block;">
@@ -232,6 +257,8 @@
                         <div id="errorPop"></div>
                         <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
                         <button type="button" class="btn btn-danger" onclick="cambioDatosPedido(1, 'cancelado')" id="btnCancelarPedido">Cancelar Pedido</button>
+                        <button type="button" class="btn btn-info" onclick="imprimirV()" id="btnimprNota">Imprimir Nota</button>
+                        <button type="button" class="btn btn-primary" onclick="cambioDatosPedido(1, 'confirmado')" id="btnConfirmado">Confirmar Pedido</button>
                         <button type="button" class="btn btn-primary" onclick="cambioDatosPedido(1, 'entregado')" id="btnEntregarPedido">Entregar Pedido</button>
                         <button type="button" class="btn btn-info" onclick="cambioDatosPedido(1, 'pendiente')" id="btnActivarPedido">Activar Pedido</button>
                     </div>
@@ -247,8 +274,10 @@
                 <br>
                 <div id="boxcancelacion">
                     <div>Motivo Cancelacion</div>
-                    <input type="text" name="motivoCancelacion"  style="width: 100%"  
-                           />
+                    <select id="mensajeCan" style="width: 100%; margin-bottom: 10px" onchange="cambioMotivoCancelacion(this)">
+                        
+                    </select>
+                    <input type="text" name="motivoCancelacion"  style="width: 100%" placeholder="Describa el Motivo"/>
                 </div>
                 <div class='centrar'>
                     <button onclick="cambioDatosPedido(2, '');" class='normal' >SI</button>

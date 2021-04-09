@@ -88,12 +88,42 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-3" id="codigBox">
+                                <label>Nro Cuenta</label>
+                                <div id="nroCuenta"></div>
+                            </div>
+                            <div class="col-4" id="codigBox">
+                                <label>Propietario</label>
+                                <div id="propietario"></div>
+                            </div>
+                            <div class="col-3" id="codigBox">
+                                <label>Banco</label>
+                                <div id="banco"></div>
+                            </div>
+                            <div class="col-2" id="codigBox">
+                                <label>Moneda</label>
+                                <div id="moneda"></div>
+                            </div>
+                            
+                            <div class="col-3" id="codigBox">
                                 <label>Fecha de Pago</label>
                                 <input type="text" class="form-control fecha" name="fechaP" autocomplete="off" maxlength="150">
                             </div>
                             <div class="col-5">
                                 <label>Nro Transacion</label>
                                 <input type="text" class="form-control"  name="nroDoc" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-12">
+                                <label>Detalle de Solicitud</label>
+                                <table id="detalletbl" class='table'>
+                                    <thead class='thead-light'>
+                                        <th><div class="normal">Fecha Entrega</div></th>
+                                        <th><div class="medio">Cliente</div></th>
+                                        <th><div class="normal">Vendido</div></th>
+                                        <th><div class="normal">Comision</div></th>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot></tfoot>
+                                </table>
                             </div>
                         </div>
                         

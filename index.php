@@ -59,25 +59,29 @@
             $prod = $listaProducto[$i];
             $foto = $prod["foto"];
             $precio = $prod["precio"];
+            $comision = $prod["comision"];
             $nombre = $prod["nombre"];
             $detalle= $prod["descripcion"];
             $id_producto = $prod["id_producto"];
             $htmlProducto .= "<div class='itemProducto'  >";
-            $htmlProducto .= "<div class='btnadd i" . $id_producto . "' onclick=\"modificarCarrito('',$id_producto,'$nombre','$foto','$precio')\"><span>+</span></div>";
-            $htmlProducto .= "<img src='$foto' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">";
-            $htmlProducto .= "<div class='precio' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">Bs. $precio</div>";
-            $htmlProducto .= "<div class='nombre' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio')\">$nombre</div>";
+            $htmlProducto .= "<div class='btnadd i" . $id_producto . "' onclick=\"modificarCarrito('',$id_producto,'$nombre','$foto','$precio','$comision')\"><span>+</span></div>";
+            $htmlProducto .= "<img src='$foto' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">";
+            $htmlProducto .= "<div class='precio' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">Bs. $precio</div>";
+            $htmlProducto .= "<div class='nombre' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">$nombre</div>";
             $htmlProducto .= "</div>";
         }
         $tarifario = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
         
         $sucursal=new Sucursal($con);
         $sucursalesDisponibles=$sucursal->TodassucursalLocalizacion();
+        
+        $pedido_id=isset($_GET["pv"]) ? $_GET["pv"] : "0";
         ?>
         <script>
             var id_tienda = '<?php echo $tienda_id ?>';
             var tarifario=<?php echo $tarifario?>;
             var listaSucursales=<?php echo json_encode($sucursalesDisponibles) ?>;
+            var pedidoView=<?php echo json_encode($pedido_id) ?>;
         </script>
         <div class="row" id="menu">
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0">
@@ -87,7 +91,6 @@
                     <span class="iconLabel">La Sueca</span>
                 </a>
             </div>
-
             <div  class="col-6 col-sm-8 d-none d-sm-inline-block">
                 <div class="buscadorMenu">
                     <div class="categoria" >
@@ -98,15 +101,16 @@
                 </div>
             </div>
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
+                <img class="iconMenu" src="Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
                 <img class="iconMenu" src="Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
-                <div class='addCarrito'><span>1</span></div>
+                <div class='addCarrito'><span></span></div>
             </div>
             <div  class="col-12 d-inline-block d-sm-none mt-2" >
                 <div class="buscadorMenu">
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text">
+                    <input type="text" autocomplete="off" onkeyup="buscador(event)">
                     <img src="Imagen/Iconos/lupa.svg" title="buscador">
                 </div>
             </div>
@@ -197,10 +201,6 @@
                     <div style="margin: 10px">
                         <label>Horario de entrega</label>
                         <ul id="hora">
-                            <li><input name='hora' type='radio' checked value='9:00:00' > <span>entre 9:00 al 11:00  </span></li>
-                            <li><input name='hora' type='radio' value='14:00:00' > <span>entre 14:00 al 16:00  </span></li>
-                            <li><input name='hora' type='radio' value='16:00:00' > <span>entre 16:00 al 18:00  </span></li>
-                            <li><input name='hora' type='radio' value='18:00:00' > <span>entre 18:00 al 20:00  </span></li>
                         </ul>
                     </div>
 
@@ -231,6 +231,36 @@
                     <button onclick="finalizarVenta()">Realizar Pedido <span class="total"></span></button>
                 </div>
             </div>
+            
+            
+            
+            
+            <div id="popConfirmarSms" class="pop">
+                <div class="titulo">Confirmación SMS<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-3">
+                    <label>Enviamos un mensaje a tu telefono celular</label>
+                    <div>Ingresa el código que recibiste pare terminar de realizar el pedido</div>
+                    <input type='text' name='codigoSms' autocomplete="off" style="width:100%">
+                </div>
+                <div class="foot">
+                    <span onclick="continuarDelivery()">Atras</span>
+                    <button onclick="confirmarSmsVenta()">Confirmar</button>
+                </div>
+            </div>
+            <div id="popCodigoPedido" class="pop">
+                <div class="titulo">El pedido se realizo correctamente<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-3">
+                    <label>Tu Código de pedido es:</label>
+                    <div style="font-size: 25px;   font-weight: bold;" id="codePedido"></div>
+                </div>
+                <div class="foot">
+                    <span onclick="ocultarPopup()">Salir</span>
+                    <button id='btncontinuar1' onclick="verOrdenCompras()">Ver Detalle</button>
+                </div>
+            </div>
+            
+            
+            
             <div id="popDetalle" class="pop">
                 <img src="" alt=""/>
                 <div id="detallePrecio"></div>
@@ -239,6 +269,83 @@
                 <div style="margin-top: 15px;">
                     <button onclick="ocultarPopup()" class="btn-danger">Salir</button>
                     <button onclick="agregarCarritoDetalleProducto()"> Agregar Carrito</button>
+                </div>
+            </div>
+            
+            
+            <div id="popBuscadorPedido" class="pop">
+                <div class="titulo">¿Ingrese el código del pedido?<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-2">
+                    <input type="text" placeholder="" name='buscadorPedido'>
+                    <button onclick="buscadorPedidoPop(2)" >Buscar</button>
+                </div>
+                <div class="foot">
+                    <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
+                </div>
+              
+            </div>
+            <div id="popVerDetallePedido" class="pop">
+                <div class="titulo">Detalle de Pedido<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="cuerpo" style="padding: 10px 20px;">
+                    <div>
+                        <span class="negrilla">Fecha de Solicitud:</span>
+                        <span id="txtSolicitado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Fecha de Entrega:</span>
+                        <span id="txtEntregado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Estado:</span>
+                        <span  id="txtEstado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Cliente:</span>
+                        <span  id="txtCliente"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Teléfono:</span>
+                        <span  id="txtTelefono"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Dirección de Entrega:</span>
+                        <span  id="txtDireccion"></span>
+                    </div>
+                    
+                    <div>
+                        <span class="negrilla">Intrucción de Entrega:</span>
+                        <span  id="txtIntruccion"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Monto Pedido:</span>
+                        <span  id="txtMonto"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Costo del Delivery:</span>
+                        <span id="txtDelivery"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Total:</span>
+                        <span  id="txtTotal"></span>
+                    </div>
+                    <div>
+                        <br>
+                        <span class="negrilla">DETALLE DEL PEDIDO</span><br><br>
+                        <table class="table" id="prodDetalle">
+                            <thead>
+                                <th><div class="medio">Producto</div></th>
+                                <th><div class="pequeno">Cantidad</div></th>
+                                <th><div class="pequeno">Precio Uni.</div></th>
+                                <th><div class="normal">SubTotal</div></th>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="foot">
+                    <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
                 </div>
             </div>
         </div>

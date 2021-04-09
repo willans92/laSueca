@@ -447,7 +447,7 @@ function inicializarBaseDatos() {
         window.alert("Su Navegador no soporta el sistema. Actualicelo.");
         return;
     }
-    openRequest = indexedDB.open("solded", 1);
+    openRequest = indexedDB.open("lasueca", 1);
     openRequest.onupgradeneeded = function (e) {
         var thisDB = e.target.result;
         if (!thisDB.objectStoreNames.contains("")) {
@@ -599,7 +599,7 @@ function vaciarDBindex(onSusses) {
         window.alert("Su Navegador no soporta el sistema. Actualicelo.");
         return;
     }
-    openRequest = indexedDB.open("solded", 1);
+    openRequest = indexedDB.open("lasueca", 1);
     openRequest.onsuccess = function () {
         var db = openRequest.result;
         var tx = db.transaction("version", "readwrite");
@@ -1833,11 +1833,13 @@ function imprimirNotaVenta(venta, detalle) {
         htmlderecha += "    <div class='inlineblock'>" + venta.fechaEntrega + "</div>";
         htmlderecha += "</div>";
     }
-    htmlderecha += " <div> ";
-    htmlderecha += "    <div class='inlineblock mr-2 negrilla'>Nro. Factura: </div>";
-    htmlderecha += "    <div class='inlineblock'>" + nroFactura + "</div>";
-    htmlderecha += "</div>";
-
+    if(nroFactura!="0"){
+        htmlderecha += " <div> ";
+        htmlderecha += "    <div class='inlineblock mr-2 negrilla'>Nro. Factura: </div>";
+        htmlderecha += "    <div class='inlineblock'>" + nroFactura + "</div>";
+        htmlderecha += "</div>";
+    }
+    
 
     var htmlhead = "        <div class='row mt-2'>";
     htmlhead += "            <div class='col-2'> ";

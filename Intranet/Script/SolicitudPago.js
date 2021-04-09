@@ -3,6 +3,7 @@ var meses = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 var estadoReporte = "Mensual";
 var tamanopantalla = $(window).height() - 195;
 var columnaTabla = [];
+var listaSolicitudes = [];
 var id_solicitud = 0;
 $(document).ready(function () {
     $(".fecha").datepicker();
@@ -58,6 +59,7 @@ function generar() {
             var html = "";
             $("#tblPedido").html("");
             var lista = json.result;
+            listaSolicitudes = lista;
             var html = "<table class='table'>";
             html += "<thead  class='thead-light'>";
             html += "<th><div class='normal'>Solicitado</div></th>";
@@ -73,7 +75,7 @@ function generar() {
             for (var i = 0; i < lista.length; i++) {
                 var comision = parseFloat(lista[i]["montoPago"]);
                 totalComission += comision;
-                html += "<tr data-id='" + lista[i]["id_SolicitudComision"] + "' onClick='modificar(1)'>";
+                html += "<tr data-id='" + lista[i]["id_SolicitudComision"] + "' onClick='modificar(1)' data-pos='" + i + "'>";
                 html += "<td><div class='normal'>" + lista[i]["solicitado"] + "</div></td>";
                 html += "<td><div class='medio'>" + lista[i]["tienda"] + "</div></td>";
                 html += "<td><div class='normal derecha'>" + format(comision) + "</div></td>";
@@ -145,9 +147,54 @@ function modificar(tipo) {
             return;
         }
         id_solicitud = $(tupla[0]).data("id");
+        var item = listaSolicitudes[$(tupla[0]).data("pos")];
         $("input[name=fecha]").val(fechaActual());
         $("input[name=nroDoc]").val("");
+        $("#nroCuenta").text(item.cuentaBancaria);
+        $("#propietario").text(item.nombreCuenta);
+        $("#banco").text(item.banco);
+        $("#moneda").text(item.moneda);
+        cargando(true);
         $('#popPago').modal('show');
+        $.get(url, {proceso: 'detalleSolicitud', id_solicitud: id_solicitud}, function (response) {
+            cargando(false);
+            var json = $.parseJSON(response);
+            if (json.error.length > 0) {
+                if ("Error Session" === json.error) {
+                    window.parent.cerrarSession();
+                }
+                alertaRapida(json.error, "error");
+            } else {
+                var html = "";
+                var lista = json.result;
+                var totalComission = 0;
+                var totalVenta = 0;
+                for (var i = 0; i < lista.length; i++) {
+                    var comision = parseFloat(lista[i]["comision"]);
+                    var monto = parseFloat(lista[i]["totalPedido"]);
+                    totalComission += comision;
+                    totalVenta += monto;
+                    html += "<tr>";
+                    html += "<td><div class='normal'>" + lista[i]["fechaProgramada"] + "</div></td>";
+                    html += "<td><div class='medio'>" + lista[i]["cliente"] + "</div></td>";
+                    html += "<td><div class='normal'>" + format(monto) + "</div></td>";
+                    html += "<td><div class='normal'>" + format(comision) + "</div></td>";
+                    html += "</tr>";
+                }
+
+                $("#detalletbl tbody").html(html);
+                $("#detalletbl").igualartabla();
+
+
+                html = "<td><div class='normal'></div></td>";
+                html += "<td><div class='medio'>TOTAL</div></td>";
+                html += "<td><div class='normal'>" + format(totalVenta) + "</div></td>";
+                html += "<td><div class='normal'>" + format(totalComission) + "</div></td>";
+                $("#detalletbl tfoot").html(html);
+
+            }
+        });
+
     }
 }
 function registrar(tipo) {

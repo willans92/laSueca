@@ -7,13 +7,50 @@ if ($proceso === "buscarPedido") {
     $resultado = $pedido->buscarPedido($de, $hasta, $estado, $cliente, $tienda, $contador, 50);
 }
 if ($proceso === "tarifario") {
+    $mensajes=new mensajeGuardado($con);
     $resultado = array();
     $resultado["tarifario"] = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
+    $resultado["mensaje"] = $mensajes->buscarXtipo("Cancelacion Pedido");
 }
 if ($proceso === "cambioUbicacion") {// sincronizar con emprendedor
     $pedido = new pedidoApp($con);
     if (!$pedido->cambiarUbicacionPedido($id_pedido, $lon2, $lat2, $costo, 0, $sessionUsuario["id_usuario"])) {
         $error = "No se logro registrar el cambio.";
+    }
+}
+if ($proceso === "imprimirVenta") {
+    $venta = new venta($con);
+    $detalle = new detalleventa($con);
+    $sucursal = new Sucursal($con);
+    $resultado = array();
+    $resultado["venta"] = $venta->buscarXid($idven);
+    $resultado["detalle"] = $detalle->buscarXid($idven);
+    $resultado["sucursal"] = $sucursal->buscarXid($resultado["venta"]["sucursal_id"]);
+}
+if ($proceso === "registarCambioProducto") {// sincronizar con emprendedor
+    $con->transacion();
+    $pedido = new pedidoApp($con);
+    if (!$pedido->modifiarTotal($id_pedido, $total)) {
+        $error = "No se logro registra los cambio.Intente nuevamente.";
+    } else {
+        $detalleoBJ = new detallePedidoApp($con);
+        if (!$detalleoBJ->eliminarXidPedido($id_pedido)) {
+            $error = "No se logro registra los cambio.Intente nuevamente.";
+        }
+        $detalle = $_POST["detalle"];
+        for ($i = 0; $i < count($detalle); $i++) {
+            $detalleoBJ = new detallePedidoApp($con);
+            $item = $detalle[$i];
+            $detalleoBJ->contructor(0, "CAMBIADO POR CONTROL PEDIDO", $item["cant"], $item["precio"], "activo", $id_pedido, $item["id"], $item["comision"]);
+            if (!$detalleoBJ->insertar()) {
+                $error = "No se logro registra los cambio.Intente nuevamente.";
+            }
+        }
+    }
+    if ($error === "") {
+        $con->commit();
+    } else {
+        $con->rollback();
     }
 }
 if ($proceso === "cambioDatosPedido") {
@@ -71,8 +108,8 @@ if ($proceso === "cambioDatosPedido") {
 
             $cliente = new Cliente($con);
             $codigoApp = "APP-" . $pedido["cliente"];
-            $cliente->contructor(0              , $codigoApp, ""    , $clienteApp["nombre"] , $clienteApp["telefono"]   , ""        , $clienteApp->foto , 0         , $pedido["nit"] , $pedido["rz"], 0             , ""                , ""                , 0             , $clienteApp->correo   , $fecha          , "Cliente Creado por la APP" , $pedido["id_cliente"]);
-                              //($id_cliente    ,$codigo    ,$ci    ,$nombre                ,$telefono                  ,$direccion ,$foto              ,$descuento ,$nit            ,$razonSocial  ,$descuentoMax  ,$telefonoContacto  ,$personaContacto   ,$limiteCredito ,$email                 ,$fechaNacimiento   ,$comentario                , $clienteApp_id=0)
+            $cliente->contructor(0, $codigoApp, "", $clienteApp["nombre"], $clienteApp["telefono"], "", $clienteApp->foto, 0, $pedido["nit"], $pedido["rz"], 0, "", "", 0, $clienteApp->correo, $fecha, "Cliente Creado por la APP", $pedido["id_cliente"]);
+            //($id_cliente    ,$codigo    ,$ci    ,$nombre                ,$telefono                  ,$direccion ,$foto              ,$descuento ,$nit            ,$razonSocial  ,$descuentoMax  ,$telefonoContacto  ,$personaContacto   ,$limiteCredito ,$email                 ,$fechaNacimiento   ,$comentario                , $clienteApp_id=0)
             if (!$cliente->insertar()) {
                 $error = "No se logro registrar la venta. Intentelo Nuevamente";
             } else {
@@ -208,22 +245,23 @@ if ($proceso === "cambioDatosPedido") {
         } else {
             $con->rollback();
         }
-        $venta_id=$id_Venta;
+        $venta_id = $id_Venta;
     }
     $pedido = new pedidoApp($con);
-    if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id,$motivo)) {
+    if (!$pedido->cambiarDeliveryYestadoPedido($id_pedido, $estado, $venta_id, $motivo)) {
         $error = "No se logro realizar los cambios";
     }
-    if($error === "") {
+    if ($error === "") {
         $con->commit();
-    }else{
+    } else {
         $con->rollback();
     }
 }
-if ($proceso === "deliveryXciudad") {
-    $delivery = new delivery($con);
+if ($proceso === "buscarProducto") {
     $detalle = new detallePedidoApp($con);
+    $producto = new producto($con);
     $resultado = array();
+    $resultado["producto"] = $producto->stockXsucursal("0", false);
     $resultado["detalle"] = $detalle->buscarxIdpedido($id_pedido);
 }
 

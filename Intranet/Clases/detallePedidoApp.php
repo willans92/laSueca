@@ -10,40 +10,51 @@ class detallePedidoApp {
     var $montoBillete;
     var $pedidoApp_id;
     var $producto_id;
+    var $comision;
     var $CON;
 
     function __construct($con) {
         $this->CON = $con;
     }
-    function contructor($id_detallePedidoApp, $nota, $cantidad , $precioU , $estado ,$pedidoApp_id , $producto_id){
-        $this->id_detallePedidoApp=$id_detallePedidoApp;
-        $this->nota=$nota;
-        $this->cantidad=$cantidad;
-        $this->precioU=$precioU;
-        $this->estado=$estado;
-        $this->pedidoApp_id=$pedidoApp_id;
-        $this->producto_id=$producto_id;
+
+    function contructor($id_detallePedidoApp, $nota, $cantidad, $precioU
+            , $estado, $pedidoApp_id, $producto_id, $comision) {
+        $this->id_detallePedidoApp = $id_detallePedidoApp;
+        $this->nota = $nota;
+        $this->cantidad = $cantidad;
+        $this->precioU = $precioU;
+        $this->estado = $estado;
+        $this->pedidoApp_id = $pedidoApp_id;
+        $this->producto_id = $producto_id;
+        $this->comision = $comision;
     }
 
     function insertar() {
-        $consulta = "INSERT INTO lasueca.detallepedidoapp (id_detallePedidoApp,nota,cantidad,precioU,estado,pedidoApp_id,producto_id) VALUES ('$this->id_detallePedidoApp','$this->nota','$this->cantidad','$this->precioU','$this->estado','$this->pedidoApp_id','$this->producto_id');";
-         if (!$this->CON->manipular($consulta)) {
+        $consulta = "INSERT INTO lasueca.detallepedidoapp (id_detallePedidoApp,nota,cantidad,precioU,estado,pedidoApp_id,producto_id,comision) VALUES ('$this->id_detallePedidoApp','$this->nota','$this->cantidad','$this->precioU','$this->estado','$this->pedidoApp_id','$this->producto_id','$this->comision');";
+        if (!$this->CON->manipular($consulta)) {
             return false;
         }
         $consulta = "SELECT LAST_INSERT_ID() as id";
         $id = $this->CON->consulta2($consulta)[0]['id'];
-        $this->id_detallePedidoApp=$id;
+        $this->id_detallePedidoApp = $id;
         return true;
     }
-   
+
+    function eliminarXidPedido($idPedido) {
+        $consulta = "delete from lasueca.detallepedidoapp where pedidoApp_id=$idPedido";
+        return $this->CON->manipular($consulta);
+    }
+
     function buscarxIdpedido($idpedido) {
         $consulta = "select d.*,p.nombre from lasueca.detallepedidoapp d, lasueca.producto p where d.producto_id=p.id_producto and d.pedidoApp_id=$idpedido";
         return $this->CON->consulta2($consulta);
     }
+
     function pedidosEnCursoXdelyvery($id_delivery) {
         $consulta = "SELECT d.*,p.nombre FROM lasueca.pedidoapp p2, lasueca.detallepedidoapp d , lasueca.producto p WHERE (p2.estado like 'recepcionado' or p2.estado like 'recogiendo pedido'  or p2.estado like 'en camino') and d.producto_id=p.id_producto and p2.id_pedidoApp=d.pedidoApp_id and  delivery_id=$id_delivery";
         return $this->CON->consulta2($consulta);
     }
+
     function buscarXsucursal($idsucursal) {
         $consulta = "SELECT d.cantidad,d.nota,d.pedidoApp_id,pr.codigo,pr.nombre ";
         $consulta .= " FROM lasueca.pedidoApp p, lasueca.detallepedidoapp d , lasueca.producto pr";

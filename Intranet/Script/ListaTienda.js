@@ -1,7 +1,7 @@
 var url = '../Controlador/ListaTienda_Controlador.php';
 var contador = 0;
 var posicion = 0;
-var tamanopantalla = $(window).height() - 265;
+var tamanopantalla = $(window).height() - 280;
 var listaTienda;
 var tienda_id = "0";
 var cliente_id = "0";
@@ -72,6 +72,10 @@ function buscador(e, tipo) {
             html += "<td><div class='medio'>" + tienda.registrado + "</div></td>";
             html += "<td><div class='grande'>" + tienda.nombre + "</div></td>";
             html += "<td><div class='grande'>" + cliente.nombre + "</div></td>";
+            
+            html += "<td><div class='medio'>" + tienda.banco + "</div></td>";
+            html += "<td><div class='medio'>" + tienda.cuentaBancaria + "</div></td>";
+            
             html += "<td><div class='normal'>" + tienda.estado + "</div></td>";
             html += "</tr>";
             inicia--;
@@ -242,10 +246,14 @@ function modificar(tipo) {
         var cliente = listaCliente["c" + cliente_id];
         $("#popTienda .modal-title").text("Modificando Tienda");
         $("input[name=fecha]").val(tienda.registrado);
+        $("input[name=banco]").val(tienda.banco);
+        $("input[name=nombreCuenta]").val(tienda.nombreCuenta);
+        $("input[name=nroCuenta]").val(tienda.cuentaBancaria);
         $("input[name=codigoPadre]").val("00LS"+tienda.padre);
         $("input[name=codigoPadre]").prop("readonly",true);
         $("input[name=nombre]").val(tienda.nombre);
         $("#estado option[value='" + tienda.estado + "']").prop("selected", true);
+        $("#moneda option[value='" + tienda.moneda + "']").prop("selected", true);
         $("input[name=cuenta]").val(tienda.cuenta);
         $("input[name=contrasena]").val("");
         $("input[name=ci]").val(cliente.ci);

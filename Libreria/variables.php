@@ -9,6 +9,7 @@ include_once "../Intranet/Clases/producto.php";
 include_once "../Intranet/Clases/linea_producto_tienda.php";
 include_once "../Intranet/Clases/pedidoApp.php";
 include_once "../Intranet/Clases/detallePedidoApp.php";
+include_once "../Intranet/Clases/horarioEntrega.php";
 
 $error = "";
 $resultado = "";

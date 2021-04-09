@@ -14,26 +14,40 @@ class horarioEntrega {
         $this->CON = $con;
     }
 
-    function contructor($id_horarioEntrega, $detalle,$horarioDe, $horarioHasta,$estado, $dia) {
-        $this->id_horarioEntrega=$id_horarioEntrega;
-        $this->detalle=$detalle;
-        $this->horarioDe=$horarioDe;
-        $this->horarioHasta=$horarioHasta;
-        $this->estado=$estado;
-        $this->dia=$dia;
+    function contructor($id_horarioEntrega, $detalle, $horarioDe, $horarioHasta, $estado, $dia) {
+        $this->id_horarioEntrega = $id_horarioEntrega;
+        $this->detalle = $detalle;
+        $this->horarioDe = $horarioDe;
+        $this->horarioHasta = $horarioHasta;
+        $this->estado = $estado;
+        $this->dia = $dia;
     }
 
     function buscarXid($id_horarioEntrega) {
         $consulta = "select * from lasueca.horarioentrega where id_horarioEntrega=$id_horarioEntrega";
         return $this->CON->consulta2($consulta)[0];
     }
-    
-    function buscarXestado($estado,$dia) {
-        $strDia="";
-        if($dia!="-1"){
-            $strDia=" and dia=$dia";
+
+    function buscarXestado($estado, $dia) {
+        $strDia = "";
+        if ($dia != "-1") {
+            $strDia = " and dia=$dia";
         }
         $consulta = "select * from lasueca.horarioentrega where estado like '$estado' $strDia";
+        return $this->CON->consulta2($consulta);
+    }
+
+    function horarioDisponiblexFecha($fecha) {
+        $fechaactual = date("d/m/Y");
+        
+        $consulta = "select id_horarioEntrega,detalle,horarioDe,horarioHasta";
+        $consulta .= " from lasueca.horarioentrega";
+        $consulta .= " where WEEKDAY(STR_TO_DATE('$fecha','%e/%c/%Y'))=dia and estado like 'activo'";
+        if($fecha==$fechaactual){
+           $consulta .= " AND  NOW() BETWEEN STR_TO_DATE(CONCAT('$fecha', horarioDe),'%e/%c/%Y %H:%i:%s')";
+           $consulta .= " and STR_TO_DATE(CONCAT('$fecha', horarioHasta),'%e/%c/%Y %H:%i:%s')";
+        }
+        
         return $this->CON->consulta2($consulta);
     }
 

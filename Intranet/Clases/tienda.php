@@ -14,6 +14,10 @@ class tienda {
     var $modificadoPor;
     var $cliente_id;
     var $padre;
+    var $banco;
+    var $cuentaBancaria;
+    var $moneda;
+    var $nombreCuenta;
     var $CON;
 
     function __construct($con) {
@@ -21,7 +25,8 @@ class tienda {
     }
 
     function contructor($id_tienda,$nombre,$cuenta,$contrasena,$estado,$registrado,$logo,
-                        $fechaModifico,$registradoPor,$modificadoPor,$cliente_id,$padre=0) {
+                        $fechaModifico,$registradoPor,$modificadoPor,$cliente_id,$padre=0,
+                        $banco,$cuentaBancaria,$moneda,$nombreCuenta) {
         $this->id_tienda=$id_tienda;
         $this->nombre=$nombre;
         $this->cuenta=$cuenta;
@@ -34,6 +39,10 @@ class tienda {
         $this->modificadoPor=$modificadoPor;
         $this->cliente_id=$cliente_id;
         $this->padre=$padre;
+        $this->banco=$banco;
+        $this->cuentaBancaria=$cuentaBancaria;
+        $this->moneda=$moneda;
+        $this->nombreCuenta=$nombreCuenta;
     }
 
     function todo() {
@@ -63,7 +72,12 @@ class tienda {
         }
     }
    function modificar() {
-        $consulta = "UPDATE lasueca.tienda SET padre='$this->padre',nombre = '$this->nombre',cuenta = '$this->cuenta',contrasena = SHA2('$this->contrasena', 256) ,estado = '$this->estado',registrado = '$this->registrado',logo = '$this->logo',fechaModifico = '$this->fechaModifico',registradoPor = '$this->registradoPor',modificadoPor = '$this->modificadoPor',cliente_id = '$this->cliente_id' WHERE id_tienda = '$this->id_tienda' and empresa_id=".$this->CON->empresa_id."";
+       $str="";
+       if($this->contrasena!=""){
+           $str=" ,contrasena = SHA2('$this->contrasena', 256)";
+       }
+       
+        $consulta = "UPDATE lasueca.tienda SET nombreCuenta='$this->nombreCuenta', padre='$this->padre',moneda='$this->moneda',cuentaBancaria='$this->cuentaBancaria',banco='$this->banco',nombre = '$this->nombre',cuenta = '$this->cuenta' $str ,estado = '$this->estado',registrado = '$this->registrado',logo = '$this->logo',fechaModifico = '$this->fechaModifico',registradoPor = '$this->registradoPor',modificadoPor = '$this->modificadoPor',cliente_id = '$this->cliente_id' WHERE id_tienda = '$this->id_tienda' and empresa_id=".$this->CON->empresa_id."";
         return $this->CON->manipular($consulta);
     }
    function modificarFoto($id,$foto) {
@@ -72,7 +86,7 @@ class tienda {
     }
   
     function insertar() {
-        $consulta = "INSERT INTO lasueca.tienda (id_tienda,nombre,cuenta,contrasena,estado,registrado,logo,fechaModifico,registradoPor,modificadoPor,cliente_id,empresa_id,padre) VALUES ('$this->id_tienda','$this->nombre','$this->cuenta',SHA2('$this->contrasena', 256),'$this->estado','$this->registrado','$this->logo','$this->fechaModifico','$this->registradoPor','$this->modificadoPor','$this->cliente_id','".$this->CON->empresa_id."','$this->padre');";
+        $consulta = "INSERT INTO lasueca.tienda (id_tienda,nombre,cuenta,contrasena,estado,registrado,logo,fechaModifico,registradoPor,modificadoPor,cliente_id,empresa_id,padre,banco,cuentaBancaria,moneda,nombreCuenta) VALUES ('$this->id_tienda','$this->nombre','$this->cuenta',SHA2('$this->contrasena', 256),'$this->estado','$this->registrado','$this->logo','$this->fechaModifico','$this->registradoPor','$this->modificadoPor','$this->cliente_id','".$this->CON->empresa_id."','$this->padre','$this->banco','$this->cuentaBancaria','$this->moneda','$this->nombreCuenta')";
         $resultado = $this->CON->manipular($consulta);
         if (!$resultado) {
             return false;

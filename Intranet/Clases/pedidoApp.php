@@ -103,7 +103,7 @@ class pedidoApp {
     }
 
     function buscarXid($idpedido) {
-        $consulta = "  select p.descuento, p.montoBillete,p.nit,p.rz,p.costoDelivery,p.entregada,p.id_pedidoapp,p.venta_id";
+        $consulta = "  select p.intrucciones,p.solicitada, p.descuento, p.montoBillete,p.nit,p.rz,p.costoDelivery,p.entregada,p.id_pedidoapp,p.venta_id";
         $consulta .= " ,p.fechaProgramada, p.horaProgramada,c.nombre cliente,c.telefono teflCliente";
         $consulta .= " , t.nombre tienda, ct.telefono telftienda,s.lat late,s.lon lone,p.lat";
         $consulta .= " ,p.lon,p.direccion,p.cliente id_cliente, p.estado, p.totalPedido ";
@@ -112,6 +112,11 @@ class pedidoApp {
         $consulta .= " and s.id_sucursal=p.sucursal_id and ct.id_cliente=t.cliente_id ";
         $nro = $this->CON->consulta2($consulta);
         return $nro[0];
+    }
+    function verificarIdpedido($codigo) {
+        $consulta = "select count(id_pedidoApp) cantidad from lasueca.pedidoapp where CONCAT('ls',id_pedidoApp) like '$codigo'";
+        $nro = $this->CON->consulta2($consulta);
+        return $nro[0]["cantidad"];
     }
 
     function buscarPedidoTienda($estado, $de, $hasta, $buscador,$tienda) {
@@ -317,6 +322,11 @@ class pedidoApp {
         $consulta = "update pedidoapp set estado='en camino',enCamino='$fechaactual'  where id_pedidoApp=$id_pedido ";
         return $this->CON->manipular($consulta);
     }
+    
+    function modifiarTotal($id_pedido,$total) {
+        $consulta = "update pedidoapp set totalPedido='$total'  where id_pedidoApp=$id_pedido ";
+        return $this->CON->manipular($consulta);
+    }
 
     function entregarPedidoXdelivery($id_pedido) {
         $fechaactual = date("d/m/Y H:i:s");
@@ -387,7 +397,7 @@ class pedidoApp {
     function reportePedidoDiario($de, $hasta, $tienda, $estado) {
         
         if ($tienda != "" && $tienda != "0") {
-            $strTienda = " and p.id_tienda=$tienda";
+            $strTienda = " p.id_tienda=$tienda and ";
         }
         $estadoStr = "";
         if ($estado !== "") {
@@ -409,7 +419,7 @@ class pedidoApp {
     function reportePedidoMensual($tienda, $estado) {
         
         if ($tienda != "" && $tienda != "0") {
-            $strTienda = " and p.id_tienda=$tienda";
+            $strTienda = " p.id_tienda=$tienda and ";
         }
         $estadoStr = "";
         if ($estado !== "") {

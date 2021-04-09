@@ -258,6 +258,7 @@ $(document).ready(function () {
         firstDay: 1,
     };
     $.datepicker.setDefaults($.datepicker.regional["es"]);
+    fechaEntrega = fechaActual();
     $(window).resize(function () {
         $(".cuerposearch").ocultar();
     });
@@ -417,7 +418,10 @@ function abrirCarrito() {
     $("#popup").css("display", "block");
     $("#popCarrito").centrar();
     $("#popCarrito").css("display", "block");
+    $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
     $("#popDelivery").css("display", "none");
     $("#popDetalle").css("display", "none");
@@ -461,9 +465,12 @@ function abrirCarrito() {
 function ocultarPopup() {
     $("#popup").css("display", "none");
     $("#popCarrito").css("display", "none");
+    $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
     $("#popDelivery").css("display", "none");
     $("#popDetalle").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
     $("#popDatosEnvio").css("display", "popDatosEnvio");
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
@@ -497,6 +504,8 @@ function realizarCompra() {
         return;
     }
     $("#popCarrito").css("display", "none");
+    $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
     $("#popDatosEnvio").css("display", "block");
     $("#popDelivery").css("display", "none");
@@ -581,12 +590,14 @@ function continuarDelivery() {
         return;
     }
     $("#popCarrito").css("display", "none");
+    $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
     $("#popDelivery").css("display", "block");
     $("#popDetalle").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
     $("#popDelivery").centrar();
-    fechaEntrega = fechaActual();
     $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + fechaEntrega);
     $("#calendario").datepicker({
         changeMonth: true,
@@ -600,6 +611,32 @@ function continuarDelivery() {
         onSelect: function (dateText) {
             fechaEntrega = dateText;
             $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + dateText);
+            obtenerHorarioDisponible();
+        }
+    });
+    obtenerHorarioDisponible();
+}
+function obtenerHorarioDisponible() {
+    cargando(true);
+    $.post(url, {proceso: "horarioDisponible", fecha: fechaEntrega}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var lista = json.result;
+            var html = "";
+            for (var i = 0; i < lista.length; i++) {
+                html += "<li><input name='hora' type='radio' checked value='" + lista[i].detalle + "' > <span>" + lista[i].detalle + "</span></li>";
+            }
+            if (html == "") {
+                html = "No hay horarios disponible de entrega en esta fecha. Seleccione otra fecha."
+            }
+            $("#hora").html(html);
+
 
         }
     });
@@ -610,9 +647,12 @@ function continuarEntrega() {
         return;
     }
     $("#popCarrito").css("display", "none");
+    $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "block");
     $("#popFinalizarPedido").centrar();
     $("#popDelivery").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
     $("#popDetalle").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
     var carrito = localStorage.getItem("carrito");
@@ -657,6 +697,16 @@ function continuarEntrega() {
     $("#popFinalizarPedido .foot .total").text("Bs. " + totalFinal.toFixed(2));
 }
 function finalizarVenta() {
+    $("#popConfirmarSms").css("display", "block");
+    $("#popConfirmarSms").centrar();
+    $("#popCarrito").css("display", "none");
+    $("#popFinalizarPedido").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
+    $("#popDelivery").css("display", "none");
+    $("#popDetalle").css("display", "none");
+    $("#popDatosEnvio").css("display", "none");
+}
+function confirmarSmsVenta() {
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var listaCarrito = carrito.data ? carrito.data : {};
@@ -688,13 +738,18 @@ function finalizarVenta() {
             }
             alertaRapida(json.error, "error");
         } else {
+            pedidoView=json.result;
+            $("#codePedido").html("LS"+pedidoView);
             localStorage.setItem("carrito", JSON.stringify({data: "", cantidadItem: 0}));
             $("#popCarrito").css("display", "none");
-            $("#popFinalizarPedido").css("display", "none");
+            $("#popConfirmarSms").css("display", "none");
+            $("#popVerDetallePedido").css("display", "none");
+            $("#popVerDetallePedido").css("display", "none");
             $("#popDelivery").css("display", "none");
             $("#popDetalle").css("display", "none");
             $("#popDatosEnvio").css("display", "none");
-            $("#popup").css("display", "none");
+            $("#popCodigoPedido").css("display", "block");
+            $("#popCodigoPedido").centrar();
             $("#popup").limpiarFormulario();
             sincronizarCarrito();
         }
@@ -750,14 +805,14 @@ function calcularDistancia(lat1, long1, lat2, long2) {
     var distancia = (dd * 111.302) * 1000;
     return distancia;
 }
-var itemDetalle={};
-function detalleProducto(tipo,id,nombre,detalle,img,precio){
-    if(tipo===1){
-        itemDetalle={id:id,nombre:nombre,detalle:detalle,img:img,precio:precio};
-        $("#detallePrecio").html("<span>Precio Bs.</span>"+format(precio));
+var itemDetalle = {};
+function detalleProducto(tipo, id, nombre, detalle, img, precio,comision) {
+    if (tipo === 1) {
+        itemDetalle = {id: id, nombre: nombre, detalle: detalle, img: img, precio: precio,comision:comision};
+        $("#detallePrecio").html("<span>Precio Bs.</span>" + format(precio));
         $("#detalleDesc").html(detalle);
         $("#detalleNombre").html(nombre);
-        $("#popDetalle img").attr("src",img)
+        $("#popDetalle img").attr("src", img)
         $("#popup").css("display", "block");
         $("#popDetalle").centrar();
         $("#popDetalle").css("display", "block");
@@ -765,12 +820,190 @@ function detalleProducto(tipo,id,nombre,detalle,img,precio){
         $("#popDatosEnvio").css("display", "none");
         $("#popDelivery").css("display", "none");
         $("#popCarrito").css("display", "none");
-    }else{
+        $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
+    } else {
         $("#popup").ocultar();
         $("#popDetalle").ocultar();
     }
 }
-function agregarCarritoDetalleProducto(){
-    modificarCarrito('',itemDetalle.id,itemDetalle.nombre,itemDetalle.foto,itemDetalle.precio);
+function agregarCarritoDetalleProducto() {
+    modificarCarrito('', itemDetalle.id, itemDetalle.nombre, itemDetalle.foto, itemDetalle.precio,itemDetalle.comision);
     ocultarPopup();
+}
+function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,comision) {
+    var carrito = localStorage.getItem("carrito");
+    carrito = carrito ? $.parseJSON(carrito) : {};
+    var cantidadItem = carrito.cantidadItem;
+    cantidadItem = cantidadItem ? cantidadItem : 0;
+
+    var valorAccion = 1;
+    if (accion === "quitar") {
+        valorAccion = -1;
+    }
+
+    var listaCarrito = carrito.data ? carrito.data : {};
+    if (listaCarrito[idproducto]) {
+        listaCarrito[idproducto].cantidad += valorAccion;
+        $(".i" + idproducto + " span").text(listaCarrito[idproducto].cantidad);
+        if (listaCarrito[idproducto].cantidad < 0) {
+            delete listaCarrito[idproducto];
+            cantidadItem -= 0;
+            $(".i" + idproducto).removeClass("btnaddNro");
+            $(".i" + idproducto + " span").text("+");
+        } else {
+            $(".i" + idproducto).addClass("btnaddNro");
+        }
+    } else {
+        $(".i" + idproducto).addClass("btnaddNro");
+        $(".i" + idproducto + " span").text(1);
+        cantidadItem += 1;
+        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio,comision:comision};
+    }
+    carrito.cantidadItem = cantidadItem;
+    carrito.data = listaCarrito;
+    $(".addCarrito span").text(cantidadItem);
+    if (cantidadItem > 0) {
+        $(".addCarrito").css("display", "block");
+    } else {
+        $(".addCarrito").css("display", "none");
+    }
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+function sincronizarCarrito() {
+    var carrito = localStorage.getItem("carrito");
+    carrito = carrito ? $.parseJSON(carrito) : {};
+    var cantidadItem = carrito.cantidadItem;
+    cantidadItem = cantidadItem ? cantidadItem : 0;
+    $(".btnaddNro span").text("+");
+    $(".btnaddNro").removeClass("btnaddNro");
+    var listaCarrito = carrito.data ? carrito.data : {};
+    for (var item in listaCarrito) {
+        var producto = listaCarrito[item];
+        $(".i" + producto.id).addClass("btnaddNro");
+        $(".i" + producto.id + " span").text(producto.cantidad);
+    }
+    $(".addCarrito span").text(cantidadItem);
+    if (cantidadItem > 0) {
+        $(".addCarrito").css("display", "block");
+    } else {
+        $(".addCarrito").css("display", "none");
+    }
+}
+function cambioTamanoPantalla() {
+    var buscador = $(".buscadorMenu");
+    for (var i = 0; i < buscador.length; i++) {
+        var contenedorBuscadorW = $(buscador[i]).width();
+        var categoriaBuscadorW = $(buscador[i]).find(".categoria").width();
+        var lupaBuscadorW = $(buscador[i]).find("img").width();
+        var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 53;
+        $(buscador[i]).find("input").css("width", inputBuscador + "px");
+    }
+    $(window).resize(function () {
+        var buscador = $(".buscadorMenu");
+        for (var i = 0; i < buscador.length; i++) {
+            var contenedorBuscadorW = $(buscador[i]).width();
+            var categoriaBuscadorW = $(buscador[i]).find(".categoria").width();
+            var lupaBuscadorW = $(buscador[i]).find("img").width();
+            var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 53;
+            $(buscador[i]).find("input").css("width", inputBuscador + "px");
+        }
+    });
+    sincronizarCarrito();
+}
+
+function buscadorPedidoPop(tipo){
+    if(tipo==1){
+        $("#popup").css("display", "block");
+        $("#popBuscadorPedido").css("display", "block");
+        $("#popBuscadorPedido").centrar();
+        $("#popCarrito").css("display", "none");
+        $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
+        $("#popDatosEnvio").css("display", "none");
+        $("#popFinalizarPedido").css("display", "none");
+        $("#popVerDetallePedido").css("display", "none");
+        $("#popDelivery").css("display", "none");
+        $("#popDetalle").css("display", "none");
+        $("input[name=buscadorPedido]").removeClass(".rojoClarito");
+    }else{
+        var codigo=$("input[name=buscadorPedido]").val().trim().toUpperCase();
+        if(codigo===""){
+            alertaRapida("Ingrese un código valido en el buscador","error");
+            $("input[name=buscadorPedido]").addClass("rojoClarito");
+            return;
+        }
+        $("input[name=buscadorPedido]").removeClass("rojoClarito");
+        cargando(true);
+        $.post(url, {proceso: "verificarCodigo", codigo: codigo}, function (response) {
+            cargando(false);
+            var json = $.parseJSON(response);
+            if (json.error.length > 0) {
+                if ("Error Session" === json.error) {
+                    window.parent.cerrarSession();
+                }
+                alertaRapida(json.error, "error");
+            } else {
+                pedidoView=json.result;
+                if(pedidoView!="0"){
+                    verOrdenCompras();
+                }else{
+                    alertaRapida("Ingrese un código valido en el buscador","error");
+                }
+            }
+        });
+        
+    }
+    
+}
+function verOrdenCompras() {
+    cargando(true);
+    $.get(url, {proceso: "verPedido", id_pedido: pedidoView}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            $("#popup").css("display", "block");
+            $("#popVerDetallePedido").css("display", "block");
+            $("#popVerDetallePedido").centrar();
+            $("#popCarrito").css("display", "none");
+            $("#popConfirmarSms").css("display", "none");
+            $("#popCodigoPedido").css("display", "none");
+            $("#popBuscadorPedido").css("display", "none");
+            $("#popDatosEnvio").css("display", "none");
+            $("#popDelivery").css("display", "none");
+            $("#popDetalle").css("display", "none");
+            var pedido=json.result.pedido;
+            
+            var programado=pedido.fechaProgramada+" "+pedido.horaProgramada;
+            var total=parseFloat(pedido.costoDelivery)+parseFloat(pedido.totalPedido);
+            $("#txtSolicitado").text(pedido.solicitada);
+            $("#txtEntregado").text(programado);
+            $("#txtEstado").text(pedido.estado);
+            $("#txtDireccion").text(pedido.direccion);
+            $("#txtTelefono").text(pedido.teflCliente);
+            $("#txtCliente").text(pedido.cliente);
+            $("#txtIntruccion").text(pedido.intrucciones);
+            $("#txtMonto").text(format(pedido.totalPedido)+" Bs");
+            $("#txtDelivery").text(format(pedido.costoDelivery)+" Bs");
+            $("#txtTotal").text(format(total)+" Bs");
+            
+            var detalle=json.result.detalle;
+            var html="";
+            for (var i = 0; i < detalle.length; i++) {
+                var item=detalle[i];
+                var total=parseFloat(item.precioU)*parseFloat(item.cantidad);
+                html+="<tr><td><div class='medio'>"+item.nombre+"</div></td>";
+                html+="<td><div class='pequeno derecha'>"+item.cantidad+"</div></td>";
+                html+="<td><div class='pequeno derecha'>"+format(item.precioU)+"</div></td>";
+                html+="<td><div class='normal derecha'>"+format(total)+"</div></td></tr>";
+            }
+            $("#prodDetalle tbody").html(html);
+            $("#prodDetalle").igualartabla();
+        }
+    });
 }

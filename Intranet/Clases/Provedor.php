@@ -41,7 +41,7 @@ class Provedor {
     }
 
     function buscarXestado($estado) {
-        $consulta = "select * from solded.provedor where estado='$estado' and empresa_id=".$this->CON->empresa_id."";
+        $consulta = "select * from lasueca.provedor where estado='$estado' and empresa_id=".$this->CON->empresa_id."";
         return $this->CON->consulta2($consulta);
     }
     function buscarParaCompra($estado) {
@@ -49,17 +49,17 @@ class Provedor {
         if($estado!==""){
             $est=" and p.estado like '$estado'  ";
         }
-        $consulta = "select formaPago,tipoDocumento,id_provedor,nombre,nit, direccion , IFNULL((SELECT Autorizacion FROM solded.compra where provedor_id=p.id_provedor  and tipo='Compra Facturada' order by STR_TO_DATE(fecha,'%e/%c/%Y') desc  limit 0,1 ),0) as autorizacion from solded.provedor p where  empresa_id=".$this->CON->empresa_id." $est";
+        $consulta = "select formaPago,tipoDocumento,id_provedor,nombre,nit, direccion , IFNULL((SELECT Autorizacion FROM lasueca.compra where provedor_id=p.id_provedor  and tipo='Compra Facturada' order by STR_TO_DATE(fecha,'%e/%c/%Y') desc  limit 0,1 ),0) as autorizacion from lasueca.provedor p where  empresa_id=".$this->CON->empresa_id." $est";
         return $this->CON->consulta2($consulta);
     }
 
     function modificar() {
-        $consulta = "UPDATE solded.provedor SET usuarioActualizacion_id='$this->usuarioActualizacion_id' ,nombre = '$this->nombre', razonsocial = '$this->razonsocial',nit = '$this->nit',direccion = '$this->direccion',telefono = '$this->telefono',email = '$this->email',personaContacto = '$this->personaContacto',numeroPersonaContacto = '$this->numeroPersonaContacto',estado = '$this->estado',formaPago = '$this->formaPago',tipoDocumento = '$this->tipoDocumento',fechaActualizacion = '$this->fechaActualizacion' WHERE id_provedor = $this->id_provedor and empresa_id=".$this->CON->empresa_id."";
+        $consulta = "UPDATE lasueca.provedor SET usuarioActualizacion_id='$this->usuarioActualizacion_id' ,nombre = '$this->nombre', razonsocial = '$this->razonsocial',nit = '$this->nit',direccion = '$this->direccion',telefono = '$this->telefono',email = '$this->email',personaContacto = '$this->personaContacto',numeroPersonaContacto = '$this->numeroPersonaContacto',estado = '$this->estado',formaPago = '$this->formaPago',tipoDocumento = '$this->tipoDocumento',fechaActualizacion = '$this->fechaActualizacion' WHERE id_provedor = $this->id_provedor and empresa_id=".$this->CON->empresa_id."";
         return $this->CON->manipular($consulta);
     }
 
     function insertar() {
-        $consulta = "INSERT INTO solded.provedor (id_provedor,nombre,razonsocial,nit,direccion,telefono,email,personaContacto,numeroPersonaContacto,estado,formaPago,tipoDocumento,fechaActualizacion,usuarioActualizacion_id,empresa_id) VALUES($this->id_provedor,'$this->nombre','$this->razonsocial','$this->nit','$this->direccion','$this->telefono','$this->email','$this->personaContacto','$this->numeroPersonaContacto','$this->estado','$this->formaPago','$this->tipoDocumento','$this->fechaActualizacion','$this->usuarioActualizacion_id',".$this->CON->empresa_id.");";
+        $consulta = "INSERT INTO lasueca.provedor (id_provedor,nombre,razonsocial,nit,direccion,telefono,email,personaContacto,numeroPersonaContacto,estado,formaPago,tipoDocumento,fechaActualizacion,usuarioActualizacion_id,empresa_id) VALUES($this->id_provedor,'$this->nombre','$this->razonsocial','$this->nit','$this->direccion','$this->telefono','$this->email','$this->personaContacto','$this->numeroPersonaContacto','$this->estado','$this->formaPago','$this->tipoDocumento','$this->fechaActualizacion','$this->usuarioActualizacion_id',".$this->CON->empresa_id.");";
         return $this->CON->manipular($consulta);
     }
 
