@@ -55,8 +55,8 @@ if ($proceso === "registrarPedido") {
             $lista=$_POST["lista"];
             for ($i = 0; $i < count($lista); $i++) {
                 $obj=$lista[$i];
-                $detalle=new detallePedidoApp($con);
-                $detalle->contructor(0, "", $obj["cantidad"], $obj["precio"], "activo", $pedido->id_pedidoApp, $obj["id"], $obj["comision"]);
+                $detalle=new detallePedidoApp($con);//$obj["comision"]
+                $detalle->contructor(0, "", $obj["cantidad"], $obj["precio"], "activo", $pedido->id_pedidoApp, $obj["id"], 1);
                 if(!$detalle->insertar()){
                     $error="No se logro realizar el pedido. Intente Nuevamente."; 
                     break;

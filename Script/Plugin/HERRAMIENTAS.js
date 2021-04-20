@@ -419,7 +419,7 @@ function abrirCarrito() {
     $("#popCarrito").centrar();
     $("#popCarrito").css("display", "block");
     $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
     $("#popVerDetallePedido").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
@@ -443,6 +443,10 @@ function abrirCarrito() {
         html += "            <div class='nombre'>" + producto.nombre + "</div>";
         html += "            <div class='precioUni'>Bs. " + producto.precio + "</div>";
         html += "        </div>";
+        
+        
+        html += "        <div class='contenidoModificable'>";
+        
         html += "        <div class='cantidad'>";
         html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='Imagen/Iconos/minus.png'  alt=''/></div>";
         html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='Imagen/Iconos/add.png'   alt=''/></div>";
@@ -451,6 +455,10 @@ function abrirCarrito() {
         html += "        <div class='precio'>";
         html += "            Bs. " + total.toFixed(2);
         html += "        </div>";
+        
+        html += "        </div>";
+        
+        
         html += "    </div>";
         html += "</div>";
     }
@@ -470,6 +478,7 @@ function ocultarPopup() {
     $("#popDelivery").css("display", "none");
     $("#popDetalle").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
+    $("#popBuscadorPedido").css("display", "none");
     $("#popVerDetallePedido").css("display", "none");
     $("#popDatosEnvio").css("display", "popDatosEnvio");
     var carrito = localStorage.getItem("carrito");
@@ -646,9 +655,15 @@ function continuarEntrega() {
         alertaRapida("Tiene que seleccionar una fecha de entrega", "error")
         return;
     }
+    var hora = $("input[name=hora]:checked");
+    if(hora.length==0){
+        alertaRapida("No hay horario de entrega disponible", "error")
+        return;
+    }
+    
     $("#popCarrito").css("display", "none");
     $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "block");
     $("#popFinalizarPedido").centrar();
     $("#popDelivery").css("display", "none");
@@ -659,18 +674,6 @@ function continuarEntrega() {
     carrito = carrito ? $.parseJSON(carrito) : {};
     var listaCarrito = carrito.data ? carrito.data : {};
     var html = "";
-    html += "<div class='boxItemCarrito' >";
-    html += "<div class='contenido'>";
-    html += "<div class='desripcion'>";
-    html += "</div>";
-    html += "<div class='cantidad negrilla' style='padding-top: 0; text-align: center;'>";
-    html += "Cantidad";
-    html += "</div>";
-    html += "<div class='precio negrilla' style='padding-top: 0;'>";
-    html += "SubTotal";
-    html += "</div>";
-    html += "</div>";
-    html += "</div>";
     var totalFinal = 0;
     for (var item in listaCarrito) {
         var producto = listaCarrito[item];
@@ -683,9 +686,7 @@ function continuarEntrega() {
         html += "<div class='desripcion'>";
         html += "<div class='nombre' style='height: auto;'>" + producto.nombre + "</div>";
         html += "<div class='precioUni'>Bs. " + precio + "</div>";
-        html += "</div>";
-        html += "<div class='cantidad' style='padding-top: 0; text-align: center;'>";
-        html += cantidad;
+        html += "<div class='cantidad'>Cantidad: " + cantidad + "</div>";
         html += "</div>";
         html += "<div class='precio' style='padding-top: 0;'>";
         html += "Bs. " + total;
@@ -696,7 +697,20 @@ function continuarEntrega() {
     $("#popFinalizarPedido .cuerpobox").html(html);
     $("#popFinalizarPedido .foot .total").text("Bs. " + totalFinal.toFixed(2));
 }
-function finalizarVenta() {
+function finalizarVenta(tipo=1) {//tipo 1 envia sms
+    if(tipo==2){
+        var telefono=$("input[name=smsTelefono]").val();
+        if (telefono.length < 7) {
+            alertaRapida("El número de teléfono es invalido", "error");
+            return;
+        }
+        $("input[name=telefono]").val(telefono);
+    }
+    $("#boxReadSms").css("display", "block");
+    var telefono=$("input[name=telefono]").val();
+    $("#telefonoSms").text(telefono);
+    $("#boxEditSms input").val(telefono);
+    $("#boxEditSms").css("display", "none");
     $("#popConfirmarSms").css("display", "block");
     $("#popConfirmarSms").centrar();
     $("#popCarrito").css("display", "none");
@@ -705,6 +719,18 @@ function finalizarVenta() {
     $("#popDelivery").css("display", "none");
     $("#popDetalle").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
+}
+function editarTelefonoSms(tipo){
+    if(tipo===1){
+        $("#boxReadSms").css("display", "none");
+        $("#boxEditSms").css("display", "block");
+        var telefono=$("input[name=telefono]").val();
+        $("#boxEditSms input").val(telefono);
+    }else{
+        $("#boxReadSms").css("display", "block");
+        $("#boxEditSms").css("display", "none");
+    }
+     
 }
 function confirmarSmsVenta() {
     var carrito = localStorage.getItem("carrito");
@@ -762,8 +788,8 @@ function cambiarDireccionEnvio() {
         var sucursal = listaSucursales[i];
         var distancia = calcularDistancia(sucursal.lat, sucursal.lon, lat, lon);
         distancia = distancia / 1000;
-        for (var j = 0; j < tarifario.result.length; j++) {
-            var tarifa = tarifario.result[j];
+        for (var j = 0; j < tarifario.length; j++) {
+            var tarifa = tarifario[j];
             var de = parseFloat(tarifa.de);
             var hasta = parseFloat(tarifa.hasta);
             if (distancia >= de && distancia <= hasta) {
@@ -831,6 +857,64 @@ function agregarCarritoDetalleProducto() {
     modificarCarrito('', itemDetalle.id, itemDetalle.nombre, itemDetalle.foto, itemDetalle.precio,itemDetalle.comision);
     ocultarPopup();
 }
+function controladorItem(ele,accion = "agregar", idproducto, nombre, foto, precio,comision){
+    var elemento=$(ele).parent();
+    var carrito = localStorage.getItem("carrito");
+    carrito = carrito ? $.parseJSON(carrito) : {};
+    var listaCarrito = carrito.data ? carrito.data : {};
+    if (!listaCarrito[idproducto]) {
+       modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,comision); 
+    }
+    elemento.find("span").addClass("activo");
+    elemento.find(".less").css("display","inline-block");
+    elemento.find(".add").css("display","inline-block");
+    var fecha = new Date();
+    fecha.setSeconds(fecha.getSeconds() + 3);
+    elemento.data("cronometro",fecha.getTime());
+    var intervalo=setInterval(function(){
+        var elemento=$(ele).parent();
+        var fecha = new Date().getTime();    
+        var cronometro=parseInt(elemento.data("cronometro"));
+        if(fecha>cronometro){
+            elemento.find("span").removeClass("activo");
+            elemento.find(".less").css("display","none");
+            elemento.find(".add").css("display","none");
+            clearInterval(intervalo);
+        }
+       
+    },1000);
+    
+}
+function btnControl(ele,valorAccion){
+    var elemento=$(ele).parent();
+    var nombre=elemento.data("nombre");
+    var comision=elemento.data("comision");
+    var precio=elemento.data("precio");
+    var foto=elemento.data("foto");
+    var idproducto=elemento.data("id");
+    var carrito = localStorage.getItem("carrito");
+    carrito = carrito ? $.parseJSON(carrito) : {};
+    var cantidadItem = carrito.cantidadItem;
+    cantidadItem = cantidadItem ? cantidadItem : 0;
+    var listaCarrito = carrito.data ? carrito.data : {};
+    if (listaCarrito[idproducto]) {
+        listaCarrito[idproducto].cantidad += valorAccion;
+        if(listaCarrito[idproducto].cantidad<=0){
+            elemento.find("span").removeClass("btnaddNro");
+            elemento.find(".less").css("display","none");
+            elemento.find(".add").css("display","none");
+            elemento.find("span").text("+");
+            delete listaCarrito[idproducto];
+        }
+    } else {
+        cantidadItem += 1;
+        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio,comision:comision};
+    }
+    carrito.cantidadItem = cantidadItem;
+    carrito.data = listaCarrito;
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    sincronizarCarrito();
+}
 function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,comision) {
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
@@ -896,7 +980,7 @@ function cambioTamanoPantalla() {
         var contenedorBuscadorW = $(buscador[i]).width();
         var categoriaBuscadorW = $(buscador[i]).find(".categoria").width();
         var lupaBuscadorW = $(buscador[i]).find("img").width();
-        var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 53;
+        var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 43;
         $(buscador[i]).find("input").css("width", inputBuscador + "px");
     }
     $(window).resize(function () {
@@ -905,13 +989,14 @@ function cambioTamanoPantalla() {
             var contenedorBuscadorW = $(buscador[i]).width();
             var categoriaBuscadorW = $(buscador[i]).find(".categoria").width();
             var lupaBuscadorW = $(buscador[i]).find("img").width();
-            var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 53;
+            var inputBuscador = contenedorBuscadorW - categoriaBuscadorW - lupaBuscadorW - 43;
             $(buscador[i]).find("input").css("width", inputBuscador + "px");
         }
     });
+    var height=$(window).height();
+    $(".pop .cuerpo").css("max-height",height*0.50)
     sincronizarCarrito();
 }
-
 function buscadorPedidoPop(tipo){
     if(tipo==1){
         $("#popup").css("display", "block");
@@ -955,6 +1040,11 @@ function buscadorPedidoPop(tipo){
         
     }
     
+}
+function compartirWp(){
+    var host=window.location.origin+"/laSueca/index.php?pv="+pedidoView;
+    var whatsapp="https://wa.me/?texto="+host;
+    window.open(whatsapp, '_blank');
 }
 function verOrdenCompras() {
     cargando(true);

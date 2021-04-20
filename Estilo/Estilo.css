@@ -448,7 +448,7 @@ ul{
 }
 
 #menu{
-  margin-left: 0;
+    margin-left: 0;
     padding: 6px 0;
     background-color: black;
     position: fixed;
@@ -470,8 +470,6 @@ ul{
     background: #c4e1e4;
 }
 .buscadorMenu img{
-    margin-right: -11px;
-    margin-left: 9px;
     margin-top: -4px;
     width: 41px;
     height: 41px;
@@ -577,65 +575,50 @@ ul{
     height: 380px;
     padding: 15px;
 }
-#ProductoMasVendido .titulo{
+
+
+.contenedorProductos .titulo{
     font-size: 18px;
     margin-bottom: 20px;
 }
-#ProductoMasVendido .content{
-    white-space: nowrap;
+.contenedorProductos .content{
     overflow-y: hidden;
-    overflow-x: visible;
-}
-#ProductoMasVendido{
-    background: white;
-    margin: 0px 10px;
-    padding: 20px 20px;
-    margin-top: 15px;
-
-}
-
-#ProductoHome .titulo{
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-#ProductoHome .content{
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow-x: auto;
     max-height: 953px;
 }
 .vermas{
     color: #0066c0 !important;
     font-size: 13px;
-    float: right;
     cursor: pointer;
+    position: relative;
+    top: 6px;
 }
-#ProductoHome{
+.contenedorProductos{
     background: white;
-    margin: 0px 10px;
+    margin: 10px 0px;
     padding: 20px 20px;
 }
-#ProductoMasVendido img{
-    max-height: 200px;
-}
+
 .itemProducto img:hover{
     cursor: pointer;
     transform: scale(0.9);
 }
 .itemProducto img{
-    width: 140px;
-    height: 140px;
+    width: 110px;
+    height: 110px;
 
 }
-.itemProducto .btnadd span{
-    position: relative;
-    top: -11px;
-}
+
 .itemProducto .btnadd:hover{
     background:#01467d ;
     color:white;
     opacity: 0.7;
 }
-
+.itemProducto .btnadd span {
+    top: -13px;
+    position: relative;
+    font-size: 22px;
+}
 .itemProducto .btnadd{
     border: solid 3px #01467d;
     color: #01467d;
@@ -648,7 +631,7 @@ ul{
     margin-left: -12px;
     cursor: pointer;
     font-size: 28px;
-    height: 28px;
+    height: 27px;
     padding: 0px 2px;
     z-index: 2;
 }
@@ -666,16 +649,25 @@ ul{
     text-align: left;
     font-weight: normal;
     color: #565555;
-    height: 71px;
+    height: 39px;
+    font-size: 13px;
     overflow: hidden;
 }
 .itemProducto{
-    width: 160px;
+    width: 130px;
     text-align: center;
-    height: 247px;
+    height: 170px;
     display: inline-block;
+    margin: 5px 5px;
 }
-
+.overflowXcontent{
+    white-space: nowrap;
+    overflow-y: hide;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: inline-flex;
+    flex-wrap: nowrap;
+}
 .addCarrito span{
     position: relative;
     top: 0px;
@@ -700,16 +692,19 @@ ul{
     min-width: 18px;
     text-align: center;
 }
+.itemProducto .btnaddNro span{
+    position: relative;
+    font-size: 14px;
+    top: 0px;
+}
 .itemProducto .btnaddNro{
     color: white ;
     background: #01467d ;
-    font-size: 20px ;
-    padding: 0 5px ;
+    font-size: 14px ;
+    padding: 1px 5px ;
     z-index: 2;
 }
-.itemProducto .btnaddNro span{
-    top: -3px;
-}
+
 .submenuLateral{
     background: white;
     overflow-x: auto;
@@ -721,7 +716,7 @@ ul{
     background: #cecece;
     padding: 4px 13px;
     border-radius: 12px;
-    margin: 10px;
+    margin: 6px 3px;
     font-size: 15px;
     color: black;
     font-weight: bold;
@@ -733,13 +728,14 @@ ul{
 .boxcategoria img{
     width: 50px;
     height: 50px;
+    border-radius: 12px 0 0 12px;
 }
 .boxcategoria{
     text-decoration: none;
     display: inline-block;
     background: #cecece;
     border-radius: 12px;
-    margin: 10px;
+    margin: 10px 5px;
     font-size: 15px;
     color: black;
     font-weight: bold;
@@ -760,16 +756,13 @@ ul{
     color: white;
 }
 #menuProducto{
-    padding: 20px;
+    padding: 10px;
     white-space: normal;
 
 }
 #resumenResultado{
     font-size: 18px;
     margin-bottom: 18px;
-}
-#menuProducto .itemProducto{
-    margin: 10px 25px;
 }
 #buscarMas:hover{
     opacity: 0.7;
@@ -793,7 +786,7 @@ ul{
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: 3;
     display: block;
 }
 .pop .cuerpo{
@@ -804,8 +797,8 @@ ul{
 .pop{
     background: white;
     max-width: 600px;
-    width: 100%;
-    z-index: 2;
+    width: 95%;
+    z-index: 3;
     border-radius: 8px;
     box-shadow: 0 0 2px 0px black;
 }
@@ -842,17 +835,15 @@ ul{
     flex-direction: row;
     display: flex;
 }
-.boxItemCarrito .cantidad
-, .boxItemCarrito .precio{
-    flex: 2;
+.boxItemCarrito .precio{
     text-align: right;
     font-size: 13px;
-    padding-top: 24px;
+    margin-left: 5px;
 }
 .boxItemCarrito .cantidad{
-    text-align: center;
-    text-align: center;
-    padding-top: 24px;
+    display: inline-block;
+    margin-left: 14px;
+    font-style: italic;
 }
 .boxItemCarrito .cantidad .btn span{
     top: -10px;
@@ -868,14 +859,16 @@ ul{
 .boxItemCarrito input{
     width: 100%;
     position: relative;
-    top: -23px;
+    top: -24px;
     text-align: center;
-    padding: 1px 21px;
+    padding: 3px 21px;
     font-size: 12px;
+    background: #e4e9f3;
+    border-radius: 12px;
 }
 .boxItemCarrito .cantidad .btn{
     border: solid 1px silver;
-    border-radius: 8px;
+    border-radius: 25px;
     width: 23px;
     height: 24px;
     padding: 0;
@@ -888,10 +881,11 @@ ul{
     font-size: 14px;
     font-style: italic;
     color: #676161;
+    display: inline-block;
 }
 .boxItemCarrito .desripcion{
     flex: 7;
-    padding: 0 14px;
+    padding: 0px;
 }
 .boxItemCarrito .nombre{
     height: 50px;
@@ -900,6 +894,7 @@ ul{
 .boxItemCarrito .contenido{
     flex: 8;
     display: flex;
+    font-size: 13px
 }
 .cerrar:hover{
     transform: scale(1.2);
@@ -925,7 +920,7 @@ label{
     margin-left: 9px;
 }
 #bodyPage{
-        max-width: 1600px;
+    max-width: 1600px;
     margin: 0 auto;
     margin-top: 51px !important;
 }
@@ -946,7 +941,7 @@ label{
 }
 #detallePrecio{
     padding: 11px 0;
-        font-size: 16px;
+    font-size: 16px;
 }
 #detalleNombre{
     font-size: 17px;
@@ -957,13 +952,42 @@ div#popDetalle img{
     width: 180px;
     height: 180px;
 }
- div#popDetalle {
+div#popDetalle {
     text-align: center;
     padding: 16px 9px;
 }
 #detalleDesc{
     font-size: 14px;
     padding: 12px 0px;
+}
+.contenidoModificable{
+    flex: 2;
+}
+#fechaEntrega{
+    font-size: 19px;
+    margin: 10px;
+}
+.pop .foot .total{
+    top:0;
+}
+.itemProducto label.add{
+    float: right;
+    font-size: 17px;
+    margin-right: -3px;
+    position: relative;
+    top: -7px;
+    display: none;
+}
+.itemProducto span.activo{
+    padding: 0 9px;
+}
+.itemProducto label.less{
+    float: left;
+    font-size: 20px;
+    margin-left: -3px;
+    position: relative;
+    top: -10px;
+    display: none;
 }
 @media screen and (max-width : 1024px) {
     #contenedorCategoria img{
@@ -979,13 +1003,6 @@ div#popDetalle img{
         margin: 5px;
         height: 300px;
     }
-    #ProductoMasVendido  img{
-        max-height: 150px;
-    }
-    #ProductoMasVendido{
-        margin: 10px 0px;
-        padding: 15px;
-    }
     #arrowBanner{
         display: none;
     }
@@ -999,28 +1016,117 @@ div#popDetalle img{
         width: 40px;
         height: 40px;
     }
+    .boxItemCarrito .nombre{
+        font-size: 13px;
+    }
+    .boxItemCarrito img{
+        width: 50px;
+        height: 50px;
+    }
+    .boxItemCarrito .precioUni{
+        font-size: 12px
+    }
+    .boxItemCarrito .cantidad{
+        font-size: 12px
+    }
+    .contenidoModificable{
+        flex: 5;
+    }
+    #popup .titulo{
+        font-size: 14px;
+    }
+    .pop .foot{
+        text-align: center;
+    }
+    .pop .foot span {
+        margin-left: 20px;
+        margin-right: 11px;
+        font-style: italic;
+        font-weight: bold;
+        cursor: pointer;
+        position: relative;
+        top: 4px;
+    }
+
+    .pop .foot button{
+        font-size: 12px;
+        margin-top: 8px;
+    }
+    label{
+        font-size: 13px;
+    }
+    span#txtCostoEnvio {
+        width: 100%;
+        padding-bottom: 3px;
+    }
+    div#fechaEntrega {
+        font-size: 14px;
+        margin: 8px 10px;
+    }
+    #hora span{
+        font-size: 13px;
+    }
+    .spanPop{
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+    .boxcategoria{
+        font-size: 12px;
+    }
+    .boxcategoria img{
+        width: 36px;
+        height: 36px;
+    }
+    a.boxSubcategoria{
+        font-size: 13px;
+        font-weight: normal;
+    }
+    #resumenResultado{
+        font-size: 14px;
+    }
+    .itemProducto .btnadd span {
+        top: -8px;
+    }
+    .itemProducto .btnaddNro span {
+        top: 0px; 
+    }
 }
 @media screen and (max-width : 420px) {
     #contenedorCategoria img{
-        height: 160px;
+        height: 110px;
+        max-width: 110px;
     }
-    #ProductoMasVendido img{
-        max-height: 150px;
+    
+    
+    
+    
+    .itemProducto .btnadd span {
+        top: -11px;
+    }
+    .itemProducto .btnaddNro span{
+        top: 0px;
     }
     #contenedorCategoria .item{
-        height: 260px;
-        margin: 1px;
-    }
-    #ProductoMasVendido .titulo{
-        font-size: 14px;
-    }
-    #ProductoMasVendido{
-        margin: 10px 0px;
-        padding: 15px;
+        height: 190px;
+        margin: 2px;
+        text-align: center;
+        padding: 7px 9px;
     }
     #btnFlotante img{
         width: 40px;
         height: 40px;
     }
+    .contenedorProductos {
+        background: white;
+        margin: 10px 0px;
+        padding: 10px 12px;
+    }
+    .contenedorProductos .titulo {
+        font-size: 15px;
+    }
+    .vermas{
+        top: -2px;
+    }
+
 }
 

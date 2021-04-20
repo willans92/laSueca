@@ -19,13 +19,14 @@ $(document).ready(function () {
         verOrdenCompras();
     }
 });
-function buscador(e){
+function buscador(e,tipo){
     if (!(e === "" || e.keyCode === 13)) {
         return;
     }
-    var buscar = ($("input[name=buscador]").val() + "").trim();
+    var buscar = ($("input[name=buscador"+tipo+"]").val() + "").trim();
     $(location).attr('href', "buscador.php?b="+buscar);
 }
+
 function seleccionarSubcategoria(ele, id) {
     subCategoria = id;
     $(".boxSubcategoria").removeClass("selectedSubcategoria");

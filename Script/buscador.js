@@ -12,9 +12,14 @@ $(document).ready(function () {
     cambioTamanoPantalla();
 });
 function cargarMas() {
-    var buscar = ($("input[name=buscador]").val() + "").trim();
+    var buscar1 = ($("input[name=buscador]").val() + "").trim();
+    var buscar2 = ($("input[name=buscador2]").val() + "").trim();
+    var textoBuscador=buscar1;
+    if(buscar1.length===0){
+        textoBuscador=buscar2;
+    }
     cargando(true);
-    $.get(url, {proceso: "buscarMas", txtbusqueda: buscar, id_tienda: id_tienda, categoria: categoria
+    $.get(url, {proceso: "buscarMas", txtbusqueda: textoBuscador, id_tienda: id_tienda, categoria: categoria
         , subcategoria: subcategoria, pibote: pibote}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
@@ -49,11 +54,11 @@ function cargarMas() {
         }
     });
 }
-function buscador(e) {
+function buscador(e,tipo) {
     if (!(e === "" || e.keyCode === 13)) {
         return;
     }
-    var buscar = ($("input[name=buscador]").val() + "").trim();
+    var buscar = ($("input[name=buscador"+tipo+"]").val() + "").trim();
     $(location).attr('href', "buscador.php?b=" + buscar + "&t=" + tipo + "&s=" + subcategoria + "&c=" + categoria);
 }
 function seleccionarSubcategoria(ele, id) {

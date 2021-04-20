@@ -16,72 +16,33 @@
     </head>
     <body>
         <?php
+        include_once "Libreria/CONN.php";
+        include_once "Libreria/funciones.php";
+
         include_once "Intranet/Clases/catalogoProducto.php";
         include_once "Intranet/Clases/producto.php";
-        include_once "Libreria/CONN.php";
         include_once "Intranet/Clases/Sucursal.php";
-        
-        
-        
-        
+
         $tienda_id = 4;
         $con = new CONN(0);
+        $funciones = new funciones($con, $tienda_id);
+
+
         $categoria = new catalogoProducto($con);
         $listaCategoria = $categoria->catalogoAsignadoTienda($tienda_id);
-        $htmlCategoria = "";
-        for ($i = 0; $i < count($listaCategoria); $i++) {
-            $cat = $listaCategoria[$i];
-            $id_categoria = $cat["id_categoriaProducto"];
-            $htmlCategoria .= "<div class='col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 p-0'>";
-            $htmlCategoria .= "    <div class='item'>";
-            $htmlCategoria .= "        <div class='titulo'>" . $cat["nombre"] . "</div>";
-            $htmlCategoria .= "        <a href='buscador.php?c=$id_categoria'><img src='" . $cat["foto"] . "'></a>";
-            $htmlCategoria .= "        <a class='link' href='buscador.php?c=$id_categoria'>Comprar Ahora</a>";
-            $htmlCategoria .= "    </div>";
-            $htmlCategoria .= "</div>";
-        }
 
+        $tarifario = $funciones->tarifarioEmprendedor();
 
-        $producto = new producto($con);
-        $listaProducto = $producto->productoMasVendidoHome($tienda_id);
-        $htmlProductoMasVendido = "";
-        for ($i = 0; $i < count($listaProducto); $i++) {
-            $prod = $listaProducto[$i];
-            $foto = $prod["foto"];
-            $htmlProductoMasVendido .= "<img src='$foto' />";
-        }
+        $sucursal = new Sucursal($con);
+        $sucursalesDisponibles = $sucursal->TodassucursalLocalizacion();
 
-
-
-        $listaProducto = $producto->nuestrosProductosHome($tienda_id, "", "0", "0", 0, 30)["data"];
-        $htmlProducto = "";
-        for ($i = 0; $i < count($listaProducto); $i++) {
-            $prod = $listaProducto[$i];
-            $foto = $prod["foto"];
-            $precio = $prod["precio"];
-            $comision = $prod["comision"];
-            $nombre = $prod["nombre"];
-            $detalle= $prod["descripcion"];
-            $id_producto = $prod["id_producto"];
-            $htmlProducto .= "<div class='itemProducto'  >";
-            $htmlProducto .= "<div class='btnadd i" . $id_producto . "' onclick=\"modificarCarrito('',$id_producto,'$nombre','$foto','$precio','$comision')\"><span>+</span></div>";
-            $htmlProducto .= "<img src='$foto' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">";
-            $htmlProducto .= "<div class='precio' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">Bs. $precio</div>";
-            $htmlProducto .= "<div class='nombre' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">$nombre</div>";
-            $htmlProducto .= "</div>";
-        }
-        $tarifario = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
-        
-        $sucursal=new Sucursal($con);
-        $sucursalesDisponibles=$sucursal->TodassucursalLocalizacion();
-        
-        $pedido_id=isset($_GET["pv"]) ? $_GET["pv"] : "0";
+        $pedido_id = isset($_GET["pv"]) ? $_GET["pv"] : "0";
         ?>
         <script>
             var id_tienda = '<?php echo $tienda_id ?>';
-            var tarifario=<?php echo $tarifario?>;
-            var listaSucursales=<?php echo json_encode($sucursalesDisponibles) ?>;
-            var pedidoView=<?php echo json_encode($pedido_id) ?>;
+            var tarifario =<?php echo json_encode($tarifario) ?>;
+            var listaSucursales =<?php echo json_encode($sucursalesDisponibles) ?>;
+            var pedidoView =<?php echo json_encode($pedido_id) ?>;
         </script>
         <div class="row" id="menu">
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0">
@@ -96,8 +57,8 @@
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text" onkeyup="buscador(event)" name="buscador">
-                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('')">
+                    <input type="text" onkeyup="buscador(event, '')" autocomplete="off" name="buscador">
+                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '')">
                 </div>
             </div>
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
@@ -110,8 +71,8 @@
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text" autocomplete="off" onkeyup="buscador(event)">
-                    <img src="Imagen/Iconos/lupa.svg" title="buscador">
+                    <input type="text" autocomplete="off" onkeyup="buscador(event, 2)" name="buscador2">
+                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '2')">
                 </div>
             </div>
         </div>
@@ -134,35 +95,25 @@
                 <div class="arrow"> &gt;</div>
             </div>
             <div id="contenedorCategoria" class="row ">
-
-                <?php echo $htmlCategoria; ?>
-
-
+                <?php  echo $funciones->itemCategoriaHome($listaCategoria);  ?>
             </div>
-            <div id="ProductoHome">
-                <div class="titulo">Nuestros Productos<a class='vermas' href='buscador.php'>Ver más Productos</a></div>
-                <div class="content">
-
-                    <?php echo $htmlProducto; ?>
 
 
-                </div>
-            </div>
-            <div id="ProductoMasVendido">
-                <div class="titulo">Producto Mas Vendidos <a class='vermas' href='buscador.php?t=2'>Ver más Productos</a></div>
-                <div class="content">
 
-                    <?php echo $htmlProductoMasVendido; ?>
-                </div>
-            </div>
+
+            <?php  echo $funciones->itemCategoriaDetallada($listaCategoria);  ?>
+
+
+           
+
         </div>
         <div id='btnFlotante'>
             <img src="Imagen/Iconos/whatsapp.png" alt=""/>
         </div>
-        
-        
-        
-        
+
+
+
+
         <div id="popup" >
             <div class="background" onclick="ocultarPopup()"></div>
             <div id="popCarrito" class="pop">
@@ -197,7 +148,7 @@
                 <div class="cuerpo p-3">
                     <label>Fecha de Entrega</label>
                     <div id="calendario"></div>
-                    <div id="fechaEntrega" style="font-size: 19px; margin: 10px;"></div>
+                    <div id="fechaEntrega" ></div>
                     <div style="margin: 10px">
                         <label>Horario de entrega</label>
                         <ul id="hora">
@@ -220,7 +171,7 @@
                     </select>
                     <label>Detalle del Pedido</label>
                     <div class="cuerpobox">
-                        
+
                     </div>
                     <br>
                     <label>Intrucciones de Entrega</label>
@@ -231,15 +182,22 @@
                     <button onclick="finalizarVenta()">Realizar Pedido <span class="total"></span></button>
                 </div>
             </div>
-            
-            
-            
-            
             <div id="popConfirmarSms" class="pop">
                 <div class="titulo">Confirmación SMS<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
                 <div class="p-3">
+                    <div id='boxReadSms'>
+                        <span class="negrilla mr-2">Teléfono:</span>
+                        <span id='telefonoSms'></span>
+                        <span class='link' onclick="editarTelefonoSms(1)">Editar Teléfono</span>
+                    </div>
+                    <div id='boxEditSms'>
+                        <label>Teléfono</label>
+                        <input type="text" name='smsTelefono' style="margin-bottom: 14px;"><br>
+                        <button onclick="editarTelefonoSms(2)" class="btn-danger">Cancelar</button>
+                        <button onclick="finalizarVenta(2)">Enviar Sms</button>
+                    </div>
                     <label>Enviamos un mensaje a tu telefono celular</label>
-                    <div>Ingresa el código que recibiste pare terminar de realizar el pedido</div>
+                    <div class='spanPop'>Ingresa el código que recibiste pare terminar de realizar el pedido</div>
                     <input type='text' name='codigoSms' autocomplete="off" style="width:100%">
                 </div>
                 <div class="foot">
@@ -255,12 +213,9 @@
                 </div>
                 <div class="foot">
                     <span onclick="ocultarPopup()">Salir</span>
-                    <button id='btncontinuar1' onclick="verOrdenCompras()">Ver Detalle</button>
+                    <button id='btncontinuar1' onclick="verOrdenCompras()">Ver el Detalle Pedido</button>
                 </div>
             </div>
-            
-            
-            
             <div id="popDetalle" class="pop">
                 <img src="" alt=""/>
                 <div id="detallePrecio"></div>
@@ -271,8 +226,6 @@
                     <button onclick="agregarCarritoDetalleProducto()"> Agregar Carrito</button>
                 </div>
             </div>
-            
-            
             <div id="popBuscadorPedido" class="pop">
                 <div class="titulo">¿Ingrese el código del pedido?<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
                 <div class="p-2">
@@ -282,7 +235,7 @@
                 <div class="foot">
                     <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
                 </div>
-              
+
             </div>
             <div id="popVerDetallePedido" class="pop">
                 <div class="titulo">Detalle de Pedido<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
@@ -311,7 +264,7 @@
                         <span class="negrilla">Dirección de Entrega:</span>
                         <span  id="txtDireccion"></span>
                     </div>
-                    
+
                     <div>
                         <span class="negrilla">Intrucción de Entrega:</span>
                         <span  id="txtIntruccion"></span>
@@ -333,22 +286,23 @@
                         <span class="negrilla">DETALLE DEL PEDIDO</span><br><br>
                         <table class="table" id="prodDetalle">
                             <thead>
-                                <th><div class="medio">Producto</div></th>
-                                <th><div class="pequeno">Cantidad</div></th>
-                                <th><div class="pequeno">Precio Uni.</div></th>
-                                <th><div class="normal">SubTotal</div></th>
+                            <th><div class="medio">Producto</div></th>
+                            <th><div class="pequeno">Cantidad</div></th>
+                            <th><div class="pequeno">Precio Uni.</div></th>
+                            <th><div class="normal">SubTotal</div></th>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="foot">
                     <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
+                    <button  onclick="compartirWp()">Compartir por Whatsapp</button>
                 </div>
             </div>
         </div>
-      
+
     </body>
 </html>

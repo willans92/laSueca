@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Arqueo</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery.qrcode-0.12.0.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/NumeroLetra.js" type="text/javascript"></script>
+        <script src="../Script/Arqueo.js" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0"  >
+            <h1>Arqueo</h1>
+            <div class="row m-2">
+                <div class='m-2' id="filtrosMenu">
+                    <div style="width: 876px;">
+
+                        <div  class="inlineblock">
+                            <span class='negrillaenter'>Cobrador</span> 
+                            <input type="text" placeholder="-- Cobrador --" class="medio"  autocomplete="off" name="empleado"/>
+                        </div>
+                        <div  class="inlineblock">
+                            <span class='negrillaenter'>Sucursal</span> 
+                            <input type="text" placeholder="-- Sucursal --" class="medio"  autocomplete="off" name="sucursal"/>
+                        </div>
+
+                        <div  class="inlineblock">
+                            <span class='negrillaenter'>De </span> 
+                            <input type='text' class='fecha medio ' name='de' readonly autocomplete="off"/>
+                        </div>
+                        <div  class="inlineblock">
+                            <span class='negrillaenter'>Hasta </span>
+                            <input type='text' class='fecha medio' name='hasta' readonly autocomplete="off"/> 
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Estado</div>
+                            <select id="tpestadoB" class=" medio" onchange="cargar()">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <button onclick="reporteArqueo()" class=''>GENERAR REPORTE</button>
+
+                    </div>
+                </div><br>
+                <table class="table">
+                    <thead class="thead-light">
+                        <th><div class="pequeno">Registrado</div></th>
+                        <th><div class="medio">Cobrador</div></th>
+                        <th><div class="pequeno">Fecha De</div></th>
+                        <th><div class="pequeno">Fecha Hasta</div></th>
+                        <th><div class="normal">Monto Cobrado</div></th>
+                        <th><div class="normal">Monto Rendido</div></th>
+                        <th><div class="normal">Saldo</div></th>
+                        <th><div class="medio">Registrado Por</div></th>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 532px">
+                <button onclick="popArqueo()" class='p-2' >Realizar Arqueo</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="exportarExcel('tblventas', 'Reporte de Cobranza')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn"/>
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+</html>
+

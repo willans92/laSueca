@@ -21,47 +21,29 @@
         include_once "Intranet/Clases/Sucursal.php";
         include_once "Intranet/Clases/linea_producto_tienda.php";
         include_once "Libreria/CONN.php";
+         include_once "Libreria/funciones.php";
         $tienda_id = 4;
         $con = new CONN(0);
         $categoriabusqueda = isset($_GET["c"]) ? $_GET["c"] : "0";
         $subcategoriabusqueda = isset($_GET["s"]) ? $_GET["s"] : "0";
         $txtbusqueda = isset($_GET["b"]) ? $_GET["b"] : "";
         $tipobusqueda = isset($_GET["t"]) ? $_GET["t"] : "0";
-        $htmlCategoria = "";
+        $pedido_id=isset($_GET["pv"]) ? $_GET["pv"] : "0";
+        $funciones = new funciones($con,$tienda_id);
+        
+        
+        
         $htmlSubCategoria = "";
 
         if ($tipobusqueda === "0") {
             $sub = new linea_producto_tienda($con);
-            $lista = $sub->lineaXidCategoria($categoriabusqueda, $tienda_id);
-            for ($i = 0; $i < count($lista); $i++) {
-                $selected = "";
-                $arrayid = explode(",", $subcategoriabusqueda);
-                $index = in_array($lista[$i]["id_linea_producto"], $arrayid);
-                $query = $subcategoriabusqueda;
-                if ($index) {
-                    $selected = "selectedSubcategoria";
-                    $str = $query = str_replace("," . $lista[$i]["id_linea_producto"], "", $query);
-                    $query = str_replace("" . $lista[$i]["id_linea_producto"], "", $query);
-                } else {
-                    $query = $query . "," . $lista[$i]["id_linea_producto"];
-                }
-
-                $htmlSubCategoria .= "<a class='boxSubcategoria $selected' href='./buscador.php?c=" . $categoriabusqueda . "&t=$tipobusqueda&b=$txtbusqueda&s=$query' >" . $lista[$i]["descripcion"] . "</a>";
-            }
+            $listaSubCategoria = $sub->lineaXidCategoria($categoriabusqueda, $tienda_id);
+            
             $categoria = new catalogoProducto($con);
             $listaCategoria = $categoria->catalogoAsignadoTienda($tienda_id);
-            for ($i = 0; $i < count($listaCategoria); $i++) {
-                $selected = "";
-                if ($categoriabusqueda == $listaCategoria[$i]["id_categoriaProducto"]) {
-                    $selected = "selectedSubcategoria";
-                }
-                $htmlCategoria .= "<a class='boxcategoria $selected' href='./buscador.php?c=" . $listaCategoria[$i]["id_categoriaProducto"] . "&t=$tipobusqueda&b=$txtbusqueda&s=0' >";
-                $htmlCategoria .= "<img src='" . $listaCategoria[$i]["foto"] . "'>";
-                $htmlCategoria .= "<span>" . $listaCategoria[$i]["nombre"] . "</span>";
-                $htmlCategoria .= "</a>";
-            }
         }
         $producto = new producto($con);
+        
         $data = $producto->nuestrosProductosHome($tienda_id, $txtbusqueda, $categoriabusqueda, $subcategoriabusqueda, 0, 30);
         $listaProducto = $data["data"];
         $limite = $data["limite"];
@@ -71,12 +53,20 @@
             $foto = $prod["foto"];
             $precio = $prod["precio"];
             $nombre = $prod["nombre"];
+            $comision = $prod["comision"];
+            $detalle = $prod["descripcion"];
             $id_producto = $prod["id_producto"];
             $htmlProducto .= "<div class='itemProducto' >";
-            $htmlProducto .= "<div class='btnadd i" . $id_producto . "' onclick=\"modificarCarrito('',$id_producto,'$nombre','$foto','$precio')\"><span>+</span></div>";
-            $htmlProducto .= "<img src='$foto' >";
-            $htmlProducto .= "<div class='precio'>Bs. $precio</div>";
-            $htmlProducto .= "<div class='nombre'>$nombre</div>";
+            
+            $htmlProducto .= "<div class='btnadd i" . $id_producto . "' data-id='$id_producto' data-nombre='$nombre' data-foto='$foto' data-precio='$precio' data-comision='$comision'>";
+            $htmlProducto .= "<label class='less' onclick=\"btnControl(this,-1)\">-</label>";
+            $htmlProducto .= "<span onclick=\"controladorItem(this,'',$id_producto,'$nombre','$foto','$precio','$comision')\">+</span>";
+            $htmlProducto .= "<label class='add' onclick=\"btnControl(this,1)\">+</label>";
+            $htmlProducto .= "</div>";
+            
+            $htmlProducto .= "<img src='$foto' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">";
+            $htmlProducto .= "<div class='precio' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">Bs. $precio</div>";
+            $htmlProducto .= "<div class='nombre' onClick=\"detalleProducto(1,$id_producto,'$nombre','$detalle','$foto','$precio','$comision')\">$nombre</div>";
             $htmlProducto .= "</div>";
         }
         $msn = "Productos Encontrados : $limite";
@@ -102,6 +92,7 @@
             var pibote = '<?php echo count($listaProducto) ?>';
             var tarifario=<?php echo $tarifario?>;
             var listaSucursales=<?php echo json_encode($sucursalesDisponibles) ?>;
+            var pedidoView=<?php echo json_encode($pedido_id) ?>;
         </script>
         <div class="row" id="menu">
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0">
@@ -111,27 +102,27 @@
                     <span class="iconLabel">La Sueca</span>
                 </a>
             </div>
-
             <div  class="col-6 col-sm-8 d-none d-sm-inline-block">
                 <div class="buscadorMenu">
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text" onkeyup="buscador(event)" name="buscador" autocomplete="off">
-                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('')">
+                    <input type="text" onkeyup="buscador(event,'')" autocomplete="off" name="buscador">
+                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('','')">
                 </div>
             </div>
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
+                <img class="iconMenu" src="Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
                 <img class="iconMenu" src="Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
-                <div class='addCarrito'><span>1</span></div>
+                <div class='addCarrito'><span></span></div>
             </div>
             <div  class="col-12 d-inline-block d-sm-none mt-2" >
                 <div class="buscadorMenu">
                     <div class="categoria" >
                         Buscador
                     </div>
-                    <input type="text" autocomplete="off">
-                    <img src="Imagen/Iconos/lupa.svg" title="buscador">
+                    <input type="text" autocomplete="off" onkeyup="buscador(event,2)" name="buscador2">
+                    <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('','2')">
                 </div>
             </div>
         </div>
@@ -141,10 +132,10 @@
 
         <div class="container-fluid" style="max-width: 1600px; margin: 0 auto; "  id="bodyPage">
             <div class="submenuLateral" id="menuCategoria">
-                <?php echo $htmlCategoria; ?>
+                <?php echo $funciones->itemCategoriaBusqueda($listaCategoria, $categoriabusqueda,$tipobusqueda,$txtbusqueda) ?>
             </div>
             <div class="submenuLateral mt-2" id="menuSubcategoria">
-                <?php echo $htmlSubCategoria; ?>
+                <?php echo $funciones->itemSubCategoriaBusqueda($listaSubCategoria, $subcategoriabusqueda, $categoriabusqueda, $tipobusqueda, $txtbusqueda); ?>
             </div>
             <div class="submenuLateral mt-2" id="menuProducto">
                 <div id="resumenResultado">
@@ -166,7 +157,7 @@
                 <div class="cuerpo"></div>
                 <div class="foot">
                     <span onclick="ocultarPopup()">Seguir Comprando</span>
-                    <button onclick="realizarCompra()">Realizar Compra <span class="total"></span></button>
+                    <button id='btncontinuar1' onclick="realizarCompra()">Realizar Compra <span class="total"></span></button>
                 </div>
             </div>
             <div id="popDatosEnvio" class="pop">
@@ -193,7 +184,7 @@
                 <div class="cuerpo p-3">
                     <label>Fecha de Entrega</label>
                     <div id="calendario"></div>
-                    <div id="fechaEntrega" style="font-size: 19px; margin: 10px;"></div>
+                    <div id="fechaEntrega" ></div>
                     <div style="margin: 10px">
                         <label>Horario de entrega</label>
                         <ul id="hora">
@@ -227,6 +218,40 @@
                     <button onclick="finalizarVenta()">Realizar Pedido <span class="total"></span></button>
                 </div>
             </div>
+            <div id="popConfirmarSms" class="pop">
+                <div class="titulo">Confirmación SMS<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-3">
+                    <div id='boxReadSms'>
+                        <span class="negrilla mr-2">Teléfono:</span>
+                        <span id='telefonoSms'></span>
+                        <span class='link' onclick="editarTelefonoSms(1)">Editar Teléfono</span>
+                    </div>
+                    <div id='boxEditSms'>
+                        <label>Teléfono</label>
+                        <input type="text" name='smsTelefono' style="margin-bottom: 14px;"><br>
+                        <button onclick="editarTelefonoSms(2)" class="btn-danger">Cancelar</button>
+                        <button onclick="finalizarVenta(2)">Enviar Sms</button>
+                    </div>
+                    <label>Enviamos un mensaje a tu telefono celular</label>
+                    <div class='spanPop'>Ingresa el código que recibiste pare terminar de realizar el pedido</div>
+                    <input type='text' name='codigoSms' autocomplete="off" style="width:100%">
+                </div>
+                <div class="foot">
+                    <span onclick="continuarDelivery()">Atras</span>
+                    <button onclick="confirmarSmsVenta()">Confirmar</button>
+                </div>
+            </div>
+            <div id="popCodigoPedido" class="pop">
+                <div class="titulo">El pedido se realizo correctamente<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-3">
+                    <label>Tu Código de pedido es:</label>
+                    <div style="font-size: 25px;   font-weight: bold;" id="codePedido"></div>
+                </div>
+                <div class="foot">
+                    <span onclick="ocultarPopup()">Salir</span>
+                    <button id='btncontinuar1' onclick="verOrdenCompras()">Ver el Detalle Pedido</button>
+                </div>
+            </div>
             <div id="popDetalle" class="pop">
                 <img src="" alt=""/>
                 <div id="detallePrecio"></div>
@@ -235,6 +260,82 @@
                 <div style="margin-top: 15px;">
                     <button onclick="ocultarPopup()" class="btn-danger">Salir</button>
                     <button onclick="agregarCarritoDetalleProducto()"> Agregar Carrito</button>
+                </div>
+            </div>
+            <div id="popBuscadorPedido" class="pop">
+                <div class="titulo">¿Ingrese el código del pedido?<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="p-2">
+                    <input type="text" placeholder="" name='buscadorPedido'>
+                    <button onclick="buscadorPedidoPop(2)" >Buscar</button>
+                </div>
+                <div class="foot">
+                    <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
+                </div>
+              
+            </div>
+            <div id="popVerDetallePedido" class="pop">
+                <div class="titulo">Detalle de Pedido<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
+                <div class="cuerpo" style="padding: 10px 20px;">
+                    <div>
+                        <span class="negrilla">Fecha de Solicitud:</span>
+                        <span id="txtSolicitado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Fecha de Entrega:</span>
+                        <span id="txtEntregado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Estado:</span>
+                        <span  id="txtEstado"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Cliente:</span>
+                        <span  id="txtCliente"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Teléfono:</span>
+                        <span  id="txtTelefono"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Dirección de Entrega:</span>
+                        <span  id="txtDireccion"></span>
+                    </div>
+                    
+                    <div>
+                        <span class="negrilla">Intrucción de Entrega:</span>
+                        <span  id="txtIntruccion"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Monto Pedido:</span>
+                        <span  id="txtMonto"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Costo del Delivery:</span>
+                        <span id="txtDelivery"></span>
+                    </div>
+                    <div>
+                        <span class="negrilla">Total:</span>
+                        <span  id="txtTotal"></span>
+                    </div>
+                    <div>
+                        <br>
+                        <span class="negrilla">DETALLE DEL PEDIDO</span><br><br>
+                        <table class="table" id="prodDetalle">
+                            <thead>
+                                <th><div class="medio">Producto</div></th>
+                                <th><div class="pequeno">Cantidad</div></th>
+                                <th><div class="pequeno">Precio Uni.</div></th>
+                                <th><div class="normal">SubTotal</div></th>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="foot">
+                    <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
+                    <button  onclick="compartirWp()">Compartir por Whatsapp</button>
                 </div>
             </div>
         </div>
