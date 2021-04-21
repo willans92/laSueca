@@ -976,7 +976,10 @@ div#popDetalle {
     margin-right: -3px;
     position: relative;
     top: -7px;
-    display: none;
+     display: none;
+    top: 0px;
+    padding: 0 5px;
+    right: -2px;
 }
 .itemProducto span.activo{
     padding: 0 9px;
@@ -986,8 +989,10 @@ div#popDetalle {
     font-size: 20px;
     margin-left: -3px;
     position: relative;
-    top: -10px;
     display: none;
+    top: -2px;
+    left:-2px;
+    padding: 0 5px;
 }
 @media screen and (max-width : 1024px) {
     #contenedorCategoria img{
