@@ -1,6 +1,6 @@
 <?php
 
-class Provedor {
+class SolicitudComision {
 
     var $id_provedor;
     var $nombre;

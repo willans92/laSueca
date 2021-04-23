@@ -52,4 +52,3 @@ if (empty($_POST['proceso'])) {
     echo json_encode($reponse);
 }
  
-
