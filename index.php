@@ -22,12 +22,15 @@
         include_once "Intranet/Clases/catalogoProducto.php";
         include_once "Intranet/Clases/producto.php";
         include_once "Intranet/Clases/Sucursal.php";
+        include_once "Intranet/Clases/empresa.php";
 
         $tienda_id = 4;
         $con = new CONN(0);
         $funciones = new funciones($con, $tienda_id);
-
-
+        $empresa=new empresa($con);
+        $empresa=$empresa->buscarXid(87);
+        $link="https://wa.me/591".$empresa["telefono"];
+              
         $categoria = new catalogoProducto($con);
         $listaCategoria = $categoria->catalogoAsignadoTienda($tienda_id);
 
@@ -64,7 +67,7 @@
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
                 <img class="iconMenu" src="Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
                 <img class="iconMenu" src="Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
-                <div class='addCarrito'><span></span></div>
+                <div class='addCarrito' onclick="abrirCarrito()"><span></span></div>
             </div>
             <div  class="col-12 d-inline-block d-sm-none mt-2" >
                 <div class="buscadorMenu">
@@ -108,7 +111,9 @@
 
         </div>
         <div id='btnFlotante'>
-            <img src="Imagen/Iconos/whatsapp.png" alt=""/>
+            <a href="<?php echo $link?>">
+                <img src="Imagen/Iconos/whatsapp.png" alt=""/>
+            </a>
         </div>
 
 

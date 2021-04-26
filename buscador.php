@@ -22,6 +22,8 @@
         include_once "Intranet/Clases/linea_producto_tienda.php";
         include_once "Libreria/CONN.php";
          include_once "Libreria/funciones.php";
+         include_once "Intranet/Clases/empresa.php";
+         
         $tienda_id = 4;
         $con = new CONN(0);
         $categoriabusqueda = isset($_GET["c"]) ? $_GET["c"] : "0";
@@ -30,7 +32,9 @@
         $tipobusqueda = isset($_GET["t"]) ? $_GET["t"] : "0";
         $pedido_id=isset($_GET["pv"]) ? $_GET["pv"] : "0";
         $funciones = new funciones($con,$tienda_id);
-        
+        $empresa=new empresa($con);
+        $empresa=$empresa->buscarXid(87);
+        $link="https://wa.me/591".$empresa["telefono"];
         
         
         $htmlSubCategoria = "";
@@ -114,7 +118,7 @@
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
                 <img class="iconMenu" src="Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
                 <img class="iconMenu" src="Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
-                <div class='addCarrito'><span></span></div>
+                <div class='addCarrito' onclick="abrirCarrito()"><span></span></div>
             </div>
             <div  class="col-12 d-inline-block d-sm-none mt-2" >
                 <div class="buscadorMenu">

@@ -1093,7 +1093,7 @@ div#popDetalle {
         top: -8px;
     }
     .itemProducto .btnaddNro span {
-        top: 0px; 
+        top: 1px; 
     }
 }
 @media screen and (max-width : 420px) {
@@ -1131,6 +1131,10 @@ div#popDetalle {
     }
     .vermas{
         top: -2px;
+    }
+    .pop .foot button{
+        margin-top: 18px;
+        margin-bottom: 6px;
     }
 
 }

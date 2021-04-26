@@ -5,7 +5,7 @@ class funciones {
 
     var $CON;
     var $id_tienda;
-    var $urlEmprendedor="http://localhost/Emprendedor/externo/lasueca.php?wsdl";
+    var $urlEmprendedor="https://www.emprendedor-wd.com/externo/lasueca.php?wsdl";
 
     function __construct($con, $tienda) {
         $this->CON = $con;

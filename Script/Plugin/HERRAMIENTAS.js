@@ -994,7 +994,8 @@ function cambioTamanoPantalla() {
         }
     });
     var height=$(window).height();
-    $(".pop .cuerpo").css("max-height",height*0.50)
+    var calculando=(height-300)*0.80;
+    $(".pop .cuerpo").css("max-height",calculando)
     sincronizarCarrito();
 }
 function buscadorPedidoPop(tipo){
@@ -1004,7 +1005,7 @@ function buscadorPedidoPop(tipo){
         $("#popBuscadorPedido").centrar();
         $("#popCarrito").css("display", "none");
         $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+        $("#popCodigoPedido").css("display", "none");
         $("#popDatosEnvio").css("display", "none");
         $("#popFinalizarPedido").css("display", "none");
         $("#popVerDetallePedido").css("display", "none");
@@ -1043,7 +1044,7 @@ function buscadorPedidoPop(tipo){
 }
 function compartirWp(){
     var host=window.location.origin+"/laSueca/index.php?pv="+pedidoView;
-    var whatsapp="https://wa.me/?texto="+host;
+    var whatsapp="https://wa.me/?text="+host;
     window.open(whatsapp, '_blank');
 }
 function verOrdenCompras() {
