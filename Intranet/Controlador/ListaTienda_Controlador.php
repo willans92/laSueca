@@ -57,16 +57,17 @@ if ($proceso === "registrar") {
     }
     if ($error === "") {
         if ($tienda_id === "0") {
-            $tiendaModelo = "../Libreria/ModeloTienda/*.*";
+            $tiendaModelo = "../Libreria/ModeloTienda";
             $dirNuevo = "../../Tiendas/$tienda->id_tienda";
-            mkdir($dirNuevo);// crea carpeta
+            mkdir($dirNuevo); // crea carpeta
 
-            $dirModelo = opendir($tiendaModelo);// copia toda la carpeta
-            /*while (($file = readdir($dirModelo)) !== false) {
+            $dirModelo = opendir($tiendaModelo); // copia toda la carpeta
+            while (($file = readdir($dirModelo)) !== false) {
                 if (strpos($file, '.') !== 0) {
                     copy($tiendaModelo . '/' . $file, $dirNuevo . '/' . $file);
                 }
-            }*/
+            }
+            
         }
 
 
