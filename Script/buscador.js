@@ -1,4 +1,4 @@
-var url = 'Controlador/Buscador_Controlador.php';
+var url = '../../Controlador/Buscador_Controlador.php';
 var subCategoria = 0;
 var map;
 var marker;
@@ -9,6 +9,9 @@ var fechaEntrega="";
 var costoDelivery=0;
 var sucursal_id=0;
 $(document).ready(function () {
+     $(window).resize(function () {
+       cambioTamanoPantalla();
+    });
     cambioTamanoPantalla();
 });
 function cargarMas() {

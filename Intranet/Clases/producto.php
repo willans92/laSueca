@@ -64,6 +64,8 @@ class producto {
         $consulta = "select * from ( ";
         $consulta .= " select p.nombre,p.id_producto,p.descripcion, p.foto,";
         $consulta .= " (select count(p1.id_pedidoApp) from lasueca.pedidoApp p1, lasueca.detallepedidoapp d1 where p1.estado like 'entregado' and d1.pedidoApp_id=p1.id_pedidoApp and d1.producto_id=p.id_producto) vendido";
+        $consulta .= " ,ifnull((select precio from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) precio";
+        $consulta .= " ,ifnull((select comision from lasueca.precioventa where producto_id=p.id_producto order by id_precioVenta desc limit 0,1),0) comision";
         $consulta .= " from lasueca.categoriaproducto_linea l, lasueca.linea_producto lin,lasueca.categoriaproducto c";
         $consulta .= " , lasueca.producto p, lasueca.linea_producto_tienda lp ";
         $consulta .= " where l.linea_producto_id=lin.id_linea_producto ";

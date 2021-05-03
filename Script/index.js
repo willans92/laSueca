@@ -1,4 +1,4 @@
-var url = 'Controlador/Buscador_Controlador.php';
+var url = '../../Controlador/Buscador_Controlador.php';
 var subCategoria = 0;
 var map;
 var marker;
@@ -14,6 +14,9 @@ $(document).ready(function () {
         lat=crd.latitude;
         lon=crd.longitude;
     });
+     $(window).resize(function () {
+       cambioTamanoPantalla();
+    });
     cambioTamanoPantalla();
     if(pedidoView!="0"){
         verOrdenCompras();
@@ -23,8 +26,13 @@ function buscador(e,tipo){
     if (!(e === "" || e.keyCode === 13)) {
         return;
     }
-    var buscar = ($("input[name=buscador"+tipo+"]").val() + "").trim();
-    $(location).attr('href', "buscador.php?b="+buscar);
+    var buscar1 = ($("input[name=buscador"+tipo+"]").val() + "").trim();
+    var buscar2 = ($("input[name=buscador2]").val() + "").trim();
+    var textoBuscador=buscar1;
+    if(buscar1.length===0){
+        textoBuscador=buscar2;
+    }
+    $(location).attr('href', "buscador.php?b="+textoBuscador);
 }
 
 function seleccionarSubcategoria(ele, id) {

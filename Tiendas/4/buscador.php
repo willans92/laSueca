@@ -21,8 +21,9 @@
         include_once "Intranet/Clases/Sucursal.php";
         include_once "Intranet/Clases/linea_producto_tienda.php";
         include_once "Libreria/CONN.php";
-         include_once "Libreria/funciones.php";
-         include_once "Intranet/Clases/empresa.php";
+        include_once "Libreria/funciones.php";
+        include_once "Intranet/Clases/empresa.php";
+        include_once "Intranet/Clases/tienda.php";
          
         $tienda_id = 4;
         $con = new CONN(0);
@@ -33,6 +34,12 @@
         $pedido_id=isset($_GET["pv"]) ? $_GET["pv"] : "0";
         $funciones = new funciones($con,$tienda_id);
         $empresa=new empresa($con);
+        
+        
+        $tienda=new tienda($con);
+        $tienda=$tienda->buscarXid($tienda_id);
+        
+        
         $empresa=$empresa->buscarXid(87);
         $link="https://wa.me/591".$empresa["telefono"];
         
@@ -99,11 +106,11 @@
             var pedidoView=<?php echo json_encode($pedido_id) ?>;
         </script>
         <div class="row" id="menu">
-            <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0">
+            <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0 iconIzquierda">
                 <a href="index.php">
                     <img class="iconMenu" src="Imagen/Iconos/menu.svg"  style="display: none"/>
-                    <img class="iconMenu" src="Imagen/banderaSueca.jpg" style="padding: 0;" />
-                    <span class="iconLabel">La Sueca</span>
+                     <img class="iconMenu" src="<?php echo $tienda["logo"]?>" style="padding: 0;" />
+                    <span class="iconLabel"><?php echo $tienda["nombre"]?></span>
                 </a>
             </div>
             <div  class="col-6 col-sm-8 d-none d-sm-inline-block">
@@ -115,7 +122,7 @@
                     <img src="Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('','')">
                 </div>
             </div>
-            <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right">
+            <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right iconDerecha">
                 <img class="iconMenu" src="Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
                 <img class="iconMenu" src="Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
                 <div class='addCarrito' onclick="abrirCarrito()"><span></span></div>

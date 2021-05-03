@@ -55,6 +55,10 @@ class horarioEntrega {
         $consulta = "select * from lasueca.horarioentrega";
         return $this->CON->consulta2($consulta);
     }
+    function horarioDiaSemana() {
+        $consulta = "SELECT dia, count(dia) horarios from lasueca.horarioentrega where estado like 'activo' group by dia ";
+        return $this->CON->consulta2($consulta);
+    }
 
     function modificar() {
         $consulta = "UPDATE lasueca.horarioentrega SET id_horarioEntrega = '$this->id_horarioEntrega',detalle = '$this->detalle',horarioDe = '$this->horarioDe',horarioHasta = '$this->horarioHasta',estado = '$this->estado',dia = '$this->dia' WHERE id_horarioEntrega = '$this->id_horarioEntrega'";

@@ -49,6 +49,10 @@ class tienda {
         $consulta = "select * from lasueca.tienda where empresa_id=".$this->CON->empresa_id."";
         return $this->CON->consulta2($consulta);
     }
+    function buscarXid($id_tienda) {
+        $consulta = "select * from lasueca.tienda where id_tienda=$id_tienda";
+        return $this->CON->consulta2($consulta)[0];
+    }
     function logear($cuenta, $contrasena) {
         $consulta = "select count(*) as cant from lasueca.tienda where cuenta like '$cuenta' and contrasena like SHA2('$contrasena', 256)";
         $result = $this->CON->consulta($consulta);

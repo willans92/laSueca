@@ -12,6 +12,12 @@ if ($proceso === "horarioDisponible") {
     $horario = new horarioEntrega($con);
     $resultado = $horario->horarioDisponiblexFecha($fecha);
 }
+if ($proceso === "horarioDiaSemana") {
+    $horario = new horarioEntrega($con);
+    $resultado=array();
+    $resultado["horario"] = $horario->horarioDisponiblexFecha($fecha);
+    $resultado["semana"] = $horario->horarioDiaSemana();
+}
 if ($proceso === "verPedido") {
     $pedido = new pedidoApp($con);
     $detalle=new detallePedidoApp($con);

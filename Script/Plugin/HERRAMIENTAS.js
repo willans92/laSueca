@@ -443,22 +443,22 @@ function abrirCarrito() {
         html += "            <div class='nombre'>" + producto.nombre + "</div>";
         html += "            <div class='precioUni'>Bs. " + producto.precio + "</div>";
         html += "        </div>";
-        
-        
+
+
         html += "        <div class='contenidoModificable'>";
-        
+
         html += "        <div class='cantidad'>";
-        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='Imagen/Iconos/minus.png'  alt=''/></div>";
-        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='Imagen/Iconos/add.png'   alt=''/></div>";
+        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='../../Imagen/Iconos/minus.png'  alt=''/></div>";
+        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='../../Imagen/Iconos/add.png'   alt=''/></div>";
         html += "                <input type='text' value='" + producto.cantidad + "' readonly>";
         html += "        </div>";
         html += "        <div class='precio'>";
         html += "            Bs. " + total.toFixed(2);
         html += "        </div>";
-        
+
         html += "        </div>";
-        
-        
+
+
         html += "    </div>";
         html += "</div>";
     }
@@ -474,7 +474,7 @@ function ocultarPopup() {
     $("#popup").css("display", "none");
     $("#popCarrito").css("display", "none");
     $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
     $("#popDelivery").css("display", "none");
     $("#popDetalle").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
@@ -514,7 +514,7 @@ function realizarCompra() {
     }
     $("#popCarrito").css("display", "none");
     $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
     $("#popDatosEnvio").css("display", "block");
     $("#popDelivery").css("display", "none");
@@ -600,7 +600,7 @@ function continuarDelivery() {
     }
     $("#popCarrito").css("display", "none");
     $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
     $("#popFinalizarPedido").css("display", "none");
     $("#popVerDetallePedido").css("display", "none");
     $("#popDelivery").css("display", "block");
@@ -608,22 +608,57 @@ function continuarDelivery() {
     $("#popDatosEnvio").css("display", "none");
     $("#popDelivery").centrar();
     $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + fechaEntrega);
-    $("#calendario").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        beforeShowDay: function (fecha) {
-            var fechaActual = new Date();
-            fechaActual.setDate(fechaActual.getDate() - 1);
-            var validar = fecha >= fechaActual;
-            return [validar];
-        },
-        onSelect: function (dateText) {
-            fechaEntrega = dateText;
-            $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + dateText);
+    cargando(true);
+    $.post(url, {proceso: "horarioDiaSemana", fecha: fechaEntrega}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            var lista = json.result.horario;
+            var html = "";
+            for (var i = 0; i < lista.length; i++) {
+                html += "<li><input name='hora' type='radio' checked value='" + lista[i].detalle + "' > <span>" + lista[i].detalle + "</span></li>";
+            }
+            if (html == "") {
+                html = "No hay horarios disponible de entrega en esta fecha. Seleccione otra fecha."
+            }
+            $("#hora").html(html);
+            
+            var listaSemana = json.result.semana;
+            var dia=[];
+            for (var i = 0; i < listaSemana.length; i++) {
+                dia.push(listaSemana[i].dia);
+            }
+            $("#calendario").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                beforeShowDay: function (fecha) {
+                    var fechaActual = new Date();
+                    fechaActual.setDate(fechaActual.getDate() - 1);
+                    console.log(dia.indexOf(fecha.getDay()),dia,fecha.getDay())
+                    var diaSe=fecha.getDay()-1;
+                    diaSe=diaSe==-1?6:diaSe
+                    if (dia.indexOf(diaSe)<0){
+                        return [false]
+                    }
+                    var validar = fecha >= fechaActual;
+                    return [validar];
+                },
+                onSelect: function (dateText) {
+                    fechaEntrega = dateText;
+                    $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + dateText);
+                    obtenerHorarioDisponible();
+                }
+            });
             obtenerHorarioDisponible();
+
         }
     });
-    obtenerHorarioDisponible();
+
 }
 function obtenerHorarioDisponible() {
     cargando(true);
@@ -656,11 +691,11 @@ function continuarEntrega() {
         return;
     }
     var hora = $("input[name=hora]:checked");
-    if(hora.length==0){
+    if (hora.length == 0) {
         alertaRapida("No hay horario de entrega disponible", "error")
         return;
     }
-    
+
     $("#popCarrito").css("display", "none");
     $("#popConfirmarSms").css("display", "none");
     $("#popCodigoPedido").css("display", "none");
@@ -697,9 +732,9 @@ function continuarEntrega() {
     $("#popFinalizarPedido .cuerpobox").html(html);
     $("#popFinalizarPedido .foot .total").text("Bs. " + totalFinal.toFixed(2));
 }
-function finalizarVenta(tipo=1) {//tipo 1 envia sms
-    if(tipo==2){
-        var telefono=$("input[name=smsTelefono]").val();
+function finalizarVenta(tipo = 1) {//tipo 1 envia sms
+    if (tipo == 2) {
+        var telefono = $("input[name=smsTelefono]").val();
         if (telefono.length < 7) {
             alertaRapida("El número de teléfono es invalido", "error");
             return;
@@ -707,7 +742,7 @@ function finalizarVenta(tipo=1) {//tipo 1 envia sms
         $("input[name=telefono]").val(telefono);
     }
     $("#boxReadSms").css("display", "block");
-    var telefono=$("input[name=telefono]").val();
+    var telefono = $("input[name=telefono]").val();
     $("#telefonoSms").text(telefono);
     $("#boxEditSms input").val(telefono);
     $("#boxEditSms").css("display", "none");
@@ -720,17 +755,17 @@ function finalizarVenta(tipo=1) {//tipo 1 envia sms
     $("#popDetalle").css("display", "none");
     $("#popDatosEnvio").css("display", "none");
 }
-function editarTelefonoSms(tipo){
-    if(tipo===1){
+function editarTelefonoSms(tipo) {
+    if (tipo === 1) {
         $("#boxReadSms").css("display", "none");
         $("#boxEditSms").css("display", "block");
-        var telefono=$("input[name=telefono]").val();
+        var telefono = $("input[name=telefono]").val();
         $("#boxEditSms input").val(telefono);
-    }else{
+    } else {
         $("#boxReadSms").css("display", "block");
         $("#boxEditSms").css("display", "none");
     }
-     
+
 }
 function confirmarSmsVenta() {
     var carrito = localStorage.getItem("carrito");
@@ -764,8 +799,8 @@ function confirmarSmsVenta() {
             }
             alertaRapida(json.error, "error");
         } else {
-            pedidoView=json.result;
-            $("#codePedido").html("LS"+pedidoView);
+            pedidoView = json.result;
+            $("#codePedido").html("LS" + pedidoView);
             localStorage.setItem("carrito", JSON.stringify({data: "", cantidadItem: 0}));
             $("#popCarrito").css("display", "none");
             $("#popConfirmarSms").css("display", "none");
@@ -832,9 +867,9 @@ function calcularDistancia(lat1, long1, lat2, long2) {
     return distancia;
 }
 var itemDetalle = {};
-function detalleProducto(tipo, id, nombre, detalle, img, precio,comision) {
+function detalleProducto(tipo, id, nombre, detalle, img, precio, comision) {
     if (tipo === 1) {
-        itemDetalle = {id: id, nombre: nombre, detalle: detalle, img: img, precio: precio,comision:comision};
+        itemDetalle = {id: id, nombre: nombre, detalle: detalle, img: img, precio: precio, comision: comision};
         $("#detallePrecio").html("<span>Precio Bs.</span>" + format(precio));
         $("#detalleDesc").html(detalle);
         $("#detalleNombre").html(nombre);
@@ -847,51 +882,51 @@ function detalleProducto(tipo, id, nombre, detalle, img, precio,comision) {
         $("#popDelivery").css("display", "none");
         $("#popCarrito").css("display", "none");
         $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
+        $("#popCodigoPedido").css("display", "none");
     } else {
         $("#popup").ocultar();
         $("#popDetalle").ocultar();
     }
 }
 function agregarCarritoDetalleProducto() {
-    modificarCarrito('', itemDetalle.id, itemDetalle.nombre, itemDetalle.foto, itemDetalle.precio,itemDetalle.comision);
+    modificarCarrito('', itemDetalle.id, itemDetalle.nombre, itemDetalle.foto, itemDetalle.precio, itemDetalle.comision);
     ocultarPopup();
 }
-function controladorItem(ele,accion = "agregar", idproducto, nombre, foto, precio,comision){
-    var elemento=$(ele).parent();
+function controladorItem(ele, accion = "agregar", idproducto, nombre, foto, precio, comision) {
+    var elemento = $(ele).parent();
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var listaCarrito = carrito.data ? carrito.data : {};
     if (!listaCarrito[idproducto]) {
-       modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,comision); 
+        modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio, comision);
     }
     elemento.find("span").addClass("activo");
-    elemento.find(".less").css("display","inline-block");
-    elemento.find(".add").css("display","inline-block");
+    elemento.find(".less").css("display", "inline-block");
+    elemento.find(".add").css("display", "inline-block");
     var fecha = new Date();
     fecha.setSeconds(fecha.getSeconds() + 3);
-    elemento.data("cronometro",fecha.getTime());
-    var intervalo=setInterval(function(){
-        var elemento=$(ele).parent();
-        var fecha = new Date().getTime();    
-        var cronometro=parseInt(elemento.data("cronometro"));
-        if(fecha>cronometro){
+    elemento.data("cronometro", fecha.getTime());
+    var intervalo = setInterval(function () {
+        var elemento = $(ele).parent();
+        var fecha = new Date().getTime();
+        var cronometro = parseInt(elemento.data("cronometro"));
+        if (fecha > cronometro) {
             elemento.find("span").removeClass("activo");
-            elemento.find(".less").css("display","none");
-            elemento.find(".add").css("display","none");
+            elemento.find(".less").css("display", "none");
+            elemento.find(".add").css("display", "none");
             clearInterval(intervalo);
         }
-       
-    },1000);
-    
+
+    }, 1000);
+
 }
-function btnControl(ele,valorAccion){
-    var elemento=$(ele).parent();
-    var nombre=elemento.data("nombre");
-    var comision=elemento.data("comision");
-    var precio=elemento.data("precio");
-    var foto=elemento.data("foto");
-    var idproducto=elemento.data("id");
+function btnControl(ele, valorAccion) {
+    var elemento = $(ele).parent();
+    var nombre = elemento.data("nombre");
+    var comision = elemento.data("comision");
+    var precio = elemento.data("precio");
+    var foto = elemento.data("foto");
+    var idproducto = elemento.data("id");
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var cantidadItem = carrito.cantidadItem;
@@ -899,23 +934,23 @@ function btnControl(ele,valorAccion){
     var listaCarrito = carrito.data ? carrito.data : {};
     if (listaCarrito[idproducto]) {
         listaCarrito[idproducto].cantidad += valorAccion;
-        if(listaCarrito[idproducto].cantidad<=0){
+        if (listaCarrito[idproducto].cantidad <= 0) {
             elemento.find("span").removeClass("btnaddNro");
-            elemento.find(".less").css("display","none");
-            elemento.find(".add").css("display","none");
+            elemento.find(".less").css("display", "none");
+            elemento.find(".add").css("display", "none");
             elemento.find("span").text("+");
             delete listaCarrito[idproducto];
         }
     } else {
         cantidadItem += 1;
-        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio,comision:comision};
+        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio, comision: comision};
     }
     carrito.cantidadItem = cantidadItem;
     carrito.data = listaCarrito;
     localStorage.setItem("carrito", JSON.stringify(carrito));
     sincronizarCarrito();
 }
-function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,comision) {
+function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio, comision) {
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var cantidadItem = carrito.cantidadItem;
@@ -942,7 +977,7 @@ function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio,c
         $(".i" + idproducto).addClass("btnaddNro");
         $(".i" + idproducto + " span").text(1);
         cantidadItem += 1;
-        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio,comision:comision};
+        listaCarrito[idproducto] = {id: idproducto, cantidad: 1, nombre: nombre, foto: foto, precio: precio, comision: comision};
     }
     carrito.cantidadItem = cantidadItem;
     carrito.data = listaCarrito;
@@ -993,13 +1028,13 @@ function cambioTamanoPantalla() {
             $(buscador[i]).find("input").css("width", inputBuscador + "px");
         }
     });
-    var height=$(window).height();
-    var calculando=(height-300)*0.80;
-    $(".pop .cuerpo").css("max-height",calculando)
+    var height = $(window).height();
+    var calculando = (height - 200);
+    $(".pop .cuerpo").css("max-height", calculando)
     sincronizarCarrito();
 }
-function buscadorPedidoPop(tipo){
-    if(tipo==1){
+function buscadorPedidoPop(tipo) {
+    if (tipo == 1) {
         $("#popup").css("display", "block");
         $("#popBuscadorPedido").css("display", "block");
         $("#popBuscadorPedido").centrar();
@@ -1012,10 +1047,10 @@ function buscadorPedidoPop(tipo){
         $("#popDelivery").css("display", "none");
         $("#popDetalle").css("display", "none");
         $("input[name=buscadorPedido]").removeClass(".rojoClarito");
-    }else{
-        var codigo=$("input[name=buscadorPedido]").val().trim().toUpperCase();
-        if(codigo===""){
-            alertaRapida("Ingrese un código valido en el buscador","error");
+    } else {
+        var codigo = $("input[name=buscadorPedido]").val().trim().toUpperCase();
+        if (codigo === "") {
+            alertaRapida("Ingrese un código valido en el buscador", "error");
             $("input[name=buscadorPedido]").addClass("rojoClarito");
             return;
         }
@@ -1030,21 +1065,21 @@ function buscadorPedidoPop(tipo){
                 }
                 alertaRapida(json.error, "error");
             } else {
-                pedidoView=json.result;
-                if(pedidoView!="0"){
+                pedidoView = json.result;
+                if (pedidoView != "0") {
                     verOrdenCompras();
-                }else{
-                    alertaRapida("Ingrese un código valido en el buscador","error");
+                } else {
+                    alertaRapida("Ingrese un código valido en el buscador", "error");
                 }
             }
         });
-        
+
     }
-    
+
 }
-function compartirWp(){
-    var host=window.location.origin+"/laSueca/index.php?pv="+pedidoView;
-    var whatsapp="https://wa.me/?text="+host;
+function compartirWp() {
+    var host = window.location.origin + "/laSueca/index.php?pv=" + pedidoView;
+    var whatsapp = "https://wa.me/?text=" + host;
     window.open(whatsapp, '_blank');
 }
 function verOrdenCompras() {
@@ -1068,10 +1103,10 @@ function verOrdenCompras() {
             $("#popDatosEnvio").css("display", "none");
             $("#popDelivery").css("display", "none");
             $("#popDetalle").css("display", "none");
-            var pedido=json.result.pedido;
-            
-            var programado=pedido.fechaProgramada+" "+pedido.horaProgramada;
-            var total=parseFloat(pedido.costoDelivery)+parseFloat(pedido.totalPedido);
+            var pedido = json.result.pedido;
+
+            var programado = pedido.fechaProgramada + " " + pedido.horaProgramada;
+            var total = parseFloat(pedido.costoDelivery) + parseFloat(pedido.totalPedido);
             $("#txtSolicitado").text(pedido.solicitada);
             $("#txtEntregado").text(programado);
             $("#txtEstado").text(pedido.estado);
@@ -1079,19 +1114,19 @@ function verOrdenCompras() {
             $("#txtTelefono").text(pedido.teflCliente);
             $("#txtCliente").text(pedido.cliente);
             $("#txtIntruccion").text(pedido.intrucciones);
-            $("#txtMonto").text(format(pedido.totalPedido)+" Bs");
-            $("#txtDelivery").text(format(pedido.costoDelivery)+" Bs");
-            $("#txtTotal").text(format(total)+" Bs");
-            
-            var detalle=json.result.detalle;
-            var html="";
+            $("#txtMonto").text(format(pedido.totalPedido) + " Bs");
+            $("#txtDelivery").text(format(pedido.costoDelivery) + " Bs");
+            $("#txtTotal").text(format(total) + " Bs");
+
+            var detalle = json.result.detalle;
+            var html = "";
             for (var i = 0; i < detalle.length; i++) {
-                var item=detalle[i];
-                var total=parseFloat(item.precioU)*parseFloat(item.cantidad);
-                html+="<tr><td><div class='medio'>"+item.nombre+"</div></td>";
-                html+="<td><div class='pequeno derecha'>"+item.cantidad+"</div></td>";
-                html+="<td><div class='pequeno derecha'>"+format(item.precioU)+"</div></td>";
-                html+="<td><div class='normal derecha'>"+format(total)+"</div></td></tr>";
+                var item = detalle[i];
+                var total = parseFloat(item.precioU) * parseFloat(item.cantidad);
+                html += "<tr><td><div class='medio'>" + item.nombre + "</div></td>";
+                html += "<td><div class='pequeno derecha'>" + item.cantidad + "</div></td>";
+                html += "<td><div class='pequeno derecha'>" + format(item.precioU) + "</div></td>";
+                html += "<td><div class='normal derecha'>" + format(total) + "</div></td></tr>";
             }
             $("#prodDetalle tbody").html(html);
             $("#prodDetalle").igualartabla();

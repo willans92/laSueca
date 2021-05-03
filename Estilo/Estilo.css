@@ -504,9 +504,18 @@ ul{
 }
 .buscadorMenu{
     background: white;
-    height: 100%;
+    height: 42px;
     width: 100%;
     border-radius: 4px;
+    margin: auto 0;
+}
+.iconDerecha{
+    padding: 0;
+    margin: auto 0px;
+}
+.iconIzquierda{
+    padding: 0;
+    text-align: center;
 }
 .container-fluid{
     padding: 0;
@@ -791,7 +800,7 @@ ul{
 }
 .pop .cuerpo{
     padding-bottom: 30px;
-    height: 450px;
+    min-height: 250px;
     overflow: auto;
 }
 .pop{
@@ -1056,6 +1065,7 @@ div#popDetalle {
     .pop .foot button{
         font-size: 12px;
         margin-top: 8px;
+            padding: 4px 6px;
     }
     label{
         font-size: 13px;
@@ -1094,6 +1104,9 @@ div#popDetalle {
     }
     .itemProducto .btnaddNro span {
         top: 1px; 
+    }
+    .addCarrito span{
+        top:3px;
     }
 }
 @media screen and (max-width : 420px) {
