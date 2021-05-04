@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <meta http-equiv="Expires" content="0" />
+        <meta http-equiv="Last-Modified" content="0" />
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+        <meta http-equiv="Pragma" content="no-cache" >
+
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Horario Entrega</title>
+        <link href="../Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="../Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/HERRAMIENTAS.js?3" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/FileSaver.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/xlsx.core.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.min.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/jspdf.plugin.autotable.js" type="text/javascript"></script>
+        <script src="../Script/Plugin/export/tableExport.min.js" type="text/javascript"></script>
+        <script src="../Script/HorarioEntrega.js?3" type="text/javascript"></script>
+    </head>
+    <body >
+        <div class="container-fluid p-0" >
+            <h1>Horario de Entrega</h1>
+            <div class="row">
+                <div class="col-12" >
+                    <div style="width: 542px;">
+                        <div class="inlineblock">
+                            <div class="negrilla">Buscador</div>
+                            <input type='text' class='grande buscar' name='buscar' placeholder="BUSCADOR" onkeyup="buscar(event, 1)" autocomplete="off"/>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Dia Semana</div>
+                            <select id="diaB" class="medio" onchange="cargar()"></select>
+                        </div>
+                        <div class="inlineblock">
+                            <div class="negrilla">Estado</div>
+                            <select id="tpestadoB" class="medio" onchange="cargar()">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">InActivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 minitext" >
+                        <img src="../Imagen/Iconos/sugerencia.png" alt="Sugerencia" class='sugerenciaIcon'/>
+                        * Al utilizar el buscador presionar enter para filtrar. * Para modificar un horario seleccione el registro. 
+                    </div>
+                    <div id="contenedorHorario">
+                        <table class="table" id='tblprd'>
+                            <thead class="thead-light">
+                            <th><div class="medio">Detalle</div></th>
+                            <th><div class="normal">Horario De</div></th>
+                            <th><div class="normal">Horario Hasta</div></th>
+                            <th><div class="normal">Dia</div></th>
+                            <th><div class="normal">Estado</div></th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="subrayar" id="btncargarMas" onclick="buscar('', 2)">Cargar Más Horario (<span id="actualcant"></span> - <span id="maxcant"></span>)</div>
+                </div>
+            </div>
+            <div style="height: 60px"></div>
+        </div>
+        <div class='container-fluid p-2' id='divflotante'>
+            <div style="width: 394px">
+                <button onclick="modificar()" class='btn-warning'  id="btnmodificar" style="display: none;">Modificar</button>
+                <button onclick="nuevo(1)"  class="btn btn-primary"  data-toggle="modal" data-target="#popCliente" data-whatever="@mdo"  id="btnnuevo">Nuevo</button>
+                <div class="inlineblock">
+                    <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/>
+                    <img onclick="exportarExcel('tblprd', 'Lista de Horario')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="popHorario" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="formHorario">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Horario</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <label>Detallo</label>
+                                <input type="text" class="form-control"  name="detalle" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-3">
+                                <label>Estado</label>
+                                <select id="tpestado" class="form-control">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <label>Dia</label>
+                                <select id="dia" class="form-control">
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label>Hora De</label><br>
+                                <input type="text" class="form-control"  name="horaDe" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;"><label style="font-size: 18px; font-weight: bold; padding-left: 3px;">:</label>
+                                <input type="text" class="form-control"  name="minDe" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;"><label style="font-size: 18px; font-weight: bold; padding-left: 3px;">:</label>
+                                <input type="text" class="form-control"  name="segDe" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;">
+                            </div>
+                            <div class="col-6">
+                                <label>Hora Hasta</label><br>
+                                <input type="text" class="form-control"  name="horaHasta" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;"><label style="font-size: 18px; font-weight: bold; padding-left: 3px;">:</label>
+                                <input type="text" class="form-control"  name="minHasta" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;"><label style="font-size: 18px; font-weight: bold; padding-left: 3px;">:</label>
+                                <input type="text" class="form-control"  name="segHasta" autocomplete="off" maxlength="2" style="width: 34px; padding: 0 6px; display: inline-block;">
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
