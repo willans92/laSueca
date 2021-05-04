@@ -1,5 +1,5 @@
 var url = 'Controlador/Login_Controlador.php';
-var tipo="Administrativo";
+var tipo="Tienda";
 function cambiarTipo(ele,tipoAdm){
     tipo=tipoAdm;
     $("#tipoLogin div").removeClass("tipoLoginSelected");

@@ -40,10 +40,10 @@
                 <img src="Imagen/banderaSueca.jpg" alt="" style="width: 150px; height: 150px;  border-radius: 100px;"/>
                 <div class="sueca">LA SUECA</div>
                 <div id="tipoLogin">
-                    <div class="tipoLoginSelected" onclick="cambiarTipo(this,'Administrativo')">
+                    <div  onclick="cambiarTipo(this,'Administrativo')">
                         Administrativo
                     </div>
-                    <div  onclick="cambiarTipo(this,'Tienda')">
+                    <div  class="tipoLoginSelected" onclick="cambiarTipo(this,'Tienda')">
                         Tienda
                     </div>
                 </div>

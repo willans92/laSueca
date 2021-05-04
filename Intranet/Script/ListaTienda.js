@@ -34,6 +34,9 @@ function cargar() {
             alertaRapida(json.error, "error");
         } else {
             listaTienda = json.result;
+            comboBox({identificador: "input[name=codigoPadre]", datos: listaTienda
+                , codigo: "id_tienda", texto: "codigo" , todos: false, texto2: "nombre"
+                , vistaSeleccionado: "codigo"});
             buscador("", 1);
         }
     });
@@ -134,7 +137,9 @@ function registrar() {
     json.proceso = "registrar";
     var foto = $("#foto").prop("src");
     json.logo = foto;
-    json.codigoPadre = json.codigoPadre.trim()==""?0:json.codigoPadre.replace("00LS","");
+    debugger
+    json.codigoPadre = $("input[name=codigoPadre]").data("cod");
+    json.codigoPadre=json.codigoPadre?json.codigoPadre:"0";
     if(!validar("entero",json.codigoPadre)){//00LS4
         $("#errorPop").html("El codigo de tienda es incorrecto.");
         $("input[name=codigoPadre]").addClass("rojoClarito");

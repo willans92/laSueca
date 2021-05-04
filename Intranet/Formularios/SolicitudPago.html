@@ -35,7 +35,7 @@
                         <div id='fechabox' class="inlineblock" style="display: none;">
                             <div  class="inlineblock">
                                 <span class='negrillaenter'>De </span> 
-                                <input type='text' class='fecha medio ' name='de' readonly autocomplete="off"/>
+                                <input  type='text' class='fecha medio ' name='de' readonly autocomplete="off"/>
                             </div>
                             <div  class="inlineblock">
                                 <span class='negrillaenter'>Hasta </span>
@@ -51,7 +51,7 @@
                             <select id="estado" class="medio" onchange="cambioEstado()">
                                 <option value='pendiente' class='estadoPlomo'>Pendiente</option>
                                 <option value='pagado' class='estadoVerde'>Pagado</option>
-                                <option value='cancelado' class='estadoRojo'>Cancelado</option>
+                                <option value='rechazado' class='estadoRojo'>Rechazado</option>
                             </select>
                         </div>
                         <div class="inlineblock">
@@ -88,15 +88,15 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-3" id="codigBox">
-                                <label>Nro Cuenta</label>
+                                <label>Nro Cuenta Bancaria</label>
                                 <div id="nroCuenta"></div>
                             </div>
                             <div class="col-4" id="codigBox">
-                                <label>Propietario</label>
+                                <label>Propietario Cuenta Bancaria</label>
                                 <div id="propietario"></div>
                             </div>
                             <div class="col-3" id="codigBox">
-                                <label>Banco</label>
+                                <label>Nombre del Banco</label>
                                 <div id="banco"></div>
                             </div>
                             <div class="col-2" id="codigBox">
@@ -137,7 +137,21 @@
                 </div>
             </div>
         </div>
-
+        <div id='msmOK2' style="display: none;">
+            <div class='boxmensaje'>
+                <div class='titulo'>ALERTA</div>
+                <div class='mensaje'>¿Esta seguro de rechazar la solicitud de pago?</div>
+                <br>
+                <div id="boxcancelacion">
+                    <div>Motivo Cancelacion</div>
+                    <input value="" type="text" name="motivoCancelacion"  style="width: 100%; display: block" placeholder="Describa el Motivo"/>
+                </div>
+                <div class='centrar'>
+                    <button onclick="cancelar(2);" class='normal' >SI</button>
+                    <button onclick='cerrarPop()' class='normal no' >NO</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 
