@@ -1,4 +1,4 @@
-var url = '../../Controlador/Buscador_Controlador.php';
+var url = 'http://la-sueca.com/Controlador/Buscador_Controlador.php';
 var subCategoria = 0;
 var map;
 var marker;
