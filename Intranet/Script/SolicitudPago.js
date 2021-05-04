@@ -70,6 +70,9 @@ function generar() {
                 html += "<th><div class='normal'>Fecha Pago</div></th>";
                 html += "<th><div class='normal'>Nro Trans.</div></th>";
             }
+            if (estado === "rechazado") {
+                 html += "<th><div class='normal'>Motivo</div></th>";
+            }
             html += "</thead><tbody style='height:300px'>";
             var totalComission = 0;
             for (var i = 0; i < lista.length; i++) {
@@ -84,6 +87,9 @@ function generar() {
                     html += "<td><div class='normal derecha'>" + lista[i]["fechaPagado"] + "</div></td>";
                     html += "<td><div class='normal derecha'>" + lista[i]["nroDocumento"] + "</div></td>";
                 }
+                if (estado === "rechazado") {
+                    html += "<td><div class='normal'>" + lista[i]["motivo"] + "</div></td>";
+               }
                 html += "</tr>";
             }
             html += "</tbody><tfoot>";
@@ -243,8 +249,11 @@ function cancelar(tipo) {
     var json = {};
     json.proceso = 'cancelarSolicitud';
     json.id_solicitud = id_solicitud;
+    json.motivo = $("#msmOK2 input[name=motivoCancelacion]").val();
     if (tipo == 1) {
-        $("body").msmPregunta("¿Esta seguro de cancelar la solicitud?", "cancelar(2)");
+        $('#popPago').modal('hide');
+        $("#msmOK2 input[name=motivoCancelacion]").val("");
+        $("#msmOK2").visible(1);
         return;
     }
 
@@ -258,10 +267,15 @@ function cancelar(tipo) {
             }
             alertaRapida(json.error, "error");
         } else {
-            $('#popPago').modal('hide');
+            $('#popPago').ocultar();
             $("#btnmodificar").ocultar();
-            alertaRapida("La solicitud fue cancelada correctamente.");
+            alertaRapida("La solicitud fue rechazada correctamente.");
+            $("#msmOK2").ocultar();
             generar();
         }
     });
 }
+function cerrarPop() {
+    $("#msmOK2").ocultar();
+    $("#popPago").css("display","block");
+    }

@@ -46,7 +46,7 @@ class tienda {
     }
 
     function todo() {
-        $consulta = "select * from lasueca.tienda where empresa_id=".$this->CON->empresa_id."";
+        $consulta = "select id_tienda,nombre,cuenta,contrasena,estado,registrado,logo,fechaModifico,registradoPor,modificadoPor,cliente_id,padre,banco,cuentaBancaria,moneda,nombreCuenta,concat('00LS',id_tienda) codigo from lasueca.tienda where empresa_id=".$this->CON->empresa_id."";
         return $this->CON->consulta2($consulta);
     }
     function buscarXid($id_tienda) {

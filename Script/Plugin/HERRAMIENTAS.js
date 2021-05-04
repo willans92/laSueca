@@ -627,9 +627,9 @@ function continuarDelivery() {
                 html = "No hay horarios disponible de entrega en esta fecha. Seleccione otra fecha."
             }
             $("#hora").html(html);
-            
+
             var listaSemana = json.result.semana;
-            var dia=[];
+            var dia = [];
             for (var i = 0; i < listaSemana.length; i++) {
                 dia.push(listaSemana[i].dia);
             }
@@ -639,10 +639,10 @@ function continuarDelivery() {
                 beforeShowDay: function (fecha) {
                     var fechaActual = new Date();
                     fechaActual.setDate(fechaActual.getDate() - 1);
-                    console.log(dia.indexOf(fecha.getDay()),dia,fecha.getDay())
-                    var diaSe=fecha.getDay()-1;
-                    diaSe=diaSe==-1?6:diaSe
-                    if (dia.indexOf(diaSe)<0){
+                    console.log(dia.indexOf(fecha.getDay()), dia, fecha.getDay())
+                    var diaSe = fecha.getDay() - 1;
+                    diaSe = diaSe == -1 ? 6 : diaSe
+                    if (dia.indexOf(diaSe) < 0) {
                         return [false]
                     }
                     var validar = fecha >= fechaActual;
@@ -1078,8 +1078,17 @@ function buscadorPedidoPop(tipo) {
 
 }
 function compartirWp() {
-    var host = window.location.origin + "/laSueca/index.php?pv=" + pedidoView;
-    var whatsapp = "https://wa.me/?text=" + host;
+    var f = new Date();
+    var hora = f.getHours();
+    var tiempo = "Dias";
+    if (hora > 11 && hora < 19) {
+        tiempo = "Tardes";
+    }
+    if (hora > 18 && hora < 24) {
+        tiempo = "Noches";
+    }
+    //var host = window.location.origin + "/laSueca/index.php?pv=" + pedidoView;
+    var whatsapp = "https://wa.me/?text=Buenos "+tiempo;
     window.open(whatsapp, '_blank');
 }
 function verOrdenCompras() {

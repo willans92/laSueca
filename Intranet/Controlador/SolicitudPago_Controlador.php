@@ -19,7 +19,7 @@ if ($proceso === "registrarPago") {
     $con->transacion();
     $solicitud = new solicitudComision($con);
     $fechaActualizado= date("d/m/Y H:i:s");
-    if(!$solicitud->cambioEstado($id_solicitud,$fechaP,$nroDoc,"pagado",$fechaActualizado,$sessionUsuario["id_usuario"])){
+    if(!$solicitud->cambioEstado($id_solicitud,$fechaP,$nroDoc,"pagado",$fechaActualizado,$sessionUsuario["id_usuario"],"")){
         $error="No se logro registrar el pago.";
     }else{
         $detalle=new detalleSolicitudComision($con);
@@ -37,7 +37,7 @@ if ($proceso === "cancelarSolicitud") {
     $con->transacion();
     $solicitud = new solicitudComision($con);
     $fechaActualizado= date("d/m/Y H:i:s");
-    if(!$solicitud->cambioEstado($id_solicitud,'','',"cancelado",$fechaActualizado,$sessionUsuario["id_usuario"])){
+    if(!$solicitud->cambioEstado($id_solicitud,'','',"rechazado",$fechaActualizado,$sessionUsuario["id_usuario"],$motivo)){
         $error="No se logro registrar el pago.";
     }else{
         $detalle=new detalleSolicitudComision($con);
