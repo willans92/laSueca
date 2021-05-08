@@ -16,14 +16,13 @@
     </head>
     <body>
         <?php
-        include_once "http://www.la-sueca.com/Libreria/CONN.php";
-        include_once "http://www.la-sueca.com/Libreria/funciones.php";
-
-        include_once "http://www.la-sueca.com/Intranet/Clases/catalogoProducto.php";
-        include_once "http://www.la-sueca.com/Intranet/Clases/tienda.php";
-        include_once "http://www.la-sueca.com/Intranet/Clases/producto.php";
-        include_once "http://www.la-sueca.com/Intranet/Clases/Sucursal.php";
-        include_once "http://www.la-sueca.com/Intranet/Clases/empresa.php";
+        include_once "../../Libreria/CONN.php";
+        include_once "../../Libreria/funciones.php";
+        include_once "../../Intranet/Clases/catalogoProducto.php";
+        include_once "../../Intranet/Clases/tienda.php";
+        include_once "../../Intranet/Clases/producto.php";
+        include_once "../../Intranet/Clases/Sucursal.php";
+        include_once "../../Intranet/Clases/empresa.php";
 
         $tienda_id = 4;
         
