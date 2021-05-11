@@ -446,8 +446,8 @@ function abrirCarrito() {
         html += "        <div class='contenidoModificable'>";
 
         html += "        <div class='cantidad'>";
-        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='../../Imagen/Iconos/minus.png'  alt=''/></div>";
-        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='../../Imagen/Iconos/add.png'   alt=''/></div>";
+        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='http://la-sueca.com/Imagen/Iconos/minus.png'  alt=''/></div>";
+        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='http://la-sueca.com/Imagen/Iconos/add.png'   alt=''/></div>";
         html += "                <input type='text' value='" + producto.cantidad + "' readonly>";
         html += "        </div>";
         html += "        <div class='precio'>";
