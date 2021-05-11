@@ -13,6 +13,8 @@
         <script src="http://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
         <script src="http://www.la-sueca.com/Script/index.js" type="text/javascript"></script>
+        <script src="http://www.la-sueca.com/Script/Plugin/jquery.ios.picker.min.js" type="text/javascript"></script>
+        <script src="http://www.la-sueca.com/Script/Plugin/export/jquery.drum.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
@@ -24,7 +26,7 @@
         include_once "../../Intranet/Clases/Sucursal.php";
         include_once "../../Intranet/Clases/empresa.php";
 
-        $tienda_id = 4;
+        $tienda_id = 12;
         
         $con = new CONN(0);
         $funciones = new funciones($con, $tienda_id);
@@ -155,12 +157,23 @@
                 <img src="http://www.la-sueca.com/Imagen/Iconos/whatsapp.png" alt=""/>
             </a>
         </div>
+        
+        
 
 
 
 
         <div id="popup" >
             <div class="background" onclick="ocultarPopup()"></div>
+            
+            <div id="popDrum" class="pop">
+                <div class="titulo">Cantidad de artículo</div>
+                <div id="example-picker"></div>
+                <div style="padding-bottom: 12px;">
+                    <button class='btnC' onclick="aceptarDrum()">Aceptar</button>
+                    <span   class='btnC' onclick="ocultarPopup()">Cerrar</span>
+                </div>
+            </div>
             <div id="popCarrito" class="pop">
                 <div class="titulo">Carrito de Compras<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
                 <div class="cuerpo"></div>
@@ -212,7 +225,7 @@
                     <label>Método de Pago</label>
                     <select id="metodopago" class="medio">
                         <option value="efectivo">Efectivo</option>
-                        <option value="codigo qr">Codigo QR</option>
+                        <option value="codigo qr">Transferencia Bancaria o Código Qr</option>
                     </select>
                     <label>Detalle del Pedido</label>
                     <div class="cuerpobox">

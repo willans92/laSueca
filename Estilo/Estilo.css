@@ -125,6 +125,86 @@ body{
     border: 1px solid black;
     margin-top: -500px;
 }
+.picker-wrapper,
+.picker-wrapper * {
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    font-family: helvetica
+}
+.picker-wrapper {
+    text-align: center;
+    position: relative;
+    height: 210px;
+    display: inline-block;
+    line-height: 30px;
+    width: 100%;
+    font-size: 20px;
+    perspective: 1000px;
+    perspective-origin: center center;
+
+}
+.picker-scroller {
+
+    -webkit-transition : -webkit-transform 100ms ease;
+    -webkit-transform : translateZ(-90px) rotateX(0deg);
+    -webkit-transform-style : preserve-3d;
+    height : 100%;
+/*
+    overflow: auto;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding-top: 90px;
+    padding-bottom: 90px;
+*/
+}
+.picker-scroller .option{
+    /*position: absolute;*/
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    width : 100%;
+    transition: all 300ms;
+    color : black;
+    transform-origin: 50% 50%;
+    -webkit-transform-style : preserve-3d;
+}
+.picker-up {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    background: rgba(256, 256, 256, 0.6);
+    width: 100%;
+    height: 70px;
+    border-bottom: 1px solid lightgray;
+    
+}
+.picker-down {
+    position: absolute;
+    top: 120px;
+    z-index: 2;
+    background: rgba(256, 256, 256, 0.6);
+    width: 100%;
+    height: 70px;
+    border-top: 1px solid lightgray;
+}
+.clone-scroller {
+    -webkit-box-shadow: inset 0 20px 24px 3px white, inset 0 -20px 24px 3px white;
+    -ms-box-shadow: inset 0 10px 24px 3px white, inset 0 -20px 24px 3px white;
+    -moz-box-shadow: inset 0 10px 24px 3px white, inset 0 -20px 24px 3px white;
+    box-shadow: inset 0 10px 24px 3px white, inset 0 -20px 24px 3px white;
+    z-index: 5;
+    overflow: auto;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding-top: 90px;
+    padding-bottom: 90px
+}
+.clone-scroller .option {
+    visibility: hidden;
+}
 .alertaConfirmacion{
     box-shadow: 0 0 2px 0px #398e39 !important;
     background: #398e39 !important;
@@ -621,7 +701,6 @@ ul{
 .itemProducto .btnadd:hover{
     background:#01467d ;
     color:white;
-    opacity: 0.7;
 }
 .itemProducto .btnadd span {
     top: -13px;
@@ -705,6 +784,12 @@ ul{
     position: relative;
     font-size: 14px;
     top: 0px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .itemProducto .btnaddNro{
     color: white ;
@@ -813,10 +898,10 @@ ul{
 }
 #popup .titulo{
     font-size: 17px;
-    padding: 7px 10px;
-    font-weight: bold;
-    border-bottom: solid 3px silver;
-    font-style: italic;
+    padding: 10px;
+    border-bottom: 1px dashed silver;
+    background: #f1f1f1;
+    color: #443434;
 }
 
 .pop .foot  span{
@@ -829,7 +914,8 @@ ul{
 .pop .foot{
     text-align: right;
     padding: 12px 13px;
-    border-top: solid 3px silver;
+    border-top: dashed silver 1px;
+    
 }
 .boxItemCarrito img{
     width: 80px;
@@ -853,10 +939,17 @@ ul{
     display: inline-block;
     margin-left: 14px;
     font-style: italic;
+    height: 30px;
 }
 .boxItemCarrito .cantidad .btn span{
     top: -10px;
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .boxItemCarrito .cantidad img{
     width: 10px;
@@ -865,6 +958,9 @@ ul{
     top: 6px;
     left: 6px;
 }
+.boxItemCarrito input:focus{
+    
+}
 .boxItemCarrito input{
     width: 100%;
     position: relative;
@@ -872,8 +968,7 @@ ul{
     text-align: center;
     padding: 3px 21px;
     font-size: 12px;
-    background: #e4e9f3;
-    border-radius: 12px;
+    border: none;
 }
 .boxItemCarrito .cantidad .btn{
     border: solid 1px silver;
@@ -970,7 +1065,9 @@ div#popDetalle {
     padding: 12px 0px;
 }
 .contenidoModificable{
-    flex: 2;
+    display: flex;
+    flex-direction: column;
+    width: 110px;
 }
 #fechaEntrega{
     font-size: 19px;
@@ -989,6 +1086,13 @@ div#popDetalle {
     top: 0px;
     padding: 0 5px;
     right: -2px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
 }
 .itemProducto span.activo{
     padding: 0 9px;
@@ -1001,7 +1105,25 @@ div#popDetalle {
     display: none;
     top: -2px;
     left:-2px;
+    cursor: pointer;
     padding: 0 5px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#popDrum{
+    margin-top: 30px;
+    width: 180px;
+    text-align: center;
+}
+#popDrum .btnC{
+   width: 80%;
+    padding: 4px 0px;
+    display: inline-block;
+    margin-top: 4px;
 }
 @media screen and (max-width : 1024px) {
     #contenedorCategoria img{
@@ -1043,11 +1165,9 @@ div#popDetalle {
     .boxItemCarrito .cantidad{
         font-size: 12px
     }
-    .contenidoModificable{
-        flex: 5;
-    }
+    
     #popup .titulo{
-        font-size: 14px;
+        font-size: 16px;
     }
     .pop .foot{
         text-align: center;
@@ -1055,6 +1175,7 @@ div#popDetalle {
     .pop .foot span {
         margin-left: 20px;
         margin-right: 11px;
+        margin-bottom: 20px;
         font-style: italic;
         font-weight: bold;
         cursor: pointer;
@@ -1063,9 +1184,9 @@ div#popDetalle {
     }
 
     .pop .foot button{
-        font-size: 12px;
-        margin-top: 8px;
-            padding: 4px 6px;
+        font-size: 15px;
+        margin-top: 15px;
+            padding: 6px 10px;
     }
     label{
         font-size: 13px;

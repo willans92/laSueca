@@ -12,6 +12,7 @@
         <script src="http://www.la-sueca.com/Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
+        <script src="http://www.la-sueca.com/Script/Plugin/export/jquery.drum.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/buscador.js" type="text/javascript"></script>
     </head>
     <body>
@@ -25,7 +26,7 @@
         include_once "http://www.la-sueca.com/Intranet/Clases/empresa.php";
         include_once "http://www.la-sueca.com/Intranet/Clases/tienda.php";
          
-        $tienda_id =11;
+        $tienda_id = 11;
         $con = new CONN(0);
         $categoriabusqueda = isset($_GET["c"]) ? $_GET["c"] : "0";
         $subcategoriabusqueda = isset($_GET["s"]) ? $_GET["s"] : "0";
@@ -88,7 +89,8 @@
         if (count($listaProducto) === $limite) {
             $ocultarMas = "style='display:none'";
         }
-        $tarifario = file_get_contents('http://localhost/Emprendedor/Controlador/Login_Controlador.php?proceso=tarifario');
+        
+         $tarifario = $funciones->tarifarioEmprendedor();
         
         $sucursal=new Sucursal($con);
         $sucursalesDisponibles=$sucursal->TodassucursalLocalizacion();
@@ -163,6 +165,15 @@
 
         <div id="popup" >
             <div class="background" onclick="ocultarPopup()"></div>
+            
+            <div id="popDrum" class="pop">
+                <div class="titulo">Cantidad de artículo</div>
+                <div id="example-picker"></div>
+                <div style="padding-bottom: 12px;">
+                    <button class='btnC' onclick="aceptarDrum()">Aceptar</button>
+                    <span   class='btnC' onclick="ocultarPopup()">Cerrar</span>
+                </div>
+            </div>
             <div id="popCarrito" class="pop">
                 <div class="titulo">Carrito de Compras<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
                 <div class="cuerpo"></div>
@@ -214,11 +225,11 @@
                     <label>Método de Pago</label>
                     <select id="metodopago" class="medio">
                         <option value="efectivo">Efectivo</option>
-                        <option value="codigo qr">Codigo QR</option>
+                        <option value="codigo qr">Transferencia Bancaria o Código Qr</option>
                     </select>
                     <label>Detalle del Pedido</label>
                     <div class="cuerpobox">
-                        
+
                     </div>
                     <br>
                     <label>Intrucciones de Entrega</label>
@@ -282,7 +293,7 @@
                 <div class="foot">
                     <button id='btncontinuar1' onclick="ocultarPopup()">Cerrar</button>
                 </div>
-              
+
             </div>
             <div id="popVerDetallePedido" class="pop">
                 <div class="titulo">Detalle de Pedido<span class="cerrar" onclick="ocultarPopup()">x</span> </div>
@@ -311,7 +322,7 @@
                         <span class="negrilla">Dirección de Entrega:</span>
                         <span  id="txtDireccion"></span>
                     </div>
-                    
+
                     <div>
                         <span class="negrilla">Intrucción de Entrega:</span>
                         <span  id="txtIntruccion"></span>
@@ -333,13 +344,13 @@
                         <span class="negrilla">DETALLE DEL PEDIDO</span><br><br>
                         <table class="table" id="prodDetalle">
                             <thead>
-                                <th><div class="medio">Producto</div></th>
-                                <th><div class="pequeno">Cantidad</div></th>
-                                <th><div class="pequeno">Precio Uni.</div></th>
-                                <th><div class="normal">SubTotal</div></th>
+                            <th><div class="medio">Producto</div></th>
+                            <th><div class="pequeno">Cantidad</div></th>
+                            <th><div class="pequeno">Precio Uni.</div></th>
+                            <th><div class="normal">SubTotal</div></th>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                         </table>
                     </div>

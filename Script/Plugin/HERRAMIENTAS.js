@@ -1,4 +1,6 @@
-var imagenCargando = "../Imagen/Cargando.gif";
+var imagenCargando = "http://la-sueca.com/Imagen/cargando.gif";
+var seleccionadoDrum = 0;
+var productoSelected=null;
 (function (a) {
     $.fn.extend({
         visible: function (tipo) {
@@ -241,6 +243,7 @@ var imagenCargando = "../Imagen/Cargando.gif";
     });
 })(jQuery);
 $(document).ready(function () {
+    
     $("input").click(function () {
         $(this).select();
     });
@@ -416,15 +419,10 @@ function cambiarItemCarrito(idProducto, cambio) {
 }
 function abrirCarrito() {
     $("#popup").css("display", "block");
+    limpiarPop();
     $("#popCarrito").centrar();
     $("#popCarrito").css("display", "block");
-    $("#popConfirmarSms").css("display", "none");
-    $("#popCodigoPedido").css("display", "none");
-    $("#popFinalizarPedido").css("display", "none");
-    $("#popVerDetallePedido").css("display", "none");
-    $("#popDatosEnvio").css("display", "none");
-    $("#popDelivery").css("display", "none");
-    $("#popDetalle").css("display", "none");
+    $("#popCarrito").focus();
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var listaCarrito = carrito.data ? carrito.data : {};
@@ -441,7 +439,7 @@ function abrirCarrito() {
         html += "<div class='contenido'>";
         html += "        <div class='desripcion'>";
         html += "            <div class='nombre'>" + producto.nombre + "</div>";
-        html += "            <div class='precioUni'>Bs. " + producto.precio + "</div>";
+        html += "            <div class='precioUni'>Bs. " + format(producto.precio) + "</div>";
         html += "        </div>";
 
 
@@ -453,7 +451,7 @@ function abrirCarrito() {
         html += "                <input type='text' value='" + producto.cantidad + "' readonly>";
         html += "        </div>";
         html += "        <div class='precio'>";
-        html += "            Bs. " + total.toFixed(2);
+        html += "            Bs. " + format(total);
         html += "        </div>";
 
         html += "        </div>";
@@ -467,19 +465,12 @@ function abrirCarrito() {
     } else {
         $("#btncontinuar1").visible();
     }
-    $(".foot .total").text("Bs. " + totalFinal.toFixed(2));
+    $(".foot .total").text("Bs. " + format(totalFinal));
     $("#popCarrito .cuerpo").html(html);
 }
 function ocultarPopup() {
     $("#popup").css("display", "none");
-    $("#popCarrito").css("display", "none");
-    $("#popConfirmarSms").css("display", "none");
-    $("#popCodigoPedido").css("display", "none");
-    $("#popDelivery").css("display", "none");
-    $("#popDetalle").css("display", "none");
-    $("#popFinalizarPedido").css("display", "none");
-    $("#popBuscadorPedido").css("display", "none");
-    $("#popVerDetallePedido").css("display", "none");
+    limpiarPop();
     $("#popDatosEnvio").css("display", "popDatosEnvio");
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
@@ -609,7 +600,7 @@ function continuarDelivery() {
     $("#popDelivery").centrar();
     $("#fechaEntrega").html("<span class='negrilla'>Fecha Entrega:</span> " + fechaEntrega);
     cargando(true);
-    $.post(url, {proceso: "horarioDiaSemana", fecha: fechaEntrega}, function (response) {
+    $.get(url, {proceso: "horarioDiaSemana", fecha: fechaEntrega}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
         if (json.error.length > 0) {
@@ -662,7 +653,7 @@ function continuarDelivery() {
 }
 function obtenerHorarioDisponible() {
     cargando(true);
-    $.post(url, {proceso: "horarioDisponible", fecha: fechaEntrega}, function (response) {
+    $.get(url, {proceso: "horarioDisponible", fecha: fechaEntrega}, function (response) {
         cargando(false);
         var json = $.parseJSON(response);
         if (json.error.length > 0) {
@@ -720,17 +711,17 @@ function continuarEntrega() {
         html += "<div class='contenido'>";
         html += "<div class='desripcion'>";
         html += "<div class='nombre' style='height: auto;'>" + producto.nombre + "</div>";
-        html += "<div class='precioUni'>Bs. " + precio + "</div>";
+        html += "<div class='precioUni'>Bs. " + format(precio) + "</div>";
         html += "<div class='cantidad'>Cantidad: " + cantidad + "</div>";
         html += "</div>";
         html += "<div class='precio' style='padding-top: 0;'>";
-        html += "Bs. " + total;
+        html += "Bs. " + format(total);
         html += "</div>";
         html += "</div>";
         html += "</div>";
     }
     $("#popFinalizarPedido .cuerpobox").html(html);
-    $("#popFinalizarPedido .foot .total").text("Bs. " + totalFinal.toFixed(2));
+    $("#popFinalizarPedido .foot .total").text("Bs. " + format(totalFinal));
 }
 function finalizarVenta(tipo = 1) {//tipo 1 envia sms
     if (tipo == 2) {
@@ -875,14 +866,9 @@ function detalleProducto(tipo, id, nombre, detalle, img, precio, comision) {
         $("#detalleNombre").html(nombre);
         $("#popDetalle img").attr("src", img)
         $("#popup").css("display", "block");
+        limpiarPop();
         $("#popDetalle").centrar();
         $("#popDetalle").css("display", "block");
-        $("#popFinalizarPedido").css("display", "none");
-        $("#popDatosEnvio").css("display", "none");
-        $("#popDelivery").css("display", "none");
-        $("#popCarrito").css("display", "none");
-        $("#popConfirmarSms").css("display", "none");
-        $("#popCodigoPedido").css("display", "none");
     } else {
         $("#popup").ocultar();
         $("#popDetalle").ocultar();
@@ -897,6 +883,28 @@ function controladorItem(ele, accion = "agregar", idproducto, nombre, foto, prec
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
     var listaCarrito = carrito.data ? carrito.data : {};
+    if (/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        limpiarPop();
+        $("#popup").css("display", "block");
+        $("#popDrum").css("display", "block");
+        $("#popup").focus();
+        $("#popDrum").centrar();
+        var seleccionar=0;
+        if (listaCarrito[idproducto]) {
+            seleccionar=listaCarrito[idproducto].cantidad;
+        }
+        $("#example-picker").picker({
+            data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+            lineHeight: 30,
+            selected: seleccionar
+        }, function (s) {
+            seleccionadoDrum = parseInt(s);
+        });
+        productoSelected={idproducto:idproducto, nombre:nombre, foto:foto, precio:precio, comision:comision};
+        return;
+    }
+    
+    
     if (!listaCarrito[idproducto]) {
         modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio, comision);
     }
@@ -920,6 +928,53 @@ function controladorItem(ele, accion = "agregar", idproducto, nombre, foto, prec
     }, 1000);
 
 }
+function limpiarPop() {
+    $("#popDrum").css("display", "none");
+    $("#popBuscadorPedido").css("display", "none");
+    $("#popCarrito").css("display", "none");
+    $("#popConfirmarSms").css("display", "none");
+    $("#popCodigoPedido").css("display", "none");
+    $("#popDatosEnvio").css("display", "none");
+    $("#popFinalizarPedido").css("display", "none");
+    $("#popVerDetallePedido").css("display", "none");
+    $("#popDelivery").css("display", "none");
+    $("#popDetalle").css("display", "none");
+}
+function aceptarDrum(){
+    var carrito = localStorage.getItem("carrito");
+    carrito = carrito ? $.parseJSON(carrito) : {};
+    var cantidadItem = carrito.cantidadItem;
+    cantidadItem = cantidadItem ? cantidadItem : 0;
+
+    var listaCarrito = carrito.data ? carrito.data : {};
+    if (listaCarrito[productoSelected.idproducto]) {
+        listaCarrito[productoSelected.idproducto].cantidad = seleccionadoDrum;
+        $(".i" + productoSelected.idproducto + " span").text(seleccionadoDrum);
+        if (seleccionadoDrum === 0) {
+            cantidadItem -= 1;
+            delete listaCarrito[productoSelected.idproducto];
+            $(".i" + productoSelected.idproducto).removeClass("btnaddNro");
+            $(".i" + productoSelected.idproducto + " span").text("+");
+        } else {
+            $(".i" + productoSelected.idproducto).addClass("btnaddNro");
+        }
+    } else {
+        cantidadItem += 1;
+        $(".i" + productoSelected.idproducto).addClass("btnaddNro");
+        $(".i" + productoSelected.idproducto + " span").text(seleccionadoDrum);
+        listaCarrito[productoSelected.idproducto] = {id: productoSelected.idproducto, cantidad: seleccionadoDrum, nombre: productoSelected.nombre, foto: productoSelected.foto, precio: productoSelected.precio, comision: productoSelected.comision};
+    }
+    carrito.cantidadItem = cantidadItem;
+    carrito.data = listaCarrito;
+    $(".addCarrito span").text(cantidadItem);
+    if (cantidadItem > 0) {
+        $(".addCarrito").css("display", "block");
+    } else {
+        $(".addCarrito").css("display", "none");
+    }
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    ocultarPopup();
+}
 function btnControl(ele, valorAccion) {
     var elemento = $(ele).parent();
     var nombre = elemento.data("nombre");
@@ -935,6 +990,7 @@ function btnControl(ele, valorAccion) {
     if (listaCarrito[idproducto]) {
         listaCarrito[idproducto].cantidad += valorAccion;
         if (listaCarrito[idproducto].cantidad <= 0) {
+            cantidadItem -= 1;
             elemento.find("span").removeClass("btnaddNro");
             elemento.find(".less").css("display", "none");
             elemento.find(".add").css("display", "none");
@@ -965,9 +1021,9 @@ function modificarCarrito(accion = "agregar", idproducto, nombre, foto, precio, 
     if (listaCarrito[idproducto]) {
         listaCarrito[idproducto].cantidad += valorAccion;
         $(".i" + idproducto + " span").text(listaCarrito[idproducto].cantidad);
-        if (listaCarrito[idproducto].cantidad < 0) {
+        if (listaCarrito[idproducto].cantidad <= 0) {
             delete listaCarrito[idproducto];
-            cantidadItem -= 0;
+            cantidadItem -= 1;
             $(".i" + idproducto).removeClass("btnaddNro");
             $(".i" + idproducto + " span").text("+");
         } else {
@@ -1036,16 +1092,9 @@ function cambioTamanoPantalla() {
 function buscadorPedidoPop(tipo) {
     if (tipo == 1) {
         $("#popup").css("display", "block");
+        limpiarPop();
         $("#popBuscadorPedido").css("display", "block");
         $("#popBuscadorPedido").centrar();
-        $("#popCarrito").css("display", "none");
-        $("#popConfirmarSms").css("display", "none");
-        $("#popCodigoPedido").css("display", "none");
-        $("#popDatosEnvio").css("display", "none");
-        $("#popFinalizarPedido").css("display", "none");
-        $("#popVerDetallePedido").css("display", "none");
-        $("#popDelivery").css("display", "none");
-        $("#popDetalle").css("display", "none");
         $("input[name=buscadorPedido]").removeClass(".rojoClarito");
     } else {
         var codigo = $("input[name=buscadorPedido]").val().trim().toUpperCase();
@@ -1056,7 +1105,7 @@ function buscadorPedidoPop(tipo) {
         }
         $("input[name=buscadorPedido]").removeClass("rojoClarito");
         cargando(true);
-        $.post(url, {proceso: "verificarCodigo", codigo: codigo}, function (response) {
+        $.get(url, {proceso: "verificarCodigo", codigo: codigo}, function (response) {
             cargando(false);
             var json = $.parseJSON(response);
             if (json.error.length > 0) {
@@ -1088,7 +1137,7 @@ function compartirWp() {
         tiempo = "Noches";
     }
     //var host = window.location.origin + "/laSueca/index.php?pv=" + pedidoView;
-    var whatsapp = "https://wa.me/?text=Buenos "+tiempo;
+    var whatsapp = "https://wa.me/?text=Buenos " + tiempo;
     window.open(whatsapp, '_blank');
 }
 function verOrdenCompras() {
@@ -1103,15 +1152,9 @@ function verOrdenCompras() {
             alertaRapida(json.error, "error");
         } else {
             $("#popup").css("display", "block");
+            limpiarPop();
             $("#popVerDetallePedido").css("display", "block");
             $("#popVerDetallePedido").centrar();
-            $("#popCarrito").css("display", "none");
-            $("#popConfirmarSms").css("display", "none");
-            $("#popCodigoPedido").css("display", "none");
-            $("#popBuscadorPedido").css("display", "none");
-            $("#popDatosEnvio").css("display", "none");
-            $("#popDelivery").css("display", "none");
-            $("#popDetalle").css("display", "none");
             var pedido = json.result.pedido;
 
             var programado = pedido.fechaProgramada + " " + pedido.horaProgramada;
