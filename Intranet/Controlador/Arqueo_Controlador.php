@@ -3,9 +3,13 @@
 include_once('../Libreria/variables.php');
 
 
-if ($proceso === "reporteCobranza") {
+if ($proceso === "reporteArqueo") {
     $cobranza = new cobranza($con);
-    $resultado = $cobranza->reporteCobranza($tipo, $de, $hasta);
+    $resultado = $cobranza->reporteArqueo($de,$hasta,$empleado,$sucursal,$estado);
+}
+if ($proceso === "reporteCobrado") {
+    $arqueo = new arqueo($con);
+    $resultado = $arqueo->cobranzaSinArqueo($cobrador,$de,$hasta);
 }
 
 

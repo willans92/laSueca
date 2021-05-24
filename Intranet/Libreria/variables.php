@@ -4,6 +4,8 @@ header("Content-Type: text/html;charset=utf-8");
 error_reporting(0);
 include_once "../Libreria/CONN.php";
 include_once "../Clases/empresa.php";
+include_once "../Clases/arqueo.php";
+include_once "../Clases/detalleArqueo.php";
 include_once "../Clases/mensajeGuardado.php";
 include_once "../Clases/horarioEntrega.php";
 include_once "../Clases/prestamo.php";

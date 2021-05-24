@@ -61,7 +61,7 @@
 
                     </div>
                 </div><br>
-                <table class="table">
+                <table class="table" id="tblarqueo">
                     <thead class="thead-light">
                         <th><div class="pequeno">Registrado</div></th>
                         <th><div class="medio">Cobrador</div></th>
@@ -82,12 +82,66 @@
         </div>
         <div class='container-fluid p-2' id='divflotante'>
             <div style="width: 532px">
-                <button onclick="popArqueo()" class='p-2' >Realizar Arqueo</button>
+                <button onclick="popArqueoEvent(1)" class='p-2' >Realizar Arqueo</button>
                 <div class="inlineblock">
                     <img onclick="imprimir()"  src="../Imagen/Iconos/print.png" alt="Imprimir" class="iconBtn"/>
-                    <img onclick="exportarExcel('tblventas', 'Reporte de Cobranza')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn"/>
+                    <img onclick="exportarExcel('tblarqueo', 'Reporte de Arqueo')"  src="../Imagen/Iconos/excel.png" alt="Exportar Excel" class="iconBtn"/>
                 </div>
 
+            </div>
+        </div>
+        
+        <div class="modal fade" id="popArqueo" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="formAlmacen">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Registro de Arqueo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5" id="codigBox">
+                                <label>Sucursal</label>
+                                <input type="text" class="form-control" name="sucursalP" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-7">
+                                <label>Cobrador</label>
+                                <input type="text" class="form-control"  name="cobradorP" autocomplete="off" maxlength="150">
+                            </div>
+                            <div class="col-3">
+                                <label>De</label>
+                                <input autocomplete="off" type="text"  class="centrar fecha" name="deP" />
+                            </div>
+                            <div class="col-3">
+                                <label>Hasta</label>
+                                <input autocomplete="off" type="text"  class="centrar fecha" name="hastaP" />
+                            </div>
+                            <div class="col-3">
+                                <button onclick="buscarCobrado()">Buscar</button>
+                            </div>
+                            <div class="col-12">
+                                <table class="table" id='tblCobranza'>
+                                    <thead>
+                                        <th><div class="chico2"></div></th>
+                                        <th><div class="normal">Fecha</div></th>
+                                        <th><div class="normal">Detalle</div></th>
+                                        <th><div class="normal">Monto</div></th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="errorPop"></div>
+                        <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </div>
+                </div>
             </div>
         </div>
 
