@@ -17,6 +17,7 @@
     <body>
         <div style="text-align: center; font-size: 19">Bienvenido a la sueca bebe</div>
         <?php 
+        echo phpversion();
         foreach (getallheaders() as $nombre => $valor) {
             echo "$nombre: $valor<br>";
         }

@@ -28,7 +28,6 @@ include_once "../Clases/usuario.php";
 include_once "../Clases/detallePedidoApp.php";
 include_once "../Clases/Perfil.php";
 include_once "../Clases/ciudad.php";
-include_once "../Clases/imagenesProductos.php";
 include_once "../Clases/categoriaapp.php";
 include_once "../Clases/linea_producto.php";
 include_once "../Clases/marca.php";
@@ -53,7 +52,6 @@ include_once "../Clases/traspasoProducto.php";
 include_once "../Clases/detalleTraspasoProducto.php";
 include_once "../Clases/ajusteInventario.php";
 include_once "../Clases/detalleAjusteInventario.php";
-include_once "../Libreria/ControlCode.php";
 
 $error = "";
 $resultado = "";
