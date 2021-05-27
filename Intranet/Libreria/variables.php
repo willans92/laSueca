@@ -77,6 +77,7 @@ if (empty($activar)) {
         return;
     }
 }
+$empId=$sessionUsuario?$sessionUsuario["empresa_id"]:0;
 $con = new CONN($sessionUsuario["empresa_id"]);
 if (!$con->estado) {
     $error = "No se pudo acceder a la base de datos. Intente mas tarde o contactese con el administrador.";

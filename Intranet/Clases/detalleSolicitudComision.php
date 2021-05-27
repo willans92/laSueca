@@ -1,6 +1,6 @@
 <?php
 
-class almacen {
+class detalleSolicitudComision {
 
     var $id_almacen;
     var $nombre;
