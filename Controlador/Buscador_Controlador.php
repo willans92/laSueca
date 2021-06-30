@@ -1,5 +1,6 @@
 <?php
-
+require '../vendor/autoload.php';
+use Twilio\Rest\Client;
 include_once('../Libreria/variables.php');
 
 
@@ -7,6 +8,26 @@ if ($proceso === "buscarMas") {
     $producto = new producto($con);
     $resultado = $producto->nuestrosProductosHome($id_tienda, $txtbusqueda
             , $categoria, $subcategoria, $pibote, 30);
+}
+if ($proceso === "enviarSms") {
+    $account_sid = 'ATn3GzC4AWgNah5AWjodngzkSeUoV8gL9F';
+    $auth_token = 'ATn3GzC4AWgNah5AWjodngzkSeUoV8gL9F';
+    $twilio_number = "+19547154120";
+    $client2 = new Client($account_sid, $auth_token);
+    $codigoGenerado="123456";
+    try {
+        $client2->messages->create(
+            '+591'.$telefono,
+            array(
+                'from' => $twilio_number,
+                'body' => $codigoGenerado
+            )
+        ); 
+        $resultado =$codigoGenerado;
+    } catch (\Throwable $th) {
+       $error="No se logro enviar el codigo. Intente mas tarde";
+    }
+    
 }
 if ($proceso === "horarioDisponible") {
     $horario = new horarioEntrega($con);

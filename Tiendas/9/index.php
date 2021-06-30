@@ -3,18 +3,18 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="http://www.la-sueca.com/Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="http://www.la-sueca.com/Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
-        <link href="http://www.la-sueca.com/Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
-        <script src="http://www.la-sueca.com/Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/popper.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        <link href="https://www.la-sueca.com/Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="https://www.la-sueca.com/Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
+        <link href="https://www.la-sueca.com/Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="https://www.la-sueca.com/Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/popper.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
-        <script src="http://www.la-sueca.com/Script/index.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/jquery.ios.picker.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/export/jquery.drum.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/index.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/jquery.ios.picker.min.js" type="text/javascript"></script>
+        <script src="https://www.la-sueca.com/Script/Plugin/export/jquery.drum.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
@@ -83,7 +83,7 @@
         <div class="row" id="menu">
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 pr-0 iconIzquierda" >
                 <a href="index.php">
-                    <img class="iconMenu" src="http://www.la-sueca.com/Imagen/Iconos/menu.svg"  style="display: none"/>
+                    <img class="iconMenu" src="https://www.la-sueca.com/Imagen/Iconos/menu.svg"  style="display: none"/>
                     <img class="iconMenu" src="<?php echo $tienda["logo"]?>" style="padding: 0;" />
                     <span class="iconLabel"><?php echo $tienda["nombre"]?></span>
                 </a>
@@ -94,12 +94,12 @@
                         Buscador
                     </div>
                     <input type="text" onkeyup="buscador(event, '')" autocomplete="off" name="buscador">
-                    <img src="http://www.la-sueca.com/Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '')">
+                    <img src="https://www.la-sueca.com/Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '')">
                 </div>
             </div>
             <div  class="col-6 col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right iconDerecha" >
-                <img class="iconMenu" src="http://www.la-sueca.com/Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
-                <img class="iconMenu" src="http://www.la-sueca.com/Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
+                <img class="iconMenu" src="https://www.la-sueca.com/Imagen/Iconos/shopping.png" style="padding: 5px;"  onclick="buscadorPedidoPop(1)" />
+                <img class="iconMenu" src="https://www.la-sueca.com/Imagen/Iconos/cart.svg" style="padding: 5px;"  onclick="abrirCarrito()" />
                 <div class='addCarrito' onclick="abrirCarrito()"><span></span></div>
             </div>
             <div  class="col-12 d-inline-block d-sm-none mt-2" >
@@ -108,7 +108,7 @@
                         Buscador
                     </div>
                     <input type="text" autocomplete="off" onkeyup="buscador(event, 2)" name="buscador2">
-                    <img src="http://www.la-sueca.com/Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '2')">
+                    <img src="https://www.la-sueca.com/Imagen/Iconos/lupa.svg" title="buscador" onclick="buscador('', '2')">
                 </div>
             </div>
         </div>
@@ -154,7 +154,7 @@
         </div>
         <div id='btnFlotante'>
             <a href="<?php echo $link?>">
-                <img src="http://www.la-sueca.com/Imagen/Iconos/whatsapp.png" alt=""/>
+                <img src="https://www.la-sueca.com/Imagen/Iconos/whatsapp.png" alt=""/>
             </a>
         </div>
         

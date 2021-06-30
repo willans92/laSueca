@@ -1,30 +1,45 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
+<html>
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="http://www.la-sueca.com/Estilo/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="http://www.la-sueca.com/Estilo/EstiloFecha.css" rel="stylesheet" type="text/css"/>
-        <link href="http://www.la-sueca.com/Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        
         <script src="http://www.la-sueca.com/Script/Plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/jquery-ui.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/popper.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/bootstrap.min.js" type="text/javascript"></script>
-        <script src="http://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        
+        
+            <link href="http://www.la-sueca.com/Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+            <script src="http://www.la-sueca.com/Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+            <script src="http://www.la-sueca.com/Script/index.js" type="text/javascript"></script>
+       <!--
+        <link href="../../Estilo/Estilo.css" rel="stylesheet" type="text/css"/>
+        <script src="../../Script/Plugin/HERRAMIENTAS.js" type="text/javascript"></script>
+        <script src="../../Script/index.js" type="text/javascript"></script>
+ -->
         <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDAkbFNdLPZweqdm0_51T52uCMVknLqBMk&libraries=places"></script>
-        <script src="http://www.la-sueca.com/Script/index.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/jquery.ios.picker.min.js" type="text/javascript"></script>
         <script src="http://www.la-sueca.com/Script/Plugin/export/jquery.drum.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
-        include_once "../../Libreria/CONN.php";
+        /*include_once "../../Libreria/CONN.php";
         include_once "../../Libreria/funciones.php";
         include_once "../../Intranet/Clases/catalogoProducto.php";
         include_once "../../Intranet/Clases/tienda.php";
         include_once "../../Intranet/Clases/producto.php";
         include_once "../../Intranet/Clases/Sucursal.php";
-        include_once "../../Intranet/Clases/empresa.php";
+        include_once "../../Intranet/Clases/empresa.php";*/
+        include_once "http://www.la-sueca.comLibreria/CONN.php";
+        include_once "http://www.la-sueca.comLibreria/funciones.php";
+        include_once "http://www.la-sueca.comIntranet/Clases/catalogoProducto.php";
+        include_once "http://www.la-sueca.comIntranet/Clases/tienda.php";
+        include_once "http://www.la-sueca.comIntranet/Clases/producto.php";
+        include_once "http://www.la-sueca.comIntranet/Clases/Sucursal.php";
+        include_once "http://www.la-sueca.comIntranet/Clases/empresa.php";
 
         $tienda_id = 4;
         
@@ -259,7 +274,7 @@
                     <input type='text' name='codigoSms' autocomplete="off" style="width:100%">
                 </div>
                 <div class="foot">
-                    <span onclick="continuarDelivery()">Atras</span>
+                    <span onclick="continuarEntrega()">Atras</span>
                     <button onclick="confirmarSmsVenta()">Confirmar</button>
                 </div>
             </div>

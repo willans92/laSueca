@@ -1,4 +1,5 @@
 <?php
+include_once "../../Intranet/Clases/tarifarioApp.php";
 
 //include_once "Intranet/Clases/producto.php";
 class funciones {
@@ -106,7 +107,7 @@ class funciones {
         return $htmlSubCategoria;
     }
 
-    function tarifarioEmprendedor() {
+   /* function tarifarioEmprendedor() {
         $tarifario=[];
         $options = [
                // 'cache_wsdl' => WSDL_CACHE_NONE,
@@ -123,5 +124,13 @@ class funciones {
             $tarifario=[];
         }
         return $tarifario;
+    }*/
+    function tarifarioEmprendedor() {
+        $tarifarioApp = new tarifarioApp($this->CON);
+        $resultado = $tarifarioApp->buscarXtipo("currier",0,0);
+        $reponse = array("error" => "", "result" => $resultado);
+        return $resultado;
     }
+    
+    
 }

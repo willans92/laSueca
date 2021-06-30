@@ -1,4 +1,4 @@
-var imagenCargando = "http://la-sueca.com/Imagen/cargando.gif";
+var imagenCargando = "https://la-sueca.com/Imagen/cargando.gif";
 var seleccionadoDrum = 0;
 var productoSelected=null;
 (function (a) {
@@ -386,7 +386,7 @@ function selectText(ele) {
 
 
 // ACCIONES CARRITO
-
+var codigoSms;
 function cambiarItemCarrito(idProducto, cambio) {
     var carrito = localStorage.getItem("carrito");
     carrito = carrito ? $.parseJSON(carrito) : {};
@@ -446,8 +446,8 @@ function abrirCarrito() {
         html += "        <div class='contenidoModificable'>";
 
         html += "        <div class='cantidad'>";
-        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='http://la-sueca.com/Imagen/Iconos/minus.png'  alt=''/></div>";
-        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='http://la-sueca.com/Imagen/Iconos/add.png'   alt=''/></div>";
+        html += "                <div class='btn float-left' onclick='cambiarItemCarrito(" + producto.id + ",-1)'><img src='https://la-sueca.com/Imagen/Iconos/minus.png'  alt=''/></div>";
+        html += "                <div class='btn float-right' onclick='cambiarItemCarrito(" + producto.id + ",1)'><img src='https://la-sueca.com/Imagen/Iconos/add.png'   alt=''/></div>";
         html += "                <input type='text' value='" + producto.cantidad + "' readonly>";
         html += "        </div>";
         html += "        <div class='precio'>";
@@ -724,6 +724,7 @@ function continuarEntrega() {
     $("#popFinalizarPedido .foot .total").text("Bs. " + format(totalFinal));
 }
 function finalizarVenta(tipo = 1) {//tipo 1 envia sms
+    debugger
     if (tipo == 2) {
         var telefono = $("input[name=smsTelefono]").val();
         if (telefono.length < 7) {
@@ -736,15 +737,27 @@ function finalizarVenta(tipo = 1) {//tipo 1 envia sms
     var telefono = $("input[name=telefono]").val();
     $("#telefonoSms").text(telefono);
     $("#boxEditSms input").val(telefono);
-    $("#boxEditSms").css("display", "none");
+    limpiarPop();
     $("#popConfirmarSms").css("display", "block");
     $("#popConfirmarSms").centrar();
-    $("#popCarrito").css("display", "none");
-    $("#popFinalizarPedido").css("display", "none");
-    $("#popVerDetallePedido").css("display", "none");
-    $("#popDelivery").css("display", "none");
-    $("#popDetalle").css("display", "none");
-    $("#popDatosEnvio").css("display", "none");
+    $("#boxEditSms").css("display", "none");
+    enviarSms();
+}
+function enviarSms() {
+    var telefono = $("input[name=telefono]").val();
+   // cargando(true);
+    $.post(url, {proceso: "enviarSms",telefono:telefono}, function (response) {
+        cargando(false);
+        var json = $.parseJSON(response);
+        if (json.error.length > 0) {
+            if ("Error Session" === json.error) {
+                window.parent.cerrarSession();
+            }
+            alertaRapida(json.error, "error");
+        } else {
+            codigoSms = json.result;
+        }
+    });
 }
 function editarTelefonoSms(tipo) {
     if (tipo === 1) {

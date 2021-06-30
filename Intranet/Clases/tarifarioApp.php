@@ -48,26 +48,6 @@ class tarifarioApp {
         return $this->CON->consulta2($consulta);
     }
 
-    function buscarTarifario($estado, $ciudad, $contador, $empresa_id, $tipo) {
-        $estadoStr = "";
-        if ($estado !== "") {
-            $estadoStr = "  and estado like '$estado' ";
-        }
-        $ciudadStr = "";
-        if ($ciudad !== "") {
-            $ciudadStr = " and ciudad_id=$ciudad ";
-        }
-        $empresaStr = "";
-        $consulta = "SELECT * FROM lasueca.tarifarioapp where empresa_id=$empresa_id and tipo like '$tipo'  $estadoStr  $ciudadStr limit $contador,60";
-        $data = $this->CON->consulta2($consulta);
-        $consulta = "SELECT count(id_tarifarioAPP) cantidad FROM lasueca.tarifarioapp where empresa_id=$empresa_id and tipo like '$tipo'  $estadoStr  $ciudadStr limit $contador,60";
-        $limiteData = $this->CON->consulta($consulta);
-        $limite = $limiteData->fetch_assoc()['cantidad'];
-        $resultado = array();
-        $resultado["limite"] = $limite;
-        $resultado["data"] = $data;
-        return $resultado;
-    }
 
     function insertar() {
         $consulta = "INSERT INTO lasueca.tarifarioapp (id_tarifarioAPP,nombre,de,hasta,precio,estado,tipo,ciudad_id,afiliado,empresa_id) VALUES ('$this->id_tarifarioAPP','$this->nombre','$this->de','$this->hasta','$this->precio','$this->estado','$this->tipo','$this->ciudad_id','$this->afiliado','$this->empresa_id');";
